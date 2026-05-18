@@ -2,12 +2,52 @@
 
 namespace Database\Seeders;
 
+use App\Models\About;
+use App\Models\Accessory;
+use App\Models\Category;
+use App\Models\CategorySubcategory;
+use App\Models\Contact;
+use App\Models\Family;
+use App\Models\FamilySubcategory;
+use App\Models\Gallery;
+use App\Models\Product;
+use App\Models\ProductGallery;
+use App\Models\ProductParameter;
+use App\Models\Series;
+use App\Models\Slider;
+use App\Models\SubCategory;
+use App\Models\SubCategory1;
+use App\Models\SubcategorySubcategory;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class HomesteadSeeder extends Seeder
 {
     private array $tables = [];
+
+    private array $modelMap = [
+        'users'                   => User::class,
+        'about'                   => About::class,
+        'contact'                 => Contact::class,
+        'slider'                  => Slider::class,
+        'gallery'                 => Gallery::class,
+        'team'                    => Team::class,
+        'accessories'             => Accessory::class,
+        'categories'              => Category::class,
+        'sub_category'            => SubCategory::class,
+        'sub_category_1'          => SubCategory1::class,
+        'family'                  => Family::class,
+        'series'                  => Series::class,
+        'products'                => Product::class,
+        'product_gallery'         => ProductGallery::class,
+        'product_parameter'       => ProductParameter::class,
+        'category_subcategory'    => CategorySubcategory::class,
+        'family_subcategory'      => FamilySubcategory::class,
+        'subcategory_subcategory' => SubcategorySubcategory::class,
+    ];
 
     public function run(): void
     {
@@ -114,11 +154,30 @@ class HomesteadSeeder extends Seeder
             return;
         }
 
+        $modelClass = $this->modelMap[$table] ?? null;
+
+        if ($modelClass === null) {
+            $this->command->warn("  [SKIP] {$table}: no model mapped");
+            return;
+        }
+
+        // Resolve actual columns from the live DB schema so that
+        // any JSON keys absent from the real table are stripped out.
+        $allowed = array_flip(Schema::getColumnListing($table));
+
         $rows  = $this->tables[$table];
         $count = count($rows);
 
+        $rows = array_map(
+            fn($row) => array_intersect_key($row, $allowed),
+            $rows
+        );
+
+        /** @var \Illuminate\Database\Eloquent\Model $instance */
+        $instance = new $modelClass();
+
         foreach (array_chunk($rows, 500) as $chunk) {
-            DB::table($table)->insert($chunk);
+            $instance->newQuery()->insert($chunk);
         }
 
         $this->command->info("  [OK] {$table}: {$count} row(s)");
