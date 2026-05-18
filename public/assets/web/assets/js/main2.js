@@ -1,15 +1,15 @@
-;(function($){
+; (function ($) {
     "use strict";
 
-    $(document).ready(function(){
+    $(document).ready(function () {
 
         /**-----------------------------
          *  Navbar fix
-         * ---------------------------*/  
-        $(document).on('click','.navbar-area .navbar-nav li.menu-item-has-children>a',function(e){
-        })  
+         * ---------------------------*/
+        $(document).on('click', '.navbar-area .navbar-nav li.menu-item-has-children>a', function (e) {
+        })
 
-       
+
         /*----------------------FloadF
             Slider active
         -----------------------*/
@@ -26,36 +26,36 @@
             prevArrow: '<a class="slick-prev"><img src="https://cdn3.iconfinder.com/data/icons/faticons/32/arrow-left-01-512.png" alt="Arrow Icon"></a>',
             nextArrow: '<a class="slick-next"><img src="https://cdn3.iconfinder.com/data/icons/faticons/32/arrow-right-01-512.png" alt="Arrow Icon"></a>',
             responsive: [
-              {
-                breakpoint: 1024,
-                settings: {
-                  slidesToShow: 1,
-                  slidesToScroll: 1,
+                {
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                    }
+                },
+                {
+                    breakpoint: 600,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
                 }
-              },
-              {
-                breakpoint: 600,
-                settings: {
-                  slidesToShow: 1,
-                  slidesToScroll: 1
-                }
-              },
-              {
-                breakpoint: 480,
-                settings: {
-                  slidesToShow: 1,
-                  slidesToScroll: 1
-                }
-              }
             ]
-        }).on('afterChange', function(){
+        }).on('afterChange', function () {
             new WOW().init();
         });
 
 
-         /*----------------------
-            Slider active
-        -----------------------*/
+        /*----------------------
+           Slider active
+       -----------------------*/
         $('.header-slider-two').slick({
             infinite: true,
             dots: true,
@@ -67,29 +67,29 @@
             slidesToShow: 1,
             slidesToScroll: 1,
             responsive: [
-              {
-                breakpoint: 1024,
-                settings: {
-                  slidesToShow: 1,
-                  slidesToScroll: 1,
+                {
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                    }
+                },
+                {
+                    breakpoint: 600,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
                 }
-              },
-              {
-                breakpoint: 600,
-                settings: {
-                  slidesToShow: 1,
-                  slidesToScroll: 1
-                }
-              },
-              {
-                breakpoint: 480,
-                settings: {
-                  slidesToShow: 1,
-                  slidesToScroll: 1
-                }
-              }
             ]
-        }).on('afterChange', function(){
+        }).on('afterChange', function () {
             new WOW().init();
         });
 
@@ -108,15 +108,15 @@
                 nav: true,
                 smartSpeed: 3000,
                 responsiveClass: true,
-                navText: ['<span class="flaticon-left-chevron"></span>','<span class="flaticon-right"></span>'],
+                navText: ['<span class="flaticon-left-chevron"></span>', '<span class="flaticon-right"></span>'],
                 responsive: {
                     0: {
                         items: 2,
-                        nav:true
+                        nav: true
                     },
                     411: {
                         items: 2,
-                        nav:true
+                        nav: true
                     },
                     451: {
                         items: 2,
@@ -143,16 +143,16 @@
 
 
 
-         /*---------------------------------
-            project Masonry activation
-        ----------------------------------*/
+        /*---------------------------------
+           project Masonry activation
+       ----------------------------------*/
         var projectContainer = $('#project-masonry');
         if (projectContainer.length > 0) {
             projectContainer.imagesLoaded(function () {
                 var latestWorkMasonry = $('#project-masonry').isotope({
                     itemSelector: '.grid-size',
                     percentPosition: true,
-                    gutter:0,
+                    gutter: 0,
                     masonry: {
                         columnWidth: 0
                     }
@@ -166,10 +166,10 @@
             });
         }
 
-  /*---------------------------------
-            Testimonial activation
-        ----------------------------------*/
-        $(document).ready(function($) {
+        /*---------------------------------
+                  Testimonial activation
+              ----------------------------------*/
+        $(document).ready(function ($) {
 
             var feedbackSlider = $('.feedback-slider');
             feedbackSlider.owlCarousel({
@@ -181,26 +181,26 @@
                 mouseDrag: true,
                 touchDrag: true,
                 navText: ["<i class='fa fa-long-arrow-left'></i>", "<i class='fa fa-long-arrow-right'></i>"],
-                responsive:{
-        
+                responsive: {
+
                     // breakpoint from 767 up
-                    767:{
+                    767: {
                         nav: true,
                         dots: false
                     }
                 }
             });
-        
-            feedbackSlider.on("translate.owl.carousel", function(){
+
+            feedbackSlider.on("translate.owl.carousel", function () {
                 $(".feedback-slider-item h3").removeClass("animated fadeIn").css("opacity", "0");
                 $(".feedback-slider-item img, .feedback-slider-thumb img, .feedback-social").removeClass("animated zoomIn").css("opacity", "0");
             });
-        
-            feedbackSlider.on("translated.owl.carousel", function(){
+
+            feedbackSlider.on("translated.owl.carousel", function () {
                 $(".feedback-slider-item h3").addClass("animated fadeIn").css("opacity", "1");
                 $(".feedback-slider-item img, .feedback-slider-thumb img, .feedback-social").addClass("animated zoomIn").css("opacity", "1");
             });
-            feedbackSlider.on('changed.owl.carousel', function(property) {
+            feedbackSlider.on('changed.owl.carousel', function (property) {
                 var current = property.item.index;
                 var prevThumb = $(property.target).find(".owl-item").eq(current).prev().find("img").attr('src');
                 var nextThumb = $(property.target).find(".owl-item").eq(current).next().find("img").attr('src');
@@ -209,95 +209,95 @@
                 $('.thumb-prev').find('img').attr('src', prevThumb);
                 $('.thumb-next').find('img').attr('src', nextThumb);
             });
-            $('.thumb-next').on('click', function() {
+            $('.thumb-next').on('click', function () {
                 feedbackSlider.trigger('next.owl.carousel', [300]);
                 return false;
             });
-            $('.thumb-prev').on('click', function() {
+            $('.thumb-prev').on('click', function () {
                 feedbackSlider.trigger('prev.owl.carousel', [300]);
                 return false;
             });
-            
+
         }); //end ready
 
 
-         /*--------------------
-            wow js init
-        ---------------------*/
+        /*--------------------
+           wow js init
+       ---------------------*/
         new WOW().init();
 
         /*-------------------------
             magnific popup activation
         -------------------------*/
-       
-    $('.video-play-btn,.video-popup,.video-play-btn2').magnificPopup({
-      // disableOn: 700,
-      disableOn: 700,
-   type: 'iframe',
-   mainClass: 'mfp-fade',
-   removalDelay: 160,
-   preloader: false,
-   fixedContentPos: false,
-      iframe:{
-        patterns:{
-          youtube:{
-          index: 'youtube.com',
-          id: 'v=',
-          src: 'https://www.youtube.com/embed/hKOnuXGLssI'
-        },
-      },
-      srcAction:'iframe_src',
-    },
-      fixedContentPos: false
-    });
- 
 
-         /*------------------
-            back to top
-        ------------------*/
+        $('.video-play-btn,.video-popup,.video-play-btn2').magnificPopup({
+            // disableOn: 700,
+            disableOn: 700,
+            type: 'iframe',
+            mainClass: 'mfp-fade',
+            removalDelay: 160,
+            preloader: false,
+            fixedContentPos: false,
+            iframe: {
+                patterns: {
+                    youtube: {
+                        index: 'youtube.com',
+                        id: 'v=',
+                        src: 'https://www.youtube.com/embed/hKOnuXGLssI'
+                    },
+                },
+                srcAction: 'iframe_src',
+            },
+            fixedContentPos: false
+        });
+
+
+        /*------------------
+           back to top
+       ------------------*/
         $(document).on('click', '.back-to-top', function () {
             $("html,body").animate({
                 scrollTop: 0
             }, 2000);
         });
-         /*------------------------------
-            counter section activation
-        -------------------------------*/
+        /*------------------------------
+           counter section activation
+       -------------------------------*/
         var counternumber = $('.counter');
         counternumber.counterUp({
             delay: 20,
             time: 3000
         });
 
-        
-       
+
+
         /*----------------------
             Search Popup
         -----------------------*/
-        var bodyOvrelay =  $('#body-overlay');
+        var bodyOvrelay = $('#body-overlay');
         var searchPopup = $('#search-popup');
         var quoteForm = $('#quoteForm');
 
-        $(document).on('click','#body-overlay',function(e){
+        $(document).on('click', '#body-overlay', function (e) {
             e.preventDefault();
             bodyOvrelay.removeClass('active');
             searchPopup.removeClass('active');
             quoteForm.removeClass('active');
         });
-        $(document).on('click','#search',function(e){
+        $(document).on('click', '#search', function (e) {
             e.preventDefault();
             searchPopup.addClass('active');
-        bodyOvrelay.addClass('active');
+            bodyOvrelay.addClass('active');
         });
 
-        $(document).on('click','#quote',function(e){
+        $(document).on('click', '#quote', function (e) {
             e.preventDefault();
             quoteForm.addClass('active');
             bodyOvrelay.addClass('active');
             quoteForm.display('block');
-            
+
         });
-    
+
 
     });
 
@@ -306,25 +306,25 @@
     var lastScrollTop = '';
 
     $(window).on('scroll', function () {
-        
-        //back to top show/hide
-       var ScrollTop = $('.back-to-top');
-       if ($(window).scrollTop() > 1000) {
-           ScrollTop.fadeIn(1000);
-       } else {
-           ScrollTop.fadeOut(1000);
-       }
 
-       /*--------------------------
-        sticky menu activation
-       -------------------------*/
+        //back to top show/hide
+        var ScrollTop = $('.back-to-top');
+        if ($(window).scrollTop() > 1000) {
+            ScrollTop.fadeIn(1000);
+        } else {
+            ScrollTop.fadeOut(1000);
+        }
+
+        /*--------------------------
+         sticky menu activation
+        -------------------------*/
         var st = $(this).scrollTop();
         var mainMenuTop = $('.navbar-area');
         if ($(window).scrollTop() > 1000) {
             if (st > lastScrollTop) {
                 // hide sticky menu on scrolldown 
                 mainMenuTop.removeClass('nav-fixed');
-                
+
             } else {
                 // active sticky menu on scrollup 
                 mainMenuTop.addClass('nav-fixed');
@@ -335,19 +335,19 @@
         }
 
         lastScrollTop = st;
-       
-    });
-           
-window.addEventListener("load", function alertFunc() {
 
-        setTimeout(()=>{
-        const loader = document.querySelector("#preloader");
-        loader.className += "hidden"; //class="loader hidden"
-        }, 1000)
     });
-    $(window).on('load',function(){
 
-       
+    // window.addEventListener("load", function alertFunc() {
+
+    //         setTimeout(()=>{
+    //         const loader = document.querySelector("#preloader");
+    //         loader.className += "hidden"; //class="loader hidden"
+    //         }, 1000)
+    //     });
+    $(window).on('load', function () {
+
+
         /*-----------------
             back to top
         ------------------*/
@@ -357,22 +357,22 @@ window.addEventListener("load", function alertFunc() {
         /*---------------------
             Cancel Preloader
         ----------------------*/
-     
+
         /*-------------------------
             magnificPopup  activation
         -------------------------*/
         // For Gallery Filtering
         $('.imagepopup').magnificPopup({ 'image': true });
-        
-        $('.popup-link').magnificPopup({ 
-                removalDelay: 300,
-                type: 'image',
-                callbacks: {
-                    beforeOpen: function() {
+
+        $('.popup-link').magnificPopup({
+            removalDelay: 300,
+            type: 'image',
+            callbacks: {
+                beforeOpen: function () {
                     this.st.image.markup = this.st.image.markup.replace('mfp-figure', 'mfp-figure animated ' + this.st.el.attr('data-effect'));
-                    }
-                },
-            });
+                }
+            },
+        });
 
 
         // Toggle Collapse
@@ -384,28 +384,28 @@ window.addEventListener("load", function alertFunc() {
                     $(this).parent().addClass('active');
                     $(this).parent().siblings().removeClass('active');
                     $(this).find('.plus-minus-toggle').toggleClass('collapsed');
-                }else {
+                } else {
                     $(this).parent().removeClass('active');
                     $(this).find('.plus-minus-toggle').toggleClass('collapsed');
                 }
             });
         }
-       
 
-  
-            // quote form animations
-            $('#quote').click(function() {
-              $('#quoteForm').fadeToggle();
-            })
-            $(document).mouseup(function (e) {
-              var container = $("#quoteForm");
-          
-              if (!container.is(e.target) // if the target of the click isn't the container...
-                  && container.has(e.target).length === 0) // ... nor a descendant of the container
-              {
-                  container.fadeOut();
-              }
-            });
+
+
+        // quote form animations
+        $('#quote').click(function () {
+            $('#quoteForm').fadeToggle();
+        })
+        $(document).mouseup(function (e) {
+            var container = $("#quoteForm");
+
+            if (!container.is(e.target) // if the target of the click isn't the container...
+                && container.has(e.target).length === 0) // ... nor a descendant of the container
+            {
+                container.fadeOut();
+            }
+        });
 
 
     });
