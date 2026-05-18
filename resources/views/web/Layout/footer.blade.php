@@ -269,28 +269,28 @@ counterup-area {
 <!-- preloader area end -->
 
     <!-- jquery -->
-    <script src="{{ asset('assets/web/assets/js/jquery.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/jquery.min.js')}}"></script>
     <!-- popper -->
-    <script src="{{ asset('assets/web/assets/js/popper.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/popper.min.js')}}"></script>
     <!-- bootstrap -->
-    <script src="{{ asset('assets/web/assets/js/bootstrap.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/bootstrap.min.js')}}"></script>
     <!-- magnific popup -->
-    <script src="{{ asset('assets/web/assets/js/jquery.magnific-popup.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/jquery.magnific-popup.js')}}"></script>
     <!-- wow -->
-    <script src="{{ asset('assets/web/assets/js/wow.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/wow.min.js')}}"></script>
     <!-- owl carousel -->
-    <script src="{{ asset('assets/web/assets/js/owl.carousel.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/owl.carousel.min.js')}}"></script>
     <!-- waypoint -->
-    <script src="{{ asset('assets/web/assets/js/waypoints.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/waypoints.min.js')}}"></script>
     <!-- counterup -->
-    <script src="{{ asset('assets/web/assets/js/jquery.counterup.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/jquery.counterup.min.js')}}"></script>
     <!-- imageloaded -->
-    <script src="{{ asset('assets/web/assets/js/imagesloaded.pkgd.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/imagesloaded.pkgd.min.js')}}"></script>
     <!-- isotope -->
-    <script src="{{ asset('assets/web/assets/js/isotope.pkgd.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/isotope.pkgd.min.js')}}"></script>
     <!-- slick slider -->
-    <script src="{{ asset('assets/web/assets/js/slick.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/slick.min.js')}}"></script>
     <!-- Slick Animation -->
-    <script src="{{ asset('assets/web/assets/js/slick-animation.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/slick-animation.js')}}"></script>
      <!-- main js -->
-    <script src="{{ asset('assets/web/assets/js/main2.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/main2.js')}}"></script>
