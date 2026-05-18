@@ -12,10 +12,10 @@ class AppDeploy extends Command
 
     public function handle(): int
     {
-        $this->info('Step 1/4 — optimize:clear');
+        $this->info('Step 1/6 — optimize:clear');
         $this->call('optimize:clear');
 
-        $this->info('Step 2/4 — chmod -R 777 storage/');
+        $this->info('Step 2/6 — chmod -R 777 storage/');
         $storagePath = base_path('storage');
         exec("chmod -R 777 {$storagePath}", $output, $exitCode);
         if ($exitCode !== 0) {
@@ -24,14 +24,18 @@ class AppDeploy extends Command
             $this->line('  <info>Done.</info>');
         }
 
-        $this->info('Step 3/4 — db:seed');
+        // database migration
+        $this->info('Step 3/6 — migrate');
+        $this->call('migrate');
+
+        $this->info('Step 4/6 — db:seed');
         $this->call('db:seed');
 
-        $this->info('Step 4/4 — optimize');
+        $this->info('Step 5/6 — optimize');
         $this->call('optimize');
 
         // Clear cache
-        $this->info('Step 5/5 — storage:link');
+        $this->info('Step 6/6 — storage:link');
         $this->call('storage:link');
 
         $this->newLine();

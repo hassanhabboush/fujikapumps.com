@@ -17,7 +17,11 @@ class CategoryController extends Controller
     }
     public function readall()  //list all category
     {
-        $categories = Category::query()->get();
+        $categories = Category::query()->get()
+        ->map(function ($category) {
+            $category->background = $category->background;
+            return $category;
+        });
 
         return response()->json(['data' => $categories]);
     } 
