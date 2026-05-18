@@ -24,27 +24,27 @@ class AppDeploy extends Command
             $this->line('  <info>Done.</info>');
         }
 
-        // database migration
-        $this->info('Step 3/7 — migrate');
-        $this->call('migrate:fresh');
-
-        $this->info('Step 4/7 — db:seed');
-        $this->call('db:seed');
-
-        $this->info('Step 5/7 — optimize');
-        $this->call('optimize');
-
-        // Clear cache
-        $this->info('Step 6/7 — storage:link');
-        $this->call('storage:link');
-
-
         // mv productParameter.php to ProductParameter.php in App\Models\
-        $this->info('Step 7/7 — mv productParameter.php to ProductParameter.php');
+        $this->info('Step 3/7 — mv productParameter.php to ProductParameter.php');
         $this->call('mv', [
             'source' => base_path('app/Models/productParameter.php'),
             'destination' => base_path('app/Models/ProductParameter.php'),
         ]);
+
+        // database migration
+        $this->info('Step 4/7 — migrate');
+        $this->call('migrate:fresh');
+
+        $this->info('Step 5/7 — db:seed');
+        $this->call('db:seed');
+
+        $this->info('Step 6/7 — optimize');
+        $this->call('optimize');
+
+        // Clear cache
+        $this->info('Step 7/7 — storage:link');
+        $this->call('storage:link');
+
 
 
         $this->newLine();
