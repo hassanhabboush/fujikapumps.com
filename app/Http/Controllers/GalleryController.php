@@ -41,9 +41,7 @@ class GalleryController extends Controller
         $file1 = $request->file('background');
         $product_id=session('product_id');
         $destinationPath1 = public_path('productimage');
-        $mdate = date("m/d/Y",time());
-        $mdate1 = strtotime($mdate);  
-        $filepath1= $mdate1.$file1->getClientOriginalName();
+        $filepath1 = time() . $file1->getClientOriginalName();
         $file1->move($destinationPath1, $filepath1);
         $this->add_gallery($product_id,'public/productimage/'.$filepath1);
         return redirect()->back();

@@ -32,9 +32,7 @@ class SeriesController extends Controller
         $text3=$request->input('text3');
         $file = $request->file('image');
         $destinationPath = public_path('seriesuploads');
-        $mdate = date("m/d/Y",time());
-        $mdate = strtotime($mdate);  
-        $filepath= $mdate.$file->getClientOriginalName();
+        $filepath = time() . $file->getClientOriginalName();
         $file->move($destinationPath, $filepath);
         $created_at= date('Y-m-d H:i:s');
         $id = Series::create(
@@ -79,8 +77,7 @@ class SeriesController extends Controller
         $series = Series::findOrFail($id);
         if ($file != null) {
             $destinationPath = public_path('seriesuploads');
-            $mdate = strtotime(date("m/d/Y", time()));
-            $filepath = $mdate . $file->getClientOriginalName();
+            $filepath = time() . $file->getClientOriginalName();
             $file->move($destinationPath, $filepath);
             $series->update([
                 'photo'        => 'public/seriesuploads/' . $filepath,

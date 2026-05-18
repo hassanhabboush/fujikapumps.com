@@ -33,9 +33,7 @@ class SliderController extends Controller
 
         $file = $request->file('image');
         $destinationPath = public_path('slideruploads');
-        $mdate = date("m/d/Y",time());
-        $mdate = strtotime($mdate);  
-        $filepath= $mdate.$file->getClientOriginalName();
+        $filepath = time() . $file->getClientOriginalName();
         $file->move($destinationPath, $filepath);
         Slider::create([
             'image'      => 'public/slideruploads/' . $filepath,
@@ -74,8 +72,7 @@ class SliderController extends Controller
         $slider = Slider::findOrFail($id);
         if ($file != null) {
             $destinationPath = public_path('slideruploads');
-            $mdate = strtotime(date("m/d/Y", time()));
-            $filepath = $mdate . $file->getClientOriginalName();
+            $filepath = time() . $file->getClientOriginalName();
             $file->move($destinationPath, $filepath);
             $slider->update([
                 'image'      => 'public/slideruploads/' . $filepath,

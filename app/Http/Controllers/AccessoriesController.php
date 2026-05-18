@@ -31,9 +31,7 @@ class AccessoriesController extends Controller
         $link=$request->input('link');
         $file = $request->file('image');
         $destinationPath = public_path('accessoriesuploads');
-        $mdate = date("m/d/Y",time());
-        $mdate = strtotime($mdate);  
-        $filepath= $mdate.$file->getClientOriginalName();
+        $filepath = time() . $file->getClientOriginalName();
         $file->move($destinationPath, $filepath);
         Accessory::create([
             'photo' => 'public/accessoriesuploads/' . $filepath,
@@ -66,8 +64,7 @@ class AccessoriesController extends Controller
         $acc = Accessory::findOrFail($id);
         if ($file != null) {
             $destinationPath = public_path('accessoriesuploads');
-            $mdate = strtotime(date("m/d/Y", time()));
-            $filepath = $mdate . $file->getClientOriginalName();
+            $filepath = time() . $file->getClientOriginalName();
             $file->move($destinationPath, $filepath);
             $acc->update([
                 'photo' => 'public/accessoriesuploads/' . $filepath,
