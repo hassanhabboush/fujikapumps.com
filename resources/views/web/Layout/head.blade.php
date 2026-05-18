@@ -23,9 +23,9 @@
     <!-- flaticon -->
     <link rel="stylesheet" href="{{ asset('assets/web/assets/fonts/flaticon.css')}}">
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ asset('assets/web/assets/css/style.css')}}">
+    <link rel="stylesheet" href="{{ versioned_asset('assets/web/assets/css/style.css') }}">
     <!-- responsive Stylesheet -->
-    <link rel="stylesheet" href="{{ asset('assets/web/assets/css/responsive.css')}}">
+    <link rel="stylesheet" href="{{ versioned_asset('assets/web/assets/css/responsive.css') }}">
 <style>
 .preloaderhidden
 {

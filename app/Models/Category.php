@@ -14,8 +14,6 @@ class Category extends Model
 
     protected $guarded = [];
 
-    // protected array $mediaFields = ['logo', 'background'];
-
     public function subCategories()
     {
         return $this->belongsToMany(SubCategory::class, 'category_subcategory', 'category_id', 'subcategory_id');

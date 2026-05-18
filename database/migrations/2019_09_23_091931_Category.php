@@ -16,10 +16,10 @@ class Category extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('english_name');
-            $table->string('arabic_name');
-            $table->string('kurdish_name');
-            $table->string('urdu_name');
-            $table->string('hebrew_name');
+            $table->string('arabic_name')->nullable();
+            $table->string('kurdish_name')->nullable();
+            $table->string('urdu_name')->nullable();
+            $table->string('hebrew_name')->nullable();
             $table->string('logo');
             $table->string('background')->nullable();
             $table->timestamps();

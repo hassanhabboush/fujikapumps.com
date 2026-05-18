@@ -12,10 +12,10 @@ class AppDeploy extends Command
 
     public function handle(): int
     {
-        $this->info('Step 1/6 — optimize:clear');
+        $this->info('Step 1/7 — optimize:clear');
         $this->call('optimize:clear');
 
-        $this->info('Step 2/6 — chmod -R 777 storage/');
+        $this->info('Step 2/7 — chmod -R 777 storage/');
         $storagePath = base_path('storage');
         exec("chmod -R 777 {$storagePath}", $output, $exitCode);
         if ($exitCode !== 0) {
@@ -25,18 +25,27 @@ class AppDeploy extends Command
         }
 
         // database migration
-        $this->info('Step 3/6 — migrate');
-        $this->call('migrate');
+        $this->info('Step 3/7 — migrate');
+        $this->call('migrate:fresh');
 
-        $this->info('Step 4/6 — db:seed');
+        $this->info('Step 4/7 — db:seed');
         $this->call('db:seed');
 
-        $this->info('Step 5/6 — optimize');
+        $this->info('Step 5/7 — optimize');
         $this->call('optimize');
 
         // Clear cache
-        $this->info('Step 6/6 — storage:link');
+        $this->info('Step 6/7 — storage:link');
         $this->call('storage:link');
+
+
+        // mv productParameter.php to ProductParameter.php in App\Models\
+        $this->info('Step 7/7 — mv productParameter.php to ProductParameter.php');
+        $this->call('mv', [
+            'source' => base_path('app/Models/productParameter.php'),
+            'destination' => base_path('app/Models/ProductParameter.php'),
+        ]);
+
 
         $this->newLine();
         $this->info('All steps completed successfully.');

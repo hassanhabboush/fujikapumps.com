@@ -293,4 +293,4 @@ counterup-area {
     <!-- Slick Animation -->
     <script defer src="{{ asset('assets/web/assets/js/slick-animation.js')}}"></script>
      <!-- main js -->
-    <script defer src="{{ asset('assets/web/assets/js/main2.js')}}"></script>
+    <script defer src="{{ versioned_asset('assets/web/assets/js/main2.js') }}"></script>
