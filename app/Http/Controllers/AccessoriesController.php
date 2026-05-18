@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use App\Models\Accessory;
+use Illuminate\Support\Facades\Cache;
 
 class AccessoriesController extends Controller
 {
@@ -15,10 +16,12 @@ class AccessoriesController extends Controller
     }
     public function readall()  //list all slider
     {
-       $acc = Accessory::select('id', 'photo', 'name', 'link')->get()
-       ->map(function ($acc) {
-           $acc->photo = $acc->photo;
-           return $acc;
+       $acc = Cache::get('accessories', function () {
+           return Accessory::select('id', 'photo', 'name', 'link')->get()
+           ->map(function ($acc) {
+               $acc->photo = $acc->photo;
+               return $acc;
+           });
        });
        return response()->json(['data' => $acc]);
     } 

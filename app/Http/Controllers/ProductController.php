@@ -8,17 +8,22 @@ use Illuminate\Support\Str;
 use App\Models\Product;
 use App\Models\ProductGallery;
 use App\Models\ProductParameter;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
     public function index()
     {
-         $products= Product::select('id','name','photo')->get();
+         $products= Cache::remember('products', 60, function () {
+            return Product::select('id','name','photo')->get();
+        });
         return view('Pages.product.product')->with('products', $products); 
     }
     public function productdetails($id)
     {
-        $productDetails= Product::findOrFail($id);
+        $productDetails= Cache::remember('product_'.$id, 60, function () use ($id) {
+            return Product::findOrFail($id);
+        });
        
         return view('Pages.product.productdetails', [
             'productDetails' => $productDetails
@@ -27,7 +32,9 @@ class ProductController extends Controller
     }
     public function readall()  //list all category
     {
-       $products = Product::select('is_featured','products.id', 'products.photo','products.name','products.link')->get()
+       $products = Cache::remember('products_all', 60, function () {
+           return Product::select('is_featured','products.id', 'products.photo','products.name','products.link')->get();
+       })
        ->map(function ($product) {
            $product->photo = $product->photo;
            return $product;
@@ -36,7 +43,9 @@ class ProductController extends Controller
     } 
     public function readallfeature()  //list all category
     {
-       $products = Product::select('is_featured', 'id', 'photo', 'name', 'link')->where('is_featured', 1)->get()
+       $products = Cache::remember('products_featured', 60, function () {
+           return Product::select('is_featured', 'id', 'photo', 'name', 'link')->where('is_featured', 1)->get();
+       })
        ->map(function ($product) {
            $product->photo = $product->photo;
            return $product;
@@ -55,9 +64,11 @@ class ProductController extends Controller
     public function readcategoryproduct($id)
     {
        
-        $products = Product::whereHas('categories', function ($q) use ($id) {
-            $q->where('categories.id', $id);
-        })->select('is_featured', 'id', 'photo', 'name', 'link')->get();
+        $products = Cache::remember('products_category_'.$id, 60, function () use ($id) {
+            return Product::whereHas('categories', function ($q) use ($id) {
+                $q->where('categories.id', $id);
+            })->select('is_featured', 'id', 'photo', 'name', 'link')->get();
+        });
        return response()->json(['data' => $products]);
     }
 
@@ -68,9 +79,11 @@ class ProductController extends Controller
 
     public function readsubcategoryproduct($id)
     {
-        $products = Product::whereHas('subCategories', function ($q) use ($id) {
-            $q->where('sub_category.id', $id);
-        })->select('is_featured', 'id', 'photo', 'name', 'link')->get();
+        $products = Cache::remember('products_subcategory_'.$id, 60, function () use ($id) {
+            return Product::whereHas('subCategories', function ($q) use ($id) {
+                $q->where('sub_category.id', $id);
+            })->select('is_featured', 'id', 'photo', 'name', 'link')->get();
+        });
         return response()->json(['data' => $products]);
     }
     public function add_category($product_id, $category_id)

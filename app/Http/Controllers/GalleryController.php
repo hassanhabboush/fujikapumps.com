@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use App\Models\ProductGallery;
 use Session;
+use Illuminate\Support\Facades\Cache;
 
 class GalleryController extends Controller
 {
@@ -19,10 +20,12 @@ class GalleryController extends Controller
     }
     public function readall($id)  //list all slider
     {
-       $source = ProductGallery::select('id', 'path')->where('product_id', $id)->get()
-       ->map(function ($gallery) {
-           $gallery->path = $gallery->path;
-           return $gallery;
+       $source = Cache::get('gallery_'.$id, function () use ($id) {
+           return ProductGallery::select('id', 'path')->where('product_id', $id)->get()
+           ->map(function ($gallery) {
+               $gallery->path = $gallery->path;
+               return $gallery;
+           });
        });
        return response()->json(['data' => $source]);
     } 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
@@ -17,10 +18,12 @@ class CategoryController extends Controller
     }
     public function readall()  //list all category
     {
-        $categories = Category::query()->get()
-        ->map(function ($category) {
-            $category->background = $category->background;
-            return $category;
+        $categories = Cache::get('categories', function () {
+            return Category::query()->get()
+            ->map(function ($category) {
+                $category->background = $category->background;
+                return $category;
+            });
         });
 
         return response()->json(['data' => $categories]);

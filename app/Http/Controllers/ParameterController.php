@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use App\Models\ProductParameter;
 use App\Models\ProductGallery;
 use Session;
+use Illuminate\Support\Facades\Cache;
 
 class ParameterController extends Controller
 {
@@ -19,7 +20,9 @@ class ParameterController extends Controller
     }
     public function readall($id)  //list all slider
     {
-       $source = ProductParameter::where('product_id', $id)->get();
+       $source = Cache::get('parameter_'.$id, function () use ($id) {
+           return ProductParameter::where('product_id', $id)->get();
+       });
        return response()->json(['data' => $source]);
     } 
     public function add_gallery($product_id,$photo)

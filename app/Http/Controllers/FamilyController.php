@@ -9,6 +9,7 @@ use App\Models\FamilySubcategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Cache;
 
 class FamilyController extends Controller
 {
@@ -19,10 +20,12 @@ class FamilyController extends Controller
 
     public function list(): JsonResponse
     {
-        $families = Family::query()->get()->map(function ($family) {
-            // Access the background attribute which will trigger the trait's getAttribute method
-            $family->background = $family->background;
-            return $family;
+        $families = Cache::get('families', function () {
+            return Family::query()->get()->map(function ($family) {
+                // Access the background attribute which will trigger the trait's getAttribute method
+                $family->background = $family->background;
+                return $family;
+            });
         });
 
         return response()->json(['data' => $families]);
