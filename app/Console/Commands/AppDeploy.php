@@ -26,10 +26,13 @@ class AppDeploy extends Command
 
         // mv productParameter.php to ProductParameter.php in App\Models\
         $this->info('Step 3/7 — mv productParameter.php to ProductParameter.php');
-        $this->call('mv', [
-            'source' => base_path('app/Models/productParameter.php'),
-            'destination' => base_path('app/Models/ProductParameter.php'),
-        ]);
+        // use exec to run the command
+        exec("mv " . base_path('app/Models/productParameter.php') . " " . base_path('app/Models/ProductParameter.php'), $output, $exitCode);
+        if ($exitCode !== 0) {
+            $this->warn('mv failed (expected on Windows). Skipping.');
+        } else {
+            $this->line('  <info>Done.</info>');
+        }
 
         // database migration
         $this->info('Step 4/7 — migrate');
