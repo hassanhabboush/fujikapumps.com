@@ -27,8 +27,17 @@ trait HasMediaUrls
             && $value !== ''
             && !str_starts_with($value, 'http')
         ) {
-            $value = str($value)->startsWith('public/') ? str_replace('public/', '', $value) : 'storage/' . $value;
-            return asset($value);
+            $relativePath = str($value)->startsWith('public/')
+                ? str_replace('public/', '', $value)
+                : 'storage/' . $value;
+
+            $webpPath = preg_replace('/\.[^.]+$/', '', $relativePath) . '.webp';
+
+            if (file_exists(public_path($webpPath))) {
+                return asset($webpPath);
+            }
+
+            return asset($relativePath);
         }
 
         return $value;
