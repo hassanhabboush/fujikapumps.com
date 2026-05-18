@@ -77,17 +77,19 @@ class WebsiteController extends Controller
          }
          if ($type==2)
          {
-          $res=SubCategory1::whereHas('parentSubCategories', function ($q) use ($id) {
-              $q->whereHas('categories', function ($q2) use ($id) {
-                  $q2->where('categories.id', $id);
-              });
-          })->select('id', 'english_name', 'background')->get();
+          $res=Cache::remember('subcategories_type2_'.$id, self::CACHE_DURATION, function () use ($id) {
+              return SubCategory1::whereHas('parentSubCategories', function ($q) use ($id) {
+                  $q->whereHas('categories', function ($q2) use ($id) {
+                      $q2->where('categories.id', $id);
+                  });
+              })->select('id', 'english_name', 'background')->get();
+          });
        return view('web.category')->with(["category"=>$category,"res"=>$res,"type"=>$type]);
        
          }
          if ($type==3)
          {
-          $subCategory=SubCategory::findOrFail($id);
+          $subCategory=Cache::remember('subcategory_'.$id, self::CACHE_DURATION, fn() => SubCategory::findOrFail($id));
           $res=$subCategory->subCategory1s()
               ->select('sub_category_1.id', 'sub_category_1.english_name', 'sub_category_1.background')
               ->paginate(9);
@@ -96,64 +98,65 @@ class WebsiteController extends Controller
          }
          if ($type==4)
          {
-          $res=Series::whereHas('family', function ($q) use ($id) {
-              $q->whereHas('subCategory1s', function ($q2) use ($id) {
-                  $q2->where('sub_category_1.id', $id);
-              });
-          })->select('id', 'link', 'english_name', 'photo', 'text1', 'text2', 'text3')->get();
+          $res=Cache::remember('series_type4_'.$id, self::CACHE_DURATION, function () use ($id) {
+              return Series::whereHas('family', function ($q) use ($id) {
+                  $q->whereHas('subCategory1s', function ($q2) use ($id) {
+                      $q2->where('sub_category_1.id', $id);
+                  });
+              })->select('id', 'link', 'english_name', 'photo', 'text1', 'text2', 'text3')->get();
+          });
           return view('web.series')->with(["category"=>$category,"products"=>$res]);
           
          }
          if ($type==5)
          {
-          $res=Series::select('id', 'english_name','photo','link','text1','text2','text3')->where('family_id',$id)->paginate(9);  
+          $res=Cache::remember('series_type5_'.$id, self::CACHE_DURATION, fn() => Series::select('id', 'english_name','photo','link','text1','text2','text3')->where('family_id',$id)->paginate(9));  
           return view('web.series')->with(["category"=>$category,"products"=>$res]);
           
          }
           if ($type==7)
          {
-          $res=Accessory::select('id', 'name','photo','link')->paginate(15);  
+          $res=Cache::remember('accessories', self::CACHE_DURATION, fn() => Accessory::select('id', 'name','photo','link')->paginate(15));  
           return view('web.Accessories')->with(["category"=>$category,"products"=>$res]);
           
          }
          if ($type==6)
          {
          
-          $product=Product::select('products.id',  'products.name', 'is_featured', 'products.photo','descreption','products.link')->where('id', $id)->get();
-        $gallery=ProductGallery::select('path')->where('product_id',$product[0]->id)->get();
-        return view('web.product')->with(["product"=>$product,"category"=>$category,'gallery'=>$gallery]); 
+          $product=Cache::remember('product_type6_'.$id, self::CACHE_DURATION, fn() => Product::select('products.id',  'products.name', 'is_featured', 'products.photo','descreption','products.link')->where('id', $id)->get());
+          $gallery=Cache::remember('product_gallery_type6_'.$id, self::CACHE_DURATION, fn() => ProductGallery::select('path')->where('product_id',$product[0]->id)->get());
+          return view('web.product')->with(["product"=>$product,"category"=>$category,'gallery'=>$gallery]); 
          }
     }
     
     public function get_category()
     {
-        $categories = Category::select('id','english_name','background')->get(); 
-       echo "{\"data\":" .json_encode($categories). "}";
+        $categories = Cache::remember('categories', self::CACHE_DURATION, fn() => Category::select('id','english_name','background')->get()); 
        return response()->json(['data' => $categories]);
     }
      public function get_volt()
     {
-        $volt = ProductParameter::select('v')->distinct('v')->get(); 
+        $volt = Cache::remember('volt', self::CACHE_DURATION, fn() => ProductParameter::select('v')->distinct('v')->get()); 
        return response()->json(['data' => $volt]);
     }
      public function get_hertz()
     {
-        $Hertz = ProductParameter::select('Hertz')->distinct('Hertz')->get(); 
+        $Hertz = Cache::remember('hertz', self::CACHE_DURATION, fn() => ProductParameter::select('Hertz')->distinct('Hertz')->get()); 
        return response()->json(['data' => $Hertz]);
     }
      public function get_dm()
     {
-        $dm = ProductParameter::select('Discharge_diameter')->distinct('Discharge_diameter')->get(); 
+        $dm = Cache::remember('dm', self::CACHE_DURATION, fn() => ProductParameter::select('Discharge_diameter')->distinct('Discharge_diameter')->get()); 
        return response()->json(['data' => $dm]);
     }
     public function get_material()
     {
-        $material= ProductParameter::select('Material')->distinct('Material')->get(); 
+        $material= Cache::remember('material', self::CACHE_DURATION, fn() => ProductParameter::select('Material')->distinct('Material')->get()); 
        return response()->json(['data' => $material]);
     }
      public function get_rpm()
     {
-        $rpm= ProductParameter::select('RPM')->distinct('RPM')->get(); 
+        $rpm= Cache::remember('rpm', self::CACHE_DURATION, fn() => ProductParameter::select('RPM')->distinct('RPM')->get()); 
        return response()->json(['data' => $rpm]);
     }
 public function send_email(Request $request){
@@ -181,15 +184,15 @@ public function filterpop(Request $request)
    $keyword=$request->input('keyword');
    if ($request->has('commercial'))
    {
-    $res=Family::select('id', 'english_name as name', 'link')->where('english_name', 'like', '%' . $keyword . '%')->get();
+    $res=Cache::remember('filterpop_commercial_' . $keyword, self::CACHE_DURATION, fn() => Family::select('id', 'english_name as name', 'link')->where('english_name', 'like', '%' . $keyword . '%')->get());
 
    }
    else
    {
-    $res=Product::select('id','name','link')->where('name', 'like', '%' . $keyword . '%')->get();
+    $res=Cache::remember('filterpop_product_' . $keyword, self::CACHE_DURATION, fn() => Product::select('id','name','link')->where('name', 'like', '%' . $keyword . '%')->get());
  
    }
-        $category=Category::select('id', 'english_name', 'background', 'created_at', 'updated_at')->get();
+        $category=Cache::remember('categories', self::CACHE_DURATION, fn() => Category::select('id', 'english_name', 'background', 'created_at', 'updated_at')->get());
    return view('web.filterpop')->with(["category"=>$category,"res"=> $res]); ;
    
 }
