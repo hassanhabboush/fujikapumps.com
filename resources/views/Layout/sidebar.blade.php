@@ -46,7 +46,7 @@
                                     <a href="{{route('admin.accessories')}}">
                                         <span class="pcoded-micon"><i class="feather icon-cpu"></i></span>
                                         <span class="pcoded-mtext">Accessories</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('Accessories')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('accessories')->count()}}</span>
                                     </a>
                                 </li>
                                 <li class="product">
