@@ -1,0 +1,40 @@
+/*-------------------------
+    Footer Area
+-------------------------*/
+.footer-top{
+    background-color: #010a35;
+    padding-top: 60px;
+}
+
+.copyright-area{
+    background-color: #001064;
+    .footer-menu{
+        text-align: left;
+        ul{
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            li{
+                display: inline-block;
+                margin: 0 8px;
+                a{
+                    font-size: 14px;
+                    @include transition($transition);
+                    &:hover{
+                        color: var(--active-color);
+                    }
+                }
+            }
+        }
+    }
+    .copyright-text{
+        text-align: right;
+        span{
+            @include transition($transition);
+            font-size: 14px;
+            &:hover{
+                color: var(--active-color);
+            }
+        }
+    }
+}

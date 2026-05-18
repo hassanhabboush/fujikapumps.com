@@ -1,0 +1,55 @@
+
+/*--------------------
+    Blog Page
+--------------------*/
+.blog-page{
+    padding: 100px 0 160px 0;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    .single-blog-item{
+        margin-bottom: 30px;
+    }
+    
+    /*==========================================
+    pagination
+    ==========================================*/   
+.pagination{
+    display: block;
+    text-align: center;
+    
+    margin-top: 30px;
+    margin-bottom: 30px;
+    .page-item{
+        display: inline-block;
+        padding-left: 10px;
+       
+        &.active{
+           .page-link{
+                background-color: var(--active-color);
+                color: $white;
+                border-color: var(--active-color);
+           }
+        }
+        .page-link{
+            border-radius: 3px;
+            color: var(--heading-color);
+            background-color: #EEEEEE;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 50px;
+            padding: 0px;
+            font-weight: 700;
+            font-size: 20px;
+            @include transition($transition);
+            &:hover{
+                background-color: var(--active-color);
+                color: $white;
+                border-color:var(--active-color);
+            }
+        }
+    }
+}
+}

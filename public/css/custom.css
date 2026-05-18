@@ -1,0 +1,164 @@
+.k-grid-header th.k-header
+{
+    text-align:center !important;
+}
+.k-grid table
+{
+      text-align:center !important;  
+}
+
+		.customClass1 {
+			background: #222;
+			color: #eee;
+        }
+        .spangreen
+        {
+            padding-left: 70%;
+        }
+		.customClass2 {
+			background: #555;
+			color: #eee;
+        }
+        .actionicon
+        {
+            background-color: #00a65a;
+            color: white;
+            padding: 2%;
+            border-radius: 4px;
+            margin-top:1%;
+        }
+        .k-grid-header th.k-header
+        {
+            text-align: center;
+        }
+        .k-edit-buttons
+        {
+            background: transparent;
+            padding-left: 5%;
+            position: absolute;
+            right: 0;
+            left: auto;
+            bottom: 0;
+        }
+        .k-edit-label
+        {
+            text-align: left;
+            width: 100% !important;
+
+        }
+        .k-edit-label label
+        {
+            font-family: initial;
+            font-size: 13px;
+            padding-left: 2%;
+            width:100%;
+            text-align: left;
+        }
+        .k-edit-form-container
+        {
+            width:98% !important;
+            
+        }
+        .k-grid td
+        {
+            text-align: center;
+        }
+        .sel
+        {
+            background: white;
+            height: 30px;
+            border-color: #dcdee2
+        }
+        .k-input 
+        {
+            width:90%;
+        }
+        .col-md-6 
+        {
+            padding: 0px;
+        }
+        .col-md-4
+        {
+            padding: 0px;
+        }
+        .col-md-3
+        {
+            padding: 0px;
+        }
+        .col-md-12
+        {
+            padding: 0px;
+        }
+        .row
+        {
+            margin:0px;
+        }
+        .k-popup-edit-form
+        {
+            background: #ecf0f5;
+        }
+        .igreen
+        {
+            background: #2dbaad;
+             padding: 2%;
+             color: white;
+             border-radius: 9px;
+        }
+        .isuccess
+        {
+            background: #28a745;
+             padding: 2%;
+             color: white;
+             border-radius: 9px;
+            
+        }
+        .iwarning
+        {
+            background: #ffc107;
+             padding: 2%;
+             color: white;
+             border-radius: 9px;
+            
+        }
+        .idanger
+        {
+            background: #dc3545;
+             padding: 2%;
+             color: white;
+             border-radius: 9px;
+            
+        }
+        .k-textbox
+        {
+            width:98% !important;
+        }
+        .k-edit-form-container .k-edit-buttons
+        {
+                width: 101.2%;
+        }
+        #logo
+        {
+            width:98% !important;
+        }
+        
+        #Elogo
+        {
+            width:98% !important;
+        }
+        .selectbox
+        {
+                background: transparent !important;
+                padding-left: 14px !important;
+        }
+        .k-cancel
+        {
+            display:none;
+        }
+        #btnleft
+        {
+            float: right;
+        }
+        .k-grid-delete
+        {
+                width: 56px !important;
+        }

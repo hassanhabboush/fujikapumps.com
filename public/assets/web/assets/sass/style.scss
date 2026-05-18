@@ -1,0 +1,117 @@
+/*
+Theme Name: Bausins
+Theme URI: 
+Author: 
+Author URI: 
+Description: Bausins is a business website template
+Version: 1.0.0
+*/
+
+
+/*--------------------------------------------------------------
+>>> TABLE OF CONTENTS:
+----------------------------------------------------------------
+
+# Typography
+# Normalize
+# Accessibility
+# Globals
+# Alignments
+# Clearings
+# Posts and pages
+# Captions
+# Galleries
+# Unit test
+# guterberg
+# Gutenberg	Default Style
+# Block Color Palette Colors
+# Sections
+    ## Breadcrumb
+    ## Comments
+    ## Widgets
+    ## Nav Bar
+    ## Top Bar
+    ## Info Bar
+    ## Header
+    ## Header Bottom Area
+    ## Call To Action
+    ## Our Work Area
+    ## Testimonial Area
+    ## Footer Area
+    ## Abous Us Area
+    ## Our Cover Area
+    ## Counterup Area
+    ## Who We Are Area
+    ## Product Area
+    ## Error 404 Area
+
+# Elements
+    ## Back Top
+    ## Preloader
+    ## Search Popup
+    ## Video Popup
+    ## Button
+    ## Section Title
+    ## Icon Box One
+    ## Icon Box Two
+    ## Icon Box Three
+    ## Work Item
+    ## Team
+    ## Testimonial
+    ## Blog Grid Item
+    ## Featured Box One
+    ## Counterup Item
+    ## Request Call Form
+    ## Accordion Item
+    ## Experience Item
+    ## Service Item
+    ## Portfolio Item
+    ## Product Item
+    ## Contact Form Item
+    ## Contact Info Item
+
+--------------------------------------------------------------*/
+
+//== Global Design
+@import "global/_mixins";
+@import "global/_variables";
+@import "global/_global";
+@import "global/_gutenberg";
+//== Pages
+@import "pages/_about";
+@import "pages/_services";
+@import "pages/_shop";
+@import "pages/_blog";
+@import "pages/_blog_details";
+@import "pages/_contact";
+//== Sections
+@import "sections/_breadcrumb";
+@import "sections/_comments";
+@import "sections/_widgets";
+@import "sections/_navbar";
+@import "sections/_info_bar";
+@import "sections/_header";
+@import "sections/_item";
+@import "sections/_about";
+@import "sections/_ask";
+@import "sections/_choose";
+@import "sections/_fact";
+@import "sections/_blog";
+@import "sections/_service";
+@import "sections/_counterup";
+@import "sections/_facilities";
+@import "sections/_project";
+@import "sections/_cta";
+@import "sections/_history";
+@import "sections/_appoinment";
+@import "sections/_blog";
+@import "sections/_testimonial";
+@import "sections/_footer";
+@import "sections/_error_404";
+//== Elements
+@import "elements/_back_top";
+@import "elements/_preloader";
+@import "elements/_search_popup";
+@import "elements/_button";
+@import "elements/_accordion";
+@import "elements/_section_title";

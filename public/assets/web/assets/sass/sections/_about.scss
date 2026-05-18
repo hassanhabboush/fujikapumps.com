@@ -1,0 +1,196 @@
+/*------------------------------
+    About Us Area
+------------------------------*/
+.about-us-area{
+    background-color: var(--secondary-color);
+    position: relative;
+    &.about-bg{
+        background: url(../img/bg/about-shape.png) no-repeat padding-box;
+        height: 100%;
+        display: block;
+        opacity: 1;
+        content: '';
+        right: 0;
+        top: 0;
+    }
+    .about-image{
+        margin: 0;
+        padding: 0;
+        background-size: cover;
+        display: block;
+        position: relative;
+        display: inline-block;
+        img {
+            height: fit-content;
+        }
+        .hover{
+            .video-play-btn{
+                position: absolute;
+                left: 50%;
+                margin-left: -40px;
+                margin-top: -40px;
+                top: 50%;
+                width: 80px;
+                height: 80px;
+                background-color: rgba(255, 128, 15, 0.7);
+                border-radius: 50%;
+                text-align: center;
+                line-height: 88px;
+            }
+        }
+    }
+    .about-area-right{
+        max-width: 700px;
+        padding: 98px 30px 95px 60px;
+        .btn-wrapper{
+            margin-top: 38px;
+            display: block;
+            .boxed-btn{
+                @include transition($transition);
+                background-color: var(--active-color);
+                
+            }
+        }
+    }
+} 
+.remove-col-padding {
+    padding: 0;
+}
+.video-play-btn i{
+    font-size: 25px;
+    color: #fff;
+}
+
+/*------------------------------
+   faq
+------------------------------*/
+.faq-wrap{
+    margin-top: 40px;
+    .accordion {
+        list-style:none;
+        margin: 0;
+        padding: 0;
+        li { 
+	        margin-bottom: 15px;
+            background-color: var(--active-color);
+            border-radius: 5px;
+	        &:last-child{
+	            margin-bottom: 0px;
+	        }
+	        &.active {
+	            .answer {
+	              max-height:200px !important;
+	              padding: 10px 20px;
+	              transition: max-height 0.5s ease, padding-bottom 0.5s ease;
+                  background: #fff;
+                  border-left: 1px solid var(--active-color);
+                  border-right: 1px solid var(--active-color);
+                  border-bottom: 1px solid var(--active-color);
+                  border-radius: 0 0 5px 5px;
+	            }
+	            .plus-minus-toggle {
+	                background-color: var(--active-color);
+	                border: 1px solid #fff;
+	                &:before,
+	                &:after {
+	                  
+	                }
+	            
+	            }
+	            .question {
+	                background-color: var(--active-color);
+	                color:var(--secondary-color);
+	                transition:color 0.5s ease;
+	                border-radius: 30px;
+	                h4{
+	                    color:var(--secondary-color);
+	                    margin-bottom: 0;
+	                }
+	            }
+	        }
+	        .answer {
+	          font-size:16px;
+	          line-height:24px;
+	          max-height:0;
+	          overflow:hidden;
+	          transition:max-height 0.5s ease, padding-bottom 0.5s ease;
+	        }
+	        .plus-minus-toggle {
+	          cursor: pointer;
+	          position: absolute;
+	          height: 30px;
+	          width: 30px;
+	          line-height: 30px;
+	          background-color:  var(--heading-color);
+	          left:10px;
+	          top:17%;
+	          border-radius: 50%;
+	          z-index:2;
+	            &:before,
+	            &:after {
+    	            background: var(--secondary-color);
+    	            content: '';
+    	            height: 3px;
+    	            left: 7px;
+    	            position: absolute;
+    	            top: 13px;
+    	            width: 16px;
+    	            transition: transform 500ms ease;
+    	        }
+	            &:after {
+	               transform-origin: center;
+	            }
+	      
+                &.collapsed {
+                    &:after {
+                    	transform: rotate(90deg);
+                    }
+
+                    &:before {
+    	              	transform: rotate(180deg);
+    	            }
+                }
+	        }		
+            .question {
+              position:relative;
+              cursor:pointer;
+              padding:10px 0 8px;
+              transition:color 0.5s ease; 
+            }
+              
+            h4 {
+                padding-left: 60px;
+                font-size:18px;
+                font-weight:500;
+                text-transform:capitalize;
+            }
+        }
+    }
+      
+}
+
+.faq-wrap .accordion .question h4 {
+    margin-bottom: 0 !important;
+}
+
+
+
+.btn-ripple-animate {
+  -webkit-animation: ripple-white3 2.5s linear infinite;
+  animation: ripple-white3 2.5s linear infinite;
+}
+@-webkit-keyframes ripple-white3 {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1), 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1), 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1); }
+  100% {
+    -webkit-box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 100px rgba(255, 255, 255, 0);
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 100px rgba(255, 255, 255, 0); } }
+
+@keyframes ripple-white3 {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1), 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1), 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1); }
+  100% {
+    -webkit-box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 100px rgba(255, 255, 255, 0);
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 100px rgba(255, 255, 255, 0); } }

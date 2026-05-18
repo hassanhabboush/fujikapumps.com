@@ -1,0 +1,77 @@
+/*----------------------
+  Counterup area
+-----------------------*/
+.counterup-area{
+    background: -webkit-linear-gradient(rgba(#396cf0, 0.8), rgba(#000, 0.95)), url(../img/bg/counterup-bg.jpg) no-repeat center center;
+    background: linear-gradient(rgba(#396cf0, 0.8), rgba(#000, 0.95)), url(../img/bg/counterup-bg.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    text-align: center;
+    &.service-page{
+        padding: 100px 0 100px;
+    }
+    .countr{
+        padding: 0px;
+        border-radius: 3px;
+        margin-bottom: 40px;
+        
+        .counter {
+            font-size: 42px;
+            line-height: 52px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 13px;
+            color: var(--main-color-one);
+            &:after {
+                content: '';
+                border-top: solid 2px #fff;
+                position: absolute;
+                z-index: 1;
+                width: 100px;
+                height: 1px;
+                left: 50%;
+                top: 50px;
+                margin-left: -50px;
+            }
+        } 
+        .title {
+            text-transform: capitalize;
+            line-height: 30px;
+            font-size: 20px;
+            color: var(--secondary-color);
+        }
+        p{
+            
+            color: var(--active-color);
+            &:after {
+                content: '';
+                border-bottom: solid 30px #ff800f;
+                position: absolute;
+                z-index: 1;
+                width: 2px;
+                height: 20px;
+                left: 50%;
+                bottom: -0px;
+            }
+        }
+    }
+    .contacy{
+        margin-top: 40px;
+        p{
+            color: var(--secondary-color);
+            &:after {
+                content: '';
+                border-top: solid 1px #fff;
+                position: absolute;
+                z-index: 1;
+                width: 80%;
+                height: 1px;
+                left: 12%;
+                bottom: 34%;
+                }
+        }
+        .btn-wrapper{
+            margin-top: 60px;
+        }
+    }
+}

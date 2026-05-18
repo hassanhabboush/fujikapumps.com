@@ -1,0 +1,217 @@
+/*------------------------------
+    cta Area
+------------------------------*/
+.cta-area{
+    position: relative;
+    z-index: 0;
+    background: #010a35;
+    &.cta-bg{
+        background: transparent;
+        margin-bottom: -120px;
+        z-index: 999;
+        .cta-wrapper{
+            .left-content{
+                border-right: 2px solid #ffff;
+                margin-right: 30px;
+            }
+            .right-content{
+                flex-basis: 50%;
+            }
+            .single-info-item{
+               // display: flex;
+                align-self: flex-start;
+                @include transition($transition);
+                cursor: pointer;
+                &:hover{
+                    .icon{
+                        background-color: var(--main-color-one);
+                        border: 1px solid var(--active-color);;
+                    }
+                }
+                .icon{
+                    margin-right: 20px;
+                    font-size: 24px;
+                    color: var(--main-color-one);
+                    background-color: transparent;
+                    border: 1px solid var(--secondary-color);;
+                    border-radius: 50%;
+                    height: 80px;
+                    width: 80px;
+                    line-height: 80px;
+                    text-align: center;
+                    transition: 0.4s;
+                    i{
+                        font-size: 28px;
+                        color: var(--secondary-color);
+                    }
+                }
+                .content{
+                    display: flex;
+                    padding-right: 50px;
+                    .details{
+                        font-size: 24px;
+                        line-height: 30px;
+                        margin: auto;
+                        color: var(--secondary-color);
+                    }
+                }
+            }
+        }
+    }
+    &.newsletter{
+        padding: 0px;
+        background: #010a35;
+        align-items: center;
+        margin-top: -60px;
+        .cta-wrapper{
+            .left-content{
+                 margin-right: 30px;
+            }
+            .single-info-item {
+                padding-right: 50px;
+            }
+            .right-content{
+                border-left: 2px solid #fff;
+                .newsletter-subcribe{
+                    margin-left: 30px;  
+                }
+            }
+        } 
+    }
+    &.service-newsletter{
+        background-color: var(--secondary-color);
+        background: transparent;
+        align-items: center;
+        .cta-wrapper{
+            top: 0px;
+            bottom: -60px;
+            .left-content{
+                 margin-right: 30px;
+            }
+            .single-info-item {
+                padding-right: 50px;
+            }
+            .right-content{
+                border-left: 2px solid #fff;
+                .newsletter-subcribe{
+                    margin-left: 30px;  
+                }
+            }
+        } 
+    }
+    &.service-page{
+        padding: 100px 0 100px;
+        background-color: var(--bg-color);
+        .cta-wrapper{
+            top: 0px;
+            .left-content{
+                 margin-right: 30px;
+            }
+            .single-info-item {
+                padding-right: 50px;
+            }
+            .right-content{
+                border-left: 2px solid #fff;
+                padding-left: 20px;
+                .newsletter-subcribe{
+                    margin-left: 30px;  
+                }
+            }
+        } 
+    }
+    .cta-wrapper{
+        padding: 20px 30px;
+        background-color: var(--heading-color);
+        border-radius: 100px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: relative;
+        top: -60px;
+        .left-content{
+            margin-right: 30px;
+        }
+        .right-content{
+            flex-basis: 50%;
+        }
+        .single-info-item{
+            display: -webkit-box;
+            align-self: flex-start;
+            @include transition($transition);
+            cursor: pointer;
+            &:hover{
+                .icon{
+                    background-color: var(--main-color-one);
+                    border: 2px solid var(--active-color);;
+                }
+            }
+            .icon{
+                margin-right: 20px;
+                font-size: 24px;
+                color: var(--main-color-one);
+                background-color: transparent;
+                border: 2px solid var(--secondary-color);;
+                border-radius: 50%;
+                height: 80px;
+                width: 80px;
+                line-height: 80px;
+                text-align: center;
+                i{
+                    font-size: 28px;
+                    color: var(--secondary-color);
+                }
+            }
+            .content{
+                display: flex;
+                padding-right: 0px;
+                .details{
+                    font-size: 24px;
+                    line-height: 30px;
+                    margin: auto;
+                    color: var(--secondary-color);
+                }
+            }
+        }
+        
+        
+    }
+
+}
+
+.newsletter-subcribe .form-group {
+    position: relative;
+    margin-bottom: 0; }
+    .newsletter-subcribe .form-group input {
+      height: 60px;
+      background: transparent;
+      border: 2px solid #fff;
+      border-radius: 30px;
+      padding: 0 150px 0 25px;
+      font-size: 18px;
+      letter-spacing: 0.45px;
+      color: #fff; }
+    .newsletter-subcribe .form-group input::placeholder {
+        letter-spacing: 0.45px;
+        color: #fff;
+        opacity: 0.51; }
+    .newsletter-subcribe .form-group .subcribe-submit {
+      position: absolute;
+      right: 3px;
+      top: 3px;
+      height: 54px;
+      line-height: 56px !important;
+      padding: 0 30px;
+      font-size: 17px;
+      letter-spacing: 1.02px;
+      color: #fff;
+      background-color: var(--main-color-one);
+      text-transform: capitalize;
+      line-height: 24px;
+      border-radius: 30px;
+      border: 0;
+      cursor: pointer;
+      transition: all 0.3s ease-in;
+      border: 0 !important; }
+      .newsletter-subcribe .form-group .subcribe-submit:hover, .newsletter-subcribe .form-group .subcribe-submit:focus {
+        opacity: 0.8;
+        outline: 0; }

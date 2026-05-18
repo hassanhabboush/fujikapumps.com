@@ -1,0 +1,81 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# -----------------------------------------------------------------------
+# Browser Caching
+# -----------------------------------------------------------------------
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Uploaded product images — 7 days (may be replaced by admin)
+    ExpiresByType image/jpeg        "access plus 7 days"
+    ExpiresByType image/jpg         "access plus 7 days"
+    ExpiresByType image/png         "access plus 7 days"
+    ExpiresByType image/gif         "access plus 7 days"
+    ExpiresByType image/webp        "access plus 7 days"
+    ExpiresByType image/bmp         "access plus 7 days"
+    ExpiresByType image/jfif        "access plus 7 days"
+
+    # Icons and SVG — 1 year (never changes)
+    ExpiresByType image/x-icon      "access plus 1 year"
+    ExpiresByType image/svg+xml     "access plus 1 year"
+
+    # Fonts — 1 year (truly immutable)
+    ExpiresByType font/ttf          "access plus 1 year"
+    ExpiresByType font/otf          "access plus 1 year"
+    ExpiresByType font/woff         "access plus 1 year"
+    ExpiresByType font/woff2        "access plus 1 year"
+    ExpiresByType application/font-woff   "access plus 1 year"
+    ExpiresByType application/font-woff2  "access plus 1 year"
+    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+
+    # CSS & JavaScript — 1 month
+    ExpiresByType text/css          "access plus 1 month"
+    ExpiresByType text/javascript   "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+
+    # Default fallback
+    ExpiresDefault "access plus 1 week"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Fonts — immutable, 1 year
+    <FilesMatch "\.(ttf|otf|woff|woff2|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Icons and SVG — immutable, 1 year
+    <FilesMatch "\.(ico|svg)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # CSS & JavaScript — 1 month, revalidate on change
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+
+    # Uploaded images — 7 days
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|bmp|jfif)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+</IfModule>

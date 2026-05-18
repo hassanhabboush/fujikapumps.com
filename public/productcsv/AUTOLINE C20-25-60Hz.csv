@@ -1,0 +1,13 @@
+﻿Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+Autoline C20-25,00000000,0.105,0.141,0,25,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+Autoline C20-25,00000000,0.105,0.141,5,24.5,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+Autoline C20-25,00000000,0.105,0.141,10,23,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+Autoline C20-25,00000000,0.105,0.141,15,21,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+Autoline C20-25,00000000,0.105,0.141,20,18,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+Autoline C20-25,00000000,0.105,0.141,25,15,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+Autoline C20-25,00000000,0.105,0.141,30,11.5,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+Autoline C20-25,00000000,0.105,0.141,35,6,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+Autoline C20-25,00000000,0.105,0.141,40,0,220-240,1,60,Cast iron,3500,https://drive.google.com/file/d/1mKCG7Nc34M8ftAbJn4NmMlYauDUw6rlV/view?usp=drive_link
+,,,,,,,,,,,

@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N1-4T,0010033333,0.37,0.5,0.8,34,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,1,33,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,1.2,32.5,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,1.4,31.5,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,1.6,30,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,1.8,29,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,2,27,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,2.2,26,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,2.4,24,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/
+FCV-N1-4T,0010033333,0.37,0.5,2.7,20,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1E4in8X8KQjE7Sy7vPlU2wBYtx7V6eO6T/

@@ -1,0 +1,10 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),Head(m),V,Discharge Diameter(Outlet),HERTZ,material,RPM,Link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,0.6,50,"160-260	",1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,1.2,45,160-260,1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,1.8,39,160-260,1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,2.4,35,160-260,1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,3,30,160-260,1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,3.6,23,160-260,1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,4.2,12,160-260,1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,4.8,10,160-260,1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link
+"FUJISMART 5-50/750,60HZ",#,0.68,0.51,5.5,0,160-260,1,60,cast iron,,https://drive.google.com/file/d/1ZtkMwcMAIVQDP6wkaUNE1MNF_7IsQg2t/view?usp=drive_link

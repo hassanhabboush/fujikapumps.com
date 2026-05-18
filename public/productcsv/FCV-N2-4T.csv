@@ -1,0 +1,11 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N2-4T,0010223333,1.1,1.5,1,50,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1lcTkM5nXQeI-sdJiCefza07OTixkGx4d
+FCV-N2-4T,0010223333,1.1,1.5,1.5,47,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1lcTkM5nXQeI-sdJiCefza07OTixkGx4d
+FCV-N2-4T,0010223333,1.1,1.5,2,44,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1lcTkM5nXQeI-sdJiCefza07OTixkGx4d
+FCV-N2-4T,0010223333,1.1,1.5,2.5,42,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1lcTkM5nXQeI-sdJiCefza07OTixkGx4d
+FCV-N2-4T,0010223333,1.1,1.5,3,36,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1lcTkM5nXQeI-sdJiCefza07OTixkGx4d
+FCV-N2-4T,0010223333,1.1,1.5,3.5,32,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1lcTkM5nXQeI-sdJiCefza07OTixkGx4d
+FCV-N2-4T,0010223333,1.1,1.5,4,26,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1lcTkM5nXQeI-sdJiCefza07OTixkGx4d
+FCV-N2-4T,0010223333,1.1,1.5,4.5,20,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1lcTkM5nXQeI-sdJiCefza07OTixkGx4d

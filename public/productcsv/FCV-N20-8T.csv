@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N20-8T,0011123333,15,2.933333333,12,150,220-380,2,60,SS316,3500,https://drive.google.com/file/d/1sINsnQUxQZ-SSj1mBE_-coqFlG22Vp_X
+FCV-N20-8T,0011123333,15,2.933333333,16,144,220-380,2,60,SS316,3500,https://drive.google.com/file/d/1sINsnQUxQZ-SSj1mBE_-coqFlG22Vp_X
+FCV-N20-8T,0011123333,15,2.933333333,20,134,220-380,2,60,SS316,3500,https://drive.google.com/file/d/1sINsnQUxQZ-SSj1mBE_-coqFlG22Vp_X
+FCV-N20-8T,0011123333,15,2.933333333,24,120,220-380,2,60,SS316,3500,https://drive.google.com/file/d/1sINsnQUxQZ-SSj1mBE_-coqFlG22Vp_X
+FCV-N20-8T,0011123333,15,2.933333333,28,102,220-380,2,60,SS316,3500,https://drive.google.com/file/d/1sINsnQUxQZ-SSj1mBE_-coqFlG22Vp_X
+FCV-N20-8T,0011123333,15,2.933333333,32,84,220-380,2,60,SS316,3500,https://drive.google.com/file/d/1sINsnQUxQZ-SSj1mBE_-coqFlG22Vp_X
+FCV-N20-8T,0011123333,15,2.933333333,34,68,220-380,2,60,SS316,3500,https://drive.google.com/file/d/1sINsnQUxQZ-SSj1mBE_-coqFlG22Vp_X
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,

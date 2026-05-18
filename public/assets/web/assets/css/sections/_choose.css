@@ -1,0 +1,51 @@
+/*------------------------------
+    Choose Area
+------------------------------*/
+.content-box-style-06 .para {
+  color: #707070; }
+
+.content-box-style-06 .nav-tabs {
+  display: block;
+  border-bottom: 0px;
+  position: relative; }
+
+.content-box-style-06 .nav-tabs::before {
+  position: absolute;
+  content: '';
+  width: 8px;
+  height: 115%;
+  top: -7%;
+  background: #fff;
+  left: -8px;
+  border-radius: 10px; }
+
+.content-box-style-06 .nav-tabs li {
+  margin-bottom: 30px; }
+
+.content-box-style-06 .nav-tabs li .active {
+  -webkit-box-shadow: 0px 5px 15px #2E319211;
+  box-shadow: 0px 5px 15px #2E319211;
+  background: #fff; }
+
+.content-box-style-06 .nav-tabs li .active::before {
+  position: absolute;
+  content: '';
+  width: 8px;
+  height: 100%;
+  background: #043381;
+  left: -8px;
+  border-radius: 10px;
+  top: 0px; }
+
+.content-box-style-06 .nav-tabs li a {
+  font-size: 24px;
+  color: #404040;
+  font-weight: 400;
+  padding: 10px;
+  position: relative; }
+
+.content-box-style-06 .tab-content p {
+  font-size: 16px;
+  color: #707070; }
+
+/*# sourceMappingURL=_choose.css.map */

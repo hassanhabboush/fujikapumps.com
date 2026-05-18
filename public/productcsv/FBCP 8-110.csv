@@ -1,0 +1,11 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),Head(m),V,Discharge Diameter(Outlet),HERTZ,material,RPM,Link
+FBCP 8-110,,1.1,1.5,0,27,220-380,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,1.2,26,220-380,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,2.4,25,220-380,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,3.6,24,220-380,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,4.8,22.5,220-380,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,6,21,220-380,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,7.2,19,220-380,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,8.4,17.5,220-381,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,9.6,15,220-382,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link
+FBCP 8-110,,1.1,1.5,10.8,12.5,220-383,1,60,SS304,3500,https://drive.google.com/file/d/1AM6x04hliDAbpt40kBLOiYqJCytKMdOT/view?usp=drive_link

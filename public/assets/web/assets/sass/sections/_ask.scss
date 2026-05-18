@@ -1,0 +1,41 @@
+/*------------------------------
+    Ask Area
+------------------------------*/
+.ask-area{
+    padding: 100px 0px 100px;
+    background-color: var(--heading-color);
+    position: relative;
+    .left-content{
+        margin-top: 15px;
+        .subtitle{
+            color: var(--secondary-color);
+            display: inline-block;
+            position: relative;
+            margin-bottom: 0;
+            &:after {
+                content: '';
+                border-top: solid 25px #ff800f;
+                position: absolute;
+                z-index: 1;
+                width: 3px;
+                height: 10px;
+                left: -10px;
+                top: 0;
+            }
+            &:before {
+                content: '';
+                border-top: solid 25px #ff800f;
+                position: absolute;
+                z-index: 1;
+                width: 3px;
+                height: 10px;
+                right: -10px;
+                top: 0;
+            }
+        }
+    }
+    .right-content{
+        text-align: end;
+    }
+
+}

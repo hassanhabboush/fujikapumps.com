@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N45-5T,0011433333,30,40,30,171,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+FCV-N45-5T,0011433333,30,40,35,166,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+FCV-N45-5T,0011433333,30,40,40,161,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+FCV-N45-5T,0011433333,30,40,42,158,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+FCV-N45-5T,0011433333,30,40,45,154,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+FCV-N45-5T,0011433333,30,40,50,145,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+FCV-N45-5T,0011433333,30,40,55,138,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+FCV-N45-5T,0011433333,30,40,60,126,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+FCV-N45-5T,0011433333,30,40,65,112,220-380,3,60,SS316,3500,https://drive.google.com/file/d/1oOpstVNiTjao0QfeyM7w9X2OXG-ii-cd
+,,,,,,,,,,,

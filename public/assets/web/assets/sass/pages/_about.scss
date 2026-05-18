@@ -1,0 +1,48 @@
+/*--------------------
+    about pages
+--------------------*/
+.about-area{
+    padding: 160px 0px 100px;
+    .about-wrapper{
+        margin-bottom: 30px;
+        text-align: center;
+        &:before {
+            content: "";
+            background: var(--active-color);
+            position: absolute;
+            width: 100%;
+            height: calc(100% - 20% + 60px);
+            left: 0;
+            top: -60px;
+            z-index: -1;
+            
+        }
+    }
+    .about-image{
+        position: relative;
+        display: inline-block;
+        margin-top: 20px;
+        .hover{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            @include transform(translate(-50%,-50%));
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #ff800f;
+            .video-play-btn{
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                @include transform(translate(-50%,-50%));
+                margin-top: 0;
+                border-radius: 50%;
+                i {
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+
+}

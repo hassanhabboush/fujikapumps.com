@@ -1,0 +1,114 @@
+
+/*---------------------
+    Breadcumb Area
+----------------------*/
+
+.breadcumb-area {
+    position: relative;
+    padding: 100px 0 100px 0;
+    z-index: 0;
+    &:after {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(#333366,0.9);
+        content: '';
+        z-index: -1;
+    }
+
+    // &.breadcrumb-bg {
+    //     background-image: url(../img/bg/breadcrumb-bg.jpg);
+    //     background-position: center;
+    //     background-size: cover;
+    // }
+
+    .breadcumb-inner {
+        text-align: center;
+        .title {
+            font-size:14px;
+            font-weight: 400;
+            color: $white;
+            line-height: 30px;
+            text-transform: uppercase;
+            margin-top: 30px;
+            &:before {
+                content:"...";
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                top: 30px;
+                font-size: 40px;
+                border-radius: 50%;
+                font-weight: 600;
+                text-align: center;
+                color: var(--active-color);
+                letter-spacing: 10px;
+            }
+        }
+        .page-lists {
+            margin: 0;
+            padding: 0;
+            li {
+                display: inline-block;
+                margin: 0 12px;
+                position: relative;
+                font-size: 30px;
+                font-weight: 600;
+                color: $white;
+                line-height: 45px;
+                text-transform: uppercase;
+                &:last-child {
+                    &:after {
+                        display: none;
+                    }
+                }
+                a {
+                    font-size: 30px;
+                    font-weight: 600;
+                    color: $white;
+                    line-height: 45px;
+                    @include transition($transition);
+                    text-transform: uppercase;
+                    &:hover {
+                        
+                       color: var(--active-color);
+                    }
+                }
+                &:after {
+                    content:"-";
+                    position: absolute;
+                    right: -20px;
+                    top: 0px;
+                    font-weight: 600;
+                }
+
+                &:first-child {
+                    margin-left: 0;
+                }
+            }
+            &:after {
+                content: '';
+                border-top: solid 25px #ff800f;
+                position: absolute;
+                z-index: 1;
+                width: 3px;
+                height: 10px;
+                top: 10px;
+                margin-left: 0px;
+            }
+            &:before {
+                content: '';
+                border-top: solid 25px #ff800f;
+                position: absolute;
+                z-index: 1;
+                width: 3px;
+                height: 10px;
+                margin-left: -15px;
+                top: 10px;
+            }
+        }
+    }
+
+}

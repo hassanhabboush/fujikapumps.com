@@ -1,0 +1,31 @@
+/*------------------------------
+    cta Area
+------------------------------*/
+.cta-area {
+  padding: 100px 0px 100px;
+  background-color: var(--heading-color);
+  position: relative; }
+  .cta-area .left-content .subtitle {
+    color: var(--secondary-color); }
+    .cta-area .left-content .subtitle:after {
+      content: '';
+      border-top: solid 25px #ff800f;
+      position: absolute;
+      z-index: 1;
+      width: 3px;
+      height: 10px;
+      left: 1px;
+      top: 1%; }
+    .cta-area .left-content .subtitle:before {
+      content: '';
+      border-top: solid 25px #ff800f;
+      position: absolute;
+      z-index: 1;
+      width: 3px;
+      height: 10px;
+      left: 65%;
+      top: 1%; }
+  .cta-area .right-content {
+    text-align: end; }
+
+/*# sourceMappingURL=_cta.css.map */

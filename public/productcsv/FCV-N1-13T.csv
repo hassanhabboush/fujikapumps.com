@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N1-13T,0010123333,1.1,1.5,0.8,110,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,1,108,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,1.2,106,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,1.4,103,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,1.6,97.5,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,1.8,95,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,2,88,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,2.2,84.5,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,2.4,78,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1
+FCV-N1-13T,0010123333,1.1,1.5,2.7,65,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1eUPajgXSda6XFSqPsUBjxmLz5lsu7uR1

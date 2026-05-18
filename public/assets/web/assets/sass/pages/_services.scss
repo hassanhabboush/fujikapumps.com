@@ -1,0 +1,75 @@
+/*--------------------------------------------------------------
+	## Services Page
+--------------------------------------------------------------*/
+.service-more{
+    padding: 100px 0px 70px;
+    background-color: var(--secondary-color);
+    .services-content{
+        .title{
+            margin:0 0 30px;
+        }
+        .single-service-content{
+            border: 1px solid #efefef;
+            display: inline-flex;
+            padding: 0 30px;
+            margin-bottom: 30px;
+            &:hover{
+                .service-number{
+                    &:before {
+                        color:var(--active-color);
+                    }
+                }
+            }
+            .service-number{
+                padding: 0 30px;
+                margin: auto;
+                @include transition($transition);   
+                &:before {
+                    content: attr(data-number);
+                    color:var(--heading-color);
+                    font-size: 40px;
+                    font-weight: 700;
+                }
+            }
+            .details{
+                border-left: 1px solid #efefef;
+                padding: 30px 0px 30px 40px;
+                display: inline-block;
+            }
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+.servive-single-page-inner {
+    .thumb {
+        margin-bottom: 30px;
+    }
+    h3 {
+        margin-bottom: 20px;
+    }
+    p {
+        margin-bottom: 45px;
+    }
+    ul {
+        padding: 0;
+        margin-bottom: 40px;
+        li {
+            list-style: none;
+            margin-bottom: 15px;
+            i {
+                margin-right: 8px;
+            }
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

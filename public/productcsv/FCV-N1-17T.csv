@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N1-17T,0010143333,1.5,2,0.8,144,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,1,142,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,1.2,139,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,1.4,135,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,1.6,127,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,1.8,124,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,2,115,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,2.2,110,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,2.4,102,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg
+FCV-N1-17T,0010143333,1.5,2,2.7,85,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1ydT50WZUgNfR_W1DDqIVotzEETiKoXOg

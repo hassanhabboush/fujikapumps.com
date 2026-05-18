@@ -1,0 +1,8 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),Head(m),V,Discharge Diameter(Outlet),HERTZ,material,RPM,Link
+FETA-N100-80-160-18.5T,8,18.5,25,0,40,220-380V,1.25,60,SS316,3500,https://drive.google.com/file/d/1lRNoJN-1bO3kAyIy57c0rRIVoT_QGef4/view?usp=drive_link
+FETA-N100-80-160-18.5T,8,18.5,25,60,40,220-380V,1.25,60,SS316,3500,https://drive.google.com/file/d/1lRNoJN-1bO3kAyIy57c0rRIVoT_QGef4/view?usp=drive_link
+FETA-N100-80-160-18.5T,8,18.5,25,80,39,220-380V,1.25,60,SS316,3500,https://drive.google.com/file/d/1lRNoJN-1bO3kAyIy57c0rRIVoT_QGef4/view?usp=drive_link
+FETA-N100-80-160-18.5T,8,18.5,25,100,37,220-380V,1.25,60,SS316,3500,https://drive.google.com/file/d/1lRNoJN-1bO3kAyIy57c0rRIVoT_QGef4/view?usp=drive_link
+FETA-N100-80-160-18.5T,8,18.5,25,120,35,220-380V,1.25,60,SS316,3500,https://drive.google.com/file/d/1lRNoJN-1bO3kAyIy57c0rRIVoT_QGef4/view?usp=drive_link
+FETA-N100-80-160-18.5T,8,18.5,25,160,30,220-380V,1.25,60,SS316,3500,https://drive.google.com/file/d/1lRNoJN-1bO3kAyIy57c0rRIVoT_QGef4/view?usp=drive_link
+FETA-N100-80-160-18.5T,8,18.5,25,200,22,220-380V,1.25,60,SS316,3500,https://drive.google.com/file/d/1lRNoJN-1bO3kAyIy57c0rRIVoT_QGef4/view?usp=drive_link

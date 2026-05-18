@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N1-23T,0010173333,2.2,3,0.8,195,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,1,192,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,1.2,188,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,1.4,182,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,1.6,172,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,1.8,168,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,2,156,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,2.2,149,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,2.4,138,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW
+FCV-N1-23T,0010173333,2.2,3,2.7,115,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1jDo8a2jEb1o127AQDhxM1NpSd_I6JPTW

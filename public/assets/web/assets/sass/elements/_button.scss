@@ -1,0 +1,116 @@
+/*---------------------------------------
+    ## Button
+---------------------------------------*/
+.btn-wrapper  {
+    display: block;
+    .btn-hrv {
+        background-color: var(--main-color-one);
+        color: #fff;
+        display: inline-block;
+        padding: 17px 40px;
+        min-width: 160px;
+        text-align: center;
+        @include transition($transition);
+        font-size: 18px;
+        font-weight: 400;
+        text-transform: capitalize;
+        letter-spacing: .15rem;
+        border-radius: 3px;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--main-color-one);
+            z-index: -2;
+        }
+        &:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: rgba(#001064, .9);
+            transition: all .3s;
+            z-index: -1;
+        }
+        &:hover {
+            color: #fff;
+            &:before {
+                width: 100%;
+            }
+        }
+    }
+    .boxed-btn{
+        background-color: var(--main-color-one);
+        color: #fff;
+        display: inline-block;
+        padding: 17px 40px;
+        min-width: 160px;
+        text-align: center;
+        border-radius: 3px;
+        @include transition($transition);
+        font-weight: 500;
+        &.white{
+            &:hover{
+                background-color: $white;
+                color: var(--main-color-one);
+            }
+        }
+        &:hover{
+            background-color:  var(--secondary-color);
+        }
+        &.btn-rounded {
+            min-width: 200px;
+            padding: 15px 10px;
+            &:hover{
+                background-color:  var(--heading-color);
+            }
+        }
+        &.reverse-color{
+            background-color: var(--secondary-color);
+            &:hover{
+                background-color:  var(--heading-color);
+            }
+        }
+        
+    }
+}
+.desktop-center {
+    text-align:center;
+}
+.desktop-left {
+    text-align:left;
+}
+.desktop-right {
+    text-align:right;
+}
+@media only screen and (max-width:768px){
+    .tablet-center {
+        text-align:center;
+    }
+    .tablet-left {
+        text-align:left;
+    }
+    .tablet-right {
+        text-align: right;
+    }
+}
+@media only screen and (max-width:414px){
+    .mobile-center {
+        text-align:center;
+    }
+    .mobile-left {
+        text-align:left;
+    }
+    .mobile-right {
+        text-align: right;
+    }
+      
+}

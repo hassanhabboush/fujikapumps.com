@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N1-2T,0010013333,0.37,0.5,0.8,17,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,1,16.7,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,1.2,16.5,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,1.4,16,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,1.6,15,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,1.8,14.5,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,2,13.5,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,2.2,13,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,2.4,12,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/
+FCV-N1-2T,0010013333,0.37,0.5,2.7,10,220-380,1.25,60,SS316,3500,https://drive.google.com/file/d/1_DcqkA78m3K81hpSA-2U8p_KC-pPDN63/

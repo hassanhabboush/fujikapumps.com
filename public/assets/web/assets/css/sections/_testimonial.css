@@ -1,0 +1,23 @@
+/*------------------------------
+    testimonial Area
+------------------------------*/
+.testimonial-area {
+  padding: 140px 0px 100px;
+  background-color: var(--bg-color);
+  position: relative;
+  z-index: 0; }
+  .testimonial-area:after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 102, 0.6);
+    content: '';
+    z-index: -1; }
+  .testimonial-area.testimonial-bg {
+    background-image: url(../img/bg/testimonial-bg.jpg);
+    background-position: center;
+    background-size: cover; }
+
+/*# sourceMappingURL=_testimonial.css.map */

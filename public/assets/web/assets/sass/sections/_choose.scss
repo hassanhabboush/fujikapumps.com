@@ -1,0 +1,62 @@
+/*------------------------------
+    banking-choose Area
+------------------------------*/
+.banking-choose-area{
+    position: relative;
+    z-index: 0;
+    padding: 100px 0 100px;
+    &:after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(#fff, 0.8);
+        content: '';
+        z-index: -1;
+    }
+    &.banking-choose-bg {
+        background-image: url(../img/bg/banking-bg.jpg);
+        background-position: center;
+        background-size: cover;
+    }
+}
+.banking-choose-thumb{
+    background: url(../img/bg/air-cool.jpg) no-repeat center;
+    background-size: cover;
+    height: 100%;
+    display: block;
+}
+
+.content-box-style-06 .para {
+    color: #707070; }
+  
+  .content-box-style-06 .nav-tabs {
+    display: block;
+    border-bottom: 0px;
+    background: #f4f8fb;
+    padding-left: 0;
+    padding: 20px 0;
+    position: relative; }
+    .content-box-style-06 .nav-tabs li {
+      margin-bottom: 10px; }
+      
+        .content-box-style-06 .nav-tabs li .active::before {
+          position: absolute;
+          content: '';
+          width: 8px;
+          height: 100%;
+          background: #043381;
+          left: 2px;
+          border-radius: 10px;
+          top: 0px; }
+      .content-box-style-06 .nav-tabs li a {
+        font-size: 18px;
+        color: #404040;
+        font-weight: 400;
+        padding: 10px 10px 10px 20px;
+        display: block;
+        position: relative; }
+  
+  .content-box-style-06 .tab-content p {
+    font-size: 16px; }

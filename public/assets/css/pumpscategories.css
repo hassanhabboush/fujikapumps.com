@@ -1,0 +1,106 @@
+/* Container & Title Styling */
+.category-section { padding: 60px 0; background: #fafafa; }
+.section-title { 
+    text-align: center; font-weight: 800; letter-spacing: -1px; 
+    margin-bottom: 40px; color: #1a1a1a; 
+}
+
+/* The Base Card */
+.live-card {
+    display: block;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    text-decoration: none !important;
+    perspective: 1000px;
+}
+
+.card-body-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-style: preserve-3d;
+}
+
+/* Background Image with Ken Burns Effect */
+.bg-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Glassmorphism Overlay */
+.glass-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 30px;
+    z-index: 2;
+}
+
+/* Content Animations */
+.category-tag {
+    color: #ffda44; font-size: 12px; font-weight: 700; text-transform: uppercase;
+    display: block; margin-bottom: 5px; opacity: 0.8;
+}
+
+.card-title {
+    color: white; font-size: 2rem; font-weight: 700; margin: 0;
+    transform: translateY(10px);
+    transition: transform 0.4s ease;
+}
+
+.explore-btn {
+    color: white; font-size: 14px; margin-top: 15px;
+    opacity: 0; transform: translateY(20px);
+    transition: all 0.4s ease;
+}
+
+/* --- THE "LIFE" ANIMATIONS --- */
+
+/* 1. Subtle Floating Motion (Constant) */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
+}
+.live-card { animation: float 4s ease-in-out infinite; }
+
+/* 2. Shimmer Light Effect */
+.shimmer {
+    position: absolute;
+    top: 0; left: -150%; width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+    transform: skewX(-25deg);
+    z-index: 3;
+}
+
+/* --- HOVER STATES --- */
+.live-card:hover .card-body-wrap {
+    transform: scale(1.02) rotateX(2deg);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+}
+
+.live-card:hover .bg-img {
+    transform: scale(1.15); /* Zoom in on hover */
+}
+
+.live-card:hover .shimmer {
+    left: 150%;
+    transition: all 0.8s ease;
+}
+
+.live-card:hover .card-title {
+    transform: translateY(0);
+}
+
+.live-card:hover .explore-btn {
+    opacity: 1;
+    transform: translateY(0);
+}

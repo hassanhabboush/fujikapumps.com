@@ -1,0 +1,13 @@
+﻿Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+INFLOW250-24,0000000000,0.25,0.35,0,25,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+INFLOW250-24,0000000000,0.25,0.35,0.36,21.42,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+INFLOW250-24,0000000000,0.25,0.35,0.67,18.36,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+INFLOW250-24,0000000000,0.25,0.35,0.91,15.3,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+INFLOW250-24,0000000000,0.25,0.35,1.14,12.24,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+INFLOW250-24,0000000000,0.25,0.35,1.39,9.18,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+INFLOW250-24,0000000000,0.25,0.35,1.65,6.12,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+INFLOW250-24,0000000000,0.25,0.35,1.94,3.06,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+INFLOW250-24,0000000000,0.25,0.35,2.15,1.53,220,1,60,Cast iron,3550,https://drive.google.com/file/d/1NZMPkQW66LIbP0d1zzzV5ZNfofH9UiuU/view?usp=drive_link
+,,,,,,,,,,,

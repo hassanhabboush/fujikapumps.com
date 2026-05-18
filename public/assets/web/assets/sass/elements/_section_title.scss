@@ -1,0 +1,59 @@
+/*----------------------------------------
+  ## Section title
+----------------------------------------*/
+.section-title{
+    margin-bottom: 60px;
+    &.white{
+        .title{
+            color: var(--secondary-color);
+            margin-top: 20px;
+        }
+        .subtitle{
+            color: var(--secondary-color);
+        }
+        p{
+            color: var(--secondary-color);
+        }
+    }
+    .subtitle{
+        color: var(--heading-color);
+        font-size: 16px;
+        line-height: 30px;
+        text-transform: uppercase;
+        position: relative;
+        &:after {
+            content: '';
+            border-top: solid 25px #ff800f;
+            position: absolute;
+            z-index: 1;
+            width: 3px;
+            height: 10px;
+            top: 1%;
+            margin-left: 10px;
+        }
+        &:before {
+            content: '';
+            border-top: solid 25px #ff800f;
+            position: absolute;
+            z-index: 1;
+            width: 3px;
+            height: 10px;
+            margin-left: -10px;
+            top: 1%;
+        }
+    }
+    .title{
+        font-size: 36px;
+        line-height: 46px;
+        font-weight: 700;
+        color: var(--heading-color);
+        margin-top: 20px;
+        &.about-page{
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: -30px;
+        }
+        
+    }
+    
+}

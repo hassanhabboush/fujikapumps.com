@@ -1,0 +1,281 @@
+/*--------------------------------------------------------------
+	## Header
+--------------------------------------------------------------*/
+
+.header-area{
+    position: relative;
+    z-index: 0;
+    
+}
+.header-slider-item{
+    padding: 160px 0 260px;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    &.header-bg{
+        background-color: #000;
+        background-position: center;
+        background-size: cover;
+        position: relative;
+        z-index: 0;
+        &:after{
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #396cf0, transparent);
+            background-color:rgba(#000,0.5);
+            opacity: .6;
+            z-index: -1;
+        }
+    }
+    
+    .subtitle{
+        padding-left: 10px;
+        font-size: 20px;
+        line-height: 30px;
+        color: var(--secondary-color);
+        &:after {
+            content: '';
+            border-top: solid 25px #ff800f;
+            position: absolute;
+            z-index: 1;
+            width: 3px;
+            height: 10px;
+            top: 1%;
+            margin-left: 10px;
+        }
+        &:before {
+            content: '';
+            border-top: solid 25px #ff800f;
+            position: absolute;
+            z-index: 1;
+            width: 3px;
+            height: 10px;
+            margin-left: -10px;
+            top: 1%;
+        }
+    }
+    .title{
+        font-size: 56px;
+        line-height: 70px;
+        color: $white;
+        font-weight: 700;
+        margin-bottom: 25px;
+        margin-top: 30px;
+    }
+    p{
+        font-size: 18px;
+        line-height: 28px;
+        color: rgba(255,255,255,0.8);
+        width: 80%;
+    }
+    .btn-wrapper{
+        .boxed-btn{
+
+        }
+    }
+}
+
+
+.slick-prev {
+    position: absolute;
+    left: -2%;
+    top: 40%;
+    width: 100px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    z-index: 99999;
+    @include transition($transition);
+    cursor: pointer;
+    img {
+        border-radius: 0  60px 60px 0;
+    }
+    &:before {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        border-radius: 0px 50px 50px 0px;
+        left: 0;
+        top: 0;
+        z-index: 0;
+        background-color:transparent;
+        img{
+            width: 100px;
+            height: 80px;
+        }
+    }
+    &:hover {
+        left: 0%;
+        &:before {
+            background-color:rgba(#ff800f,0.8);
+        }
+    }
+  }
+  .slick-next {
+    position: absolute;
+    right: -2%;
+    top: 40%;
+    width: 100px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    z-index: 99999;
+    @include transition($transition);
+    cursor: pointer;
+    img {
+        border-radius: 60px 0 0 60px;
+    }
+    &:before {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        border-radius: 50px 0px 0px 50px;
+        left: 0;
+        top: 0;
+        z-index: 0;
+        background-color:transparent;
+        img{
+            width: 100px;
+            height: 80px;
+        }
+    }
+    &:hover {
+        right: 0%;
+        &:before {
+            background-color:rgba(#ff800f,0.8);
+        }
+    }
+  }
+
+//   .slick-dots{
+//     display: none;
+//   }
+
+.header-slider-two{
+    .header-slider-item{
+        padding: 175px 0 230px;
+        position: relative;
+        z-index: 0;
+        overflow: hidden;
+        text-align: center;
+        &.header-bg{
+            background-color: #000;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+            z-index: 0;
+            &:after{
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color:rgba(#3333cc,0.9);
+                z-index: -1;
+            }
+        }
+        
+        .sub-title{
+            padding-left: 10px;
+            font-size: 20px;
+            line-height: 30px;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            
+        }
+        .title{
+            font-size: 46px;
+            line-height: 60px;
+            color: $white;
+            font-weight: 700;
+            margin-bottom: 25px;
+            margin-top: 20px;
+        }
+        p{
+            font-size: 18px;
+            line-height: 28px;
+            color: rgba(255,255,255,0.8);
+            width: 70%;
+            text-align: center;
+            margin-left: 14%;
+        }
+        .btn-wrapper{
+            .boxed-btn{
+    
+            }
+        }
+    }
+}
+.slick-dots {
+    position: absolute;
+    width: auto;
+    height: auto;
+    top: 40%;
+    right: -30px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    @include transition($transition);
+    z-index: 99999;
+    li {
+        margin-bottom: 10px;
+        cursor: pointer;
+        @include transition($transition);
+        position: relative;
+        border-radius: 30px;
+        &:before {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 60px;
+            text-align: center;
+            line-height: 60px;
+            border-radius: 30px;
+            @include transition($transition);
+        }
+        &:last-child {
+            margin: 0;
+        }
+        &.slick-active:before {
+            background-color:rgba(#ff800f,0.8);
+        }
+        button {
+            display: none;
+        }
+    }
+    
+}
+.header-slider-two .slick-dots li:nth-child(1) {
+    background-image: url(../img/icon/left-arrow-01.png);
+    background-size: contain;
+           
+  }
+  .header-slider-two .slick-dots li:nth-child(2) {
+    background-image: url(../img/icon/left-arrow-03.png);
+    background-size: contain;
+   
+  }
+  .header-slider-two .slick-dots li:nth-child(3) {
+    background-image: url(../img/icon/left-arrow-02.png);
+    background-size: contain;
+  }
+  .header-slider-two .slick-dots li {
+      right: -30px;
+      transition: all .3s ease-in-out .0s;
+      position: relative;
+  }
+  .header-slider-two .slick-dots li.slick-active,
+  .header-slider-two .slick-dots li:hover {
+    right: 0px;
+}

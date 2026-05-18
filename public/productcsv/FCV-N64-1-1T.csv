@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCV-N64-1-1T,0011483333,7.5,10,40,26,220-380,4,60,SS316,3500,https://drive.google.com/file/d/1_SicmnX82etAMerD-rFxRDLppvWdtasj
+FCV-N64-1-1T,0011483333,7.5,10,50,25,220-380,4,60,SS316,3500,https://drive.google.com/file/d/1_SicmnX82etAMerD-rFxRDLppvWdtasj
+FCV-N64-1-1T,0011483333,7.5,10,60,23,220-380,4,60,SS316,3500,https://drive.google.com/file/d/1_SicmnX82etAMerD-rFxRDLppvWdtasj
+FCV-N64-1-1T,0011483333,7.5,10,65,22,220-380,4,60,SS316,3500,https://drive.google.com/file/d/1_SicmnX82etAMerD-rFxRDLppvWdtasj
+FCV-N64-1-1T,0011483333,7.5,10,70,21,220-380,4,60,SS316,3500,https://drive.google.com/file/d/1_SicmnX82etAMerD-rFxRDLppvWdtasj
+FCV-N64-1-1T,0011483333,7.5,10,80,18,220-380,4,60,SS316,3500,https://drive.google.com/file/d/1_SicmnX82etAMerD-rFxRDLppvWdtasj
+FCV-N64-1-1T,0011483333,7.5,10,90,14,220-380,4,60,SS316,3500,https://drive.google.com/file/d/1_SicmnX82etAMerD-rFxRDLppvWdtasj
+FCV-N64-1-1T,0011483333,7.5,10,100,10,220-380,4,60,SS316,3500,https://drive.google.com/file/d/1_SicmnX82etAMerD-rFxRDLppvWdtasj
+,,,,,,,,,,,
+,,,,,,,,,,,

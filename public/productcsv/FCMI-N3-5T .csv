@@ -1,0 +1,13 @@
+Model,SerialNumber,POWER KW,Power HP,Q(m3/h),"Head(m)
+",V,"Discharge Diameter(Outlet)
+",HERTZ,material,RPM,Link
+FCMI-N3-5T,0021793333,1,1.5,0.5,68,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,1,66,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,1.5,64,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,2,62,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,2.5,60,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,3,59,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,3.5,52,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,4,46,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,4.5,38,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
+FCMI-N3-5T,0021793333,1,1.5,5,25,220-380,1,60,SS316,3500,https://drive.google.com/file/d/1tgm5h82r8z9fbTqJLuElVbobRwyUlpAi/view?usp=drive_link
