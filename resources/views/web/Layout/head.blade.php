@@ -63,6 +63,18 @@
     border:0px solid black;
 }
 .owl-prev i, .owl-next i {transform : scale(1,6); color: #ccc;}
+
+/* Lazy image blur-up effect */
+img.lazy-img {
+    filter: blur(8px);
+    opacity: 0.8;
+    transition: filter 0.4s ease, opacity 0.3s ease;
+    will-change: filter, opacity;
+}
+img.lazy-img.loaded {
+    filter: blur(0);
+    opacity: 1;
+}
     </style>
     <script>
 /*$('.owl-carousel1').owlCarousel({

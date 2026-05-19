@@ -15,8 +15,8 @@
     bottom: -11%;
     left: 51%;
 }
-counterup-area {
-    background: linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url("{{asset('assets/web/assets/img/bg/counterup-bg.jpg')}}") no-repeat center center;
+.counterup-area {
+    background: linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa) no-repeat center center;
     background-size: cover;
     background-attachment: fixed;
     text-align: center;
@@ -294,3 +294,50 @@ counterup-area {
     <script defer src="{{ asset('assets/web/assets/js/slick-animation.js')}}"></script>
      <!-- main js -->
     <script defer src="{{ versioned_asset('assets/web/assets/js/main2.js') }}"></script>
+    <!-- lazy loading & blur-up -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Blur-up effect for all native lazy images
+        document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
+            img.classList.add('lazy-img');
+            if (img.complete && img.naturalWidth > 0) {
+                img.classList.add('loaded');
+            } else {
+                img.addEventListener('load', function () {
+                    img.classList.add('loaded');
+                });
+                img.addEventListener('error', function () {
+                    img.classList.add('loaded');
+                });
+            }
+        });
+
+        // Background-image lazy loading via IntersectionObserver
+        if ('IntersectionObserver' in window) {
+            var bgObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        var el = entry.target;
+                        var bg = el.dataset.bg;
+                        if (bg) {
+                            el.style.backgroundImage = 'linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url("' + bg + '")';
+                            bgObserver.unobserve(el);
+                        }
+                    }
+                });
+            }, { rootMargin: '200px 0px' });
+
+            document.querySelectorAll('[data-bg]').forEach(function (el) {
+                bgObserver.observe(el);
+            });
+        } else {
+            // Fallback for browsers without IntersectionObserver
+            document.querySelectorAll('[data-bg]').forEach(function (el) {
+                var bg = el.dataset.bg;
+                if (bg) {
+                    el.style.backgroundImage = 'linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url("' + bg + '")';
+                }
+            });
+        }
+    });
+    </script>

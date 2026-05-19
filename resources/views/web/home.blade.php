@@ -627,7 +627,7 @@ function toggleAdvancedFields() {
     </div>
 </div>
 
-<div class="service-area cooli-item-area  counterup-area pd-top-100 pd-bottom-70">
+<div class="service-area cooli-item-area  counterup-area pd-top-100 pd-bottom-70" data-bg="{{ asset('assets/web/assets/img/bg/counterup-bg.jpg') }}">
 
 <!-- ========================= -->
 <!-- About us area  -->
