@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use Illuminate\Support\Facades\Log;
 
 class ImagesToWebp extends Command
 {
@@ -95,6 +96,8 @@ class ImagesToWebp extends Command
                 $failed++;
             }
 
+            Log::info('Converted image: ' . $filePath);
+
             $bar->advance();
         }
 
@@ -178,6 +181,7 @@ class ImagesToWebp extends Command
             'jpg', 'jpeg' => @imagecreatefromjpeg($source),
             'png'         => $this->loadPng($source),
             'gif'         => @imagecreatefromgif($source),
+            'jfif'        => @imagecreatefromjpeg($source),
             default       => false,
         };
 
