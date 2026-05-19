@@ -29,9 +29,10 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\WebsiteController;
 
 Route::group(['as' => 'admin.'], function () {
-    Route::get('/', function () {
-        return view('login');
-    });
+    // Route::get('/', function () {
+    //     return view('login');
+    // })->middleware('guest');
+
     Route::get('access', function () {
         return view('denide');
     });
@@ -213,7 +214,9 @@ Route::group(['as' => 'admin.'], function () {
 });
 
 //login/auth related routes
-Route::get('login', [MainController::class, 'index'])->name('login');
+Route::get('login', [MainController::class, 'index'])
+->middleware('guest')
+->name('login');
 Route::post('checklogin', [MainController::class, 'checklogin'])->middleware('throttle:5,1');
 Route::get('successlogin', [MainController::class, 'successlogin']);
 Route::get('logout', [MainController::class, 'logout']);

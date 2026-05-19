@@ -30,7 +30,7 @@
    <h3 align="center">Fujika Dashboard</h3><br />
 
    @if(isset(Auth::user()->email)&& (Auth::user()->active==1))
-    <script>window.location="{{route('product')}}";</script>
+    <script>window.location="{{route('admin.product')}}";</script>
    @endif
 
    @if ($message = Session::get('error'))
