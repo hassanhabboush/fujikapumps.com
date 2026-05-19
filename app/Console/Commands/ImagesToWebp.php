@@ -246,12 +246,20 @@ class ImagesToWebp extends Command
 
     /**
      * Load a PNG image with alpha channel preserved.
+     * Strips the iCCP chunk first to avoid libpng "known incorrect sRGB profile" warnings.
      *
      * @return \GdImage|false
      */
     private function loadPng(string $source): mixed
     {
-        $image = @imagecreatefrompng($source);
+        $data = @file_get_contents($source);
+
+        if ($data === false) {
+            return false;
+        }
+
+        $data  = $this->stripPngChunk($data, 'iCCP');
+        $image = @imagecreatefromstring($data);
 
         if ($image === false) {
             return false;
@@ -261,5 +269,43 @@ class ImagesToWebp extends Command
         imagesavealpha($image, true);
 
         return $image;
+    }
+
+    /**
+     * Strip all occurrences of a named chunk from raw PNG binary data.
+     */
+    private function stripPngChunk(string $data, string $chunkType): string
+    {
+        $signature = "\x89PNG\r\n\x1a\n";
+
+        if (substr($data, 0, 8) !== $signature) {
+            return $data;
+        }
+
+        $output = $signature;
+        $offset = 8;
+        $len    = strlen($data);
+
+        while ($offset < $len) {
+            if ($offset + 8 > $len) {
+                break;
+            }
+
+            $chunkDataLen  = unpack('N', substr($data, $offset, 4))[1];
+            $chunkName     = substr($data, $offset + 4, 4);
+            $totalSize     = 4 + 4 + $chunkDataLen + 4;
+
+            if ($offset + $totalSize > $len) {
+                break;
+            }
+
+            if ($chunkName !== $chunkType) {
+                $output .= substr($data, $offset, $totalSize);
+            }
+
+            $offset += $totalSize;
+        }
+
+        return $output;
     }
 }
