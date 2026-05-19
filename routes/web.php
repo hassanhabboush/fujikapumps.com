@@ -222,7 +222,7 @@ Route::get('noaccess', function () {
 });
 
 //public website routes
-Route::controller(WebsiteController::class)->group(function () {
+Route::controller(WebsiteController::class)->middleware('cache.html')->group(function () {
     Route::get('sendemail', 'send_email');
     Route::get('filter', 'filter');
     Route::get('filterpop', 'filterpop');
