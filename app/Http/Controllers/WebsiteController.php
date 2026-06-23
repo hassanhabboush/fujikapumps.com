@@ -172,7 +172,7 @@ $body = 'Name:'    . ($request->input('name'))    . "\n"
 $data = array("name"=>"", "body" => $body);
 Mail::send([], $data, function($message) use ($to_name, $to_email, $from_email, $from_name, $body) {
 $message->to($to_email, $to_name)
-->subject("Fujika Contact Form")->setBody($body);
+->subject("Fujika Contact Form")->text($body);
 $message->from($from_email, $from_name);
 });
 return redirect()->back();
