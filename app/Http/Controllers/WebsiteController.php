@@ -237,7 +237,7 @@ public function filter(Request $request)
          }
          
           if (request('hertz')&& request('hertz')!='Hertz'){
-                       $products=$products->where('Hertz',60);   
+                       $products=$products->where('Hertz',$request->input('hertz'));   
 
          }
          if (request('volt')&&request('volt')!='Voltage'){
