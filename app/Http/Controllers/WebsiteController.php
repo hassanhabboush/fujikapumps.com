@@ -169,11 +169,10 @@ $body = 'Name:'    . ($request->input('name'))    . "\n"
       . 'Phone:'   . ($request->input('phone'))   . "\n"
       . 'Company:' . ($request->input('company')) . "\n"
       . 'Enquiry:' . ($request->input('inquiry'));
-$data = array("name"=>"", "body" => $body);
-Mail::send([], $data, function($message) use ($to_name, $to_email, $from_email, $from_name, $body) {
+Mail::raw($body, function($message) use ($to_name, $to_email, $from_email, $from_name) {
 $message->to($to_email, $to_name)
-->subject("Fujika Contact Form")->text($body);
-$message->from($from_email, $from_name);
+->subject("Fujika Contact Form")
+->from($from_email, $from_name);
 });
 return redirect()->back();
     }
