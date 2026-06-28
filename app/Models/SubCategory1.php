@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use App\Traits\HasMediaUrls;
+use App\Traits\InvalidatesCache;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SubCategory;
 use App\Models\Family;
 
 class SubCategory1 extends Model
 {
-    use HasMediaUrls;
+    use HasMediaUrls, InvalidatesCache;
     protected $table = 'sub_category_1';
 
     protected $guarded = [];
+
+    protected array $cacheKeys = ['headerCategories'];
 
     public function parentSubCategories()
     {

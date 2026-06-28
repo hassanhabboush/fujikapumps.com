@@ -3,15 +3,18 @@
 namespace App\Models;
 
 use App\Traits\HasMediaUrls;
+use App\Traits\InvalidatesCache;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Series;
 use App\Models\SubCategory1;
 
 class Family extends Model
 {
-    use HasMediaUrls;
+    use HasMediaUrls, InvalidatesCache;
     protected $table = 'family';
     protected $guarded = [];
+
+    protected array $cacheKeys = ['headerCategories'];
 
 
     public function series()

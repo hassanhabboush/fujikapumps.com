@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Models\SubCategory1;
 
 class SubCategory1Controller extends Controller
@@ -55,6 +56,7 @@ class SubCategory1Controller extends Controller
         ]);
 
         $subCategory1->parentSubCategories()->attach($parent_id);
+        Cache::forget('headerCategories');
      return redirect()->back();
     }
     public function delete(Request $request)
@@ -92,6 +94,7 @@ class SubCategory1Controller extends Controller
 
         $subCategory1->update($data);
         $subCategory1->parentSubCategories()->sync($parent_id);
+        Cache::forget('headerCategories');
 
         return redirect()->back();
     }

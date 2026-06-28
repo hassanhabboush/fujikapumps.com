@@ -5,7 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use App\Models\Contact;
 use App\Models\Category;
@@ -25,8 +24,9 @@ class AppServiceProvider extends ServiceProvider
 
         Schema::defaultStringLength(191);
 
-        Event::listen('eloquent.saved: *', fn () => Cache::flush());
-        Event::listen('eloquent.deleted: *', fn () => Cache::flush());
+        // Cache invalidation is now handled per-model via the
+        // App\Traits\InvalidatesCache trait, which forgets only the
+        // cache keys each model is responsible for on save/delete.
 
         try {
             view()->share('contact', Cache::remember('contact', now()->addHours(1), fn () => Contact::first()));
