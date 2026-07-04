@@ -35,19 +35,19 @@ class AppDeploy extends Command
         }
 
         // database migration
-        $this->info('Step 4/8 — migrate');
-        $this->call('migrate:fresh');
+        // $this->info('Step 4/8 — migrate');
+        // $this->call('migrate:fresh');
 
-        $this->info('Step 5/8 — db:seed');
-        $this->call('db:seed');
+        // $this->info('Step 5/8 — db:seed');
+        // $this->call('db:seed');
         
         // Clear cache
         $this->info('Step 6/8 — storage:link');
         $this->call('storage:link');
 
         // Convert image to webp
-        $this->info('Step 7/8 — convert image to webp');
-        $this->call('app:images-to-webp');
+        // $this->info('Step 7/8 — convert image to webp');
+        // $this->call('app:images-to-webp');
         
         $this->info('Step 8/8 — optimize');
         $this->call('optimize');
