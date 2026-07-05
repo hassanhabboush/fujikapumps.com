@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Requests\DeleteCategoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -46,12 +47,13 @@ class CategoryController extends Controller
 
         return redirect()->back();
     }
-    public function delete(Request $request)
+    public function delete(DeleteCategoryRequest $request)
     {
-        $id = $request->input('id');
+        $id = $request->validated('id');
         $category = Category::findOrFail($id);
-        $path1 = $category->background;
+        $oldBackground = $category->background;
         $category->delete();
+        $this->deleteBackgroundFile($oldBackground);
 
         return redirect()->back();
     }
@@ -70,6 +72,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         if ($file !== null) {
+            $oldBackground = $category->background;
             $destinationPath = public_path('categorybackground');
             $filepath = time() . $file->getClientOriginalName();
             $file->move($destinationPath, $filepath);
@@ -79,6 +82,8 @@ class CategoryController extends Controller
                 'background'   => 'public/categorybackground/' . $filepath,
                 'english_name' => $english_name,
             ]);
+
+            $this->deleteBackgroundFile($oldBackground);
         } else {
             $category->update([
                 'updated_at'   => $updated_at,
@@ -87,5 +92,24 @@ class CategoryController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Remove a category background file from public storage.
+     *
+     * The `background` column stores a path like `public/categorybackground/<file>`,
+     * while the file physically lives in `public_path('categorybackground/<file>')`.
+     */
+    private function deleteBackgroundFile(?string $storedPath): void
+    {
+        if (empty($storedPath)) {
+            return;
+        }
+
+        $fullPath = public_path('categorybackground/' . basename($storedPath));
+
+        if (File::exists($fullPath)) {
+            File::delete($fullPath);
+        }
     }
 }
