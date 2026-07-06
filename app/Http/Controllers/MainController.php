@@ -8,6 +8,7 @@ use Auth;
 use Carbon\Carbon;
 use DateTime;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class MainController extends Controller
 {
