@@ -14,11 +14,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name'    => 'Geek Admin',
-            'email'    => 'userc@fujikaindustries.com',
-            'password'   =>  Hash::make('password1234'),
-            'role' => 2
-        ]);
+
+        if($user = User::firstWhere('email', 'userC@fujikaindustries.com')) {
+            $user->update(['password' =>  Hash::make('password1234')]);
+        }
     }
 }
