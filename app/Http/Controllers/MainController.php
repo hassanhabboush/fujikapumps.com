@@ -21,7 +21,7 @@ class MainController extends Controller
     {
      $this->validate($request, [
       'email'   => 'required|email',
-      'password'  => 'required'
+      'password'  => 'required|string'
      ]);
 
      $userdata = array(
