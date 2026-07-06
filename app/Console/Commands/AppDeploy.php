@@ -52,6 +52,23 @@ class AppDeploy extends Command
         $this->info('Step 8/8 — optimize');
         $this->call('optimize');
 
+        // Chmod to public folder and storage
+        $this->info('Step 9/8 — chmod -R 777 public/ storage/');
+        $publicPath = base_path('public');
+        exec("chmod -R 777 {$publicPath}", $output, $exitCode);
+        if ($exitCode !== 0) {
+            $this->warn('chmod failed (expected on Windows). Skipping.');
+        } else {
+            $this->line('  <info>Done.</info>');
+        }
+
+        $storagePath = base_path('storage');
+        exec("chmod -R 777 {$storagePath}", $output, $exitCode);
+        if ($exitCode !== 0) {
+            $this->warn('chmod failed (expected on Windows). Skipping.');
+        } else {
+            $this->line('  <info>Done.</info>');
+        }
 
         $this->newLine();
         $this->info('All steps completed successfully.');
