@@ -161,7 +161,7 @@ class WebsiteController extends Controller
     }
 public function send_email(Request $request){
 $to_name = "Fujika Contact Form";
-$to_email = env('MAIL_TO_ADDRESS', 'sales@fujikaindustries.com');
+$to_email = $request->input('email');
 $from_email = env('MAIL_FROM_ADDRESS', 'no-reply@fujikaindustries.com');
 $from_name  = env('MAIL_FROM_NAME', 'Fujika Contact Form');
 $body = 'Name:'    . ($request->input('name'))    . "\n"
