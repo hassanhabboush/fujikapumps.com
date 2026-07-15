@@ -161,11 +161,11 @@ class WebsiteController extends Controller
     }
 public function send_email(Request $request){
 $to_name = "Fujika Contact Form";
-$to_email = $request->input('email');
 $from_email = env('MAIL_FROM_ADDRESS', 'no-reply@fujikaindustries.com');
 $from_name  = env('MAIL_FROM_NAME', 'Fujika Contact Form');
+$to_email = env('RECIEVER_EMAIL', 'sales@fujikapumps.com');
 $body = 'Name:'    . ($request->input('name'))    . "\n"
-      . 'Email:'   . (env('RECIEVER_EMAIL', 'Sales@Fujikapumps.com'))   . "\n"
+      . 'Email:'   . $from_email   . "\n"
       . 'Phone:'   . ($request->input('phone'))   . "\n"
       . 'Company:' . ($request->input('company')) . "\n"
       . 'Enquiry:' . ($request->input('inquiry'));
