@@ -165,7 +165,7 @@ $to_email = $request->input('email');
 $from_email = env('MAIL_FROM_ADDRESS', 'no-reply@fujikaindustries.com');
 $from_name  = env('MAIL_FROM_NAME', 'Fujika Contact Form');
 $body = 'Name:'    . ($request->input('name'))    . "\n"
-      . 'Email:'   . ($request->input('email'))   . "\n"
+      . 'Email:'   . (env('RECIEVER_EMAIL', 'Sales@Fujikapumps.com'))   . "\n"
       . 'Phone:'   . ($request->input('phone'))   . "\n"
       . 'Company:' . ($request->input('company')) . "\n"
       . 'Enquiry:' . ($request->input('inquiry'));

@@ -64,6 +64,8 @@ class CategoryController extends Controller
     }
     public function edit(UpdateCategoryRequest $request)
     {
+        $request->validated();
+    
         $id = $request->input('Eid');
         $background_name = $request->input('Ebackground_name');
         $english_name = $request->input('Eenglish_name');
