@@ -18,6 +18,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+        @ini_set('memory_limit', '512M');
+        @ini_set('max_upload_size', '256M');
+
+
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
