@@ -66,7 +66,7 @@
                             @endif
                              @if(Auth::user()->role==1 || Auth::user()->role==2 || Auth::user()->role==3 || Auth::user()->role==4)
                                 <li class="slider">
-                                    <a href="{{route('admin.slider')}}">
+                                    <a href="{{route('admin.sliders.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-aperture rotate-refresh"></i><b>A</b></span>
                                         <span class="pcoded-mtext">Sliders</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('slider')->count()}}</span>

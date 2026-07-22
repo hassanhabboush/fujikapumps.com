@@ -18,9 +18,12 @@
                                              @include('Pages.slider.editslider')
                                              <div id="grid"></div> 
         <script>
+             // The grid destroys over DELETE, so CSRF has to ride along.
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
-                 
+
                    $("#grid").kendoGrid({
                                        
                            edit: function(e) {
@@ -34,16 +37,19 @@
                            transport:
                            {
                                
-                               read: 
+                               read:
                                {
                                   dataType: "json",
-                                  url: "readslider" 
+                                  url: "{{ route('admin.sliders.data') }}"
                                },
                                destroy:
                                {
-                                   url: "deleteslider"
+                                   url: function(slider) {
+                                       return "{{ url('sliders') }}/" + slider.id;
+                                   },
+                                   type: "DELETE"
                                }
-                               
+
                            },
                          serverPaging: false,
                          pageSize:8,

@@ -5,22 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Traits\HandlesMediaUploads;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    /**
-     * Uploads still land in public/categorybackground/ rather than the public
-     * disk, so legacy rows and the .webp siblings HasMediaUrls looks for keep
-     * resolving from a single directory.
-     */
+    use HandlesMediaUploads;
+
     private const BACKGROUND_DIR = 'categorybackground';
 
     public function index(): View
@@ -55,10 +50,10 @@ class CategoryController extends Controller
         Category::create([
             'english_name' => $request->validated('english_name'),
             'logo'         => '',
-            'background'   => $this->storeBackground($request->file('background')),
+            'background'   => $this->storeMedia($request->file('background'), self::BACKGROUND_DIR),
         ]);
 
-        return redirect()->back();
+        return redirect()->back()->with('status', 'Category created.');
     }
 
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
@@ -67,16 +62,16 @@ class CategoryController extends Controller
         $oldBackground = $category->getRawOriginal('background');
 
         if ($file = $request->file('background')) {
-            $attributes['background'] = $this->storeBackground($file);
+            $attributes['background'] = $this->storeMedia($file, self::BACKGROUND_DIR);
         }
 
         $category->update($attributes);
 
         if (isset($attributes['background'])) {
-            $this->deleteBackground($oldBackground);
+            $this->deleteMedia($oldBackground, self::BACKGROUND_DIR);
         }
 
-        return redirect()->back();
+        return redirect()->back()->with('status', 'Category updated.');
     }
 
     public function destroy(Category $category): Response
@@ -84,7 +79,7 @@ class CategoryController extends Controller
         $background = $category->getRawOriginal('background');
 
         $category->delete();
-        $this->deleteBackground($background);
+        $this->deleteMedia($background, self::BACKGROUND_DIR);
 
         // Called over AJAX by the grid, which has no use for a redirect.
         return response()->noContent();
@@ -100,37 +95,5 @@ class CategoryController extends Controller
             'english_name' => $category->english_name,
             'background'   => $category->background,
         ];
-    }
-
-    /**
-     * Move an upload into the background directory and return the stored path.
-     */
-    private function storeBackground(UploadedFile $file): string
-    {
-        $name = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path(self::BACKGROUND_DIR), $name);
-
-        return 'public/' . self::BACKGROUND_DIR . '/' . $name;
-    }
-
-    /**
-     * Remove a background file given its stored `public/categorybackground/<file>`
-     * path, along with the .webp sibling HasMediaUrls prefers — leaving the
-     * sibling behind would orphan the image that was actually being served.
-     */
-    private function deleteBackground(?string $storedPath): void
-    {
-        if (blank($storedPath)) {
-            return;
-        }
-
-        $fullPath = public_path(self::BACKGROUND_DIR . '/' . basename($storedPath));
-        $webpPath = preg_replace('/\.[^.]+$/', '.webp', $fullPath);
-
-        foreach (array_unique([$fullPath, $webpPath]) as $path) {
-            if (File::exists($path)) {
-                File::delete($path);
-            }
-        }
     }
 }

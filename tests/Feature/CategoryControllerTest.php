@@ -3,72 +3,35 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Tests\Concerns\ActsAsAdmin;
+use Tests\Concerns\CleansUploadDirectory;
 use Tests\TestCase;
 
 class CategoryControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use ActsAsAdmin, CleansUploadDirectory, RefreshDatabase;
 
     private const BACKGROUND_DIR = 'categorybackground';
 
-    /**
-     * Uploads are moved into the real public directory rather than a fake disk,
-     * so anything a test creates there has to be swept up afterwards.
-     *
-     * @var array<int, string>
-     */
-    private array $filesBefore = [];
-
-    /**
-     * Guards tearDown: if setUp aborted before the snapshot was taken, the
-     * "everything new" diff would cover the entire directory and wipe the real
-     * catalog images. Cleanup only runs once this is true.
-     */
-    private bool $snapshotTaken = false;
+    protected function uploadDirectory(): string
+    {
+        return self::BACKGROUND_DIR;
+    }
 
     protected function setUp(): void
     {
         parent::setUp();
-
-        File::ensureDirectoryExists(public_path(self::BACKGROUND_DIR));
-        $this->filesBefore = $this->backgroundFiles();
-        $this->snapshotTaken = true;
+        $this->snapshotUploadDirectory();
     }
 
     protected function tearDown(): void
     {
-        if ($this->snapshotTaken) {
-            foreach (array_diff($this->backgroundFiles(), $this->filesBefore) as $path) {
-                File::delete($path);
-            }
-        }
-
+        $this->cleanUploadDirectory();
         parent::tearDown();
-    }
-
-    /** @return array<int, string> */
-    private function backgroundFiles(): array
-    {
-        return array_map(
-            fn ($file) => $file->getPathname(),
-            File::files(public_path(self::BACKGROUND_DIR))
-        );
-    }
-
-    private function admin(): User
-    {
-        return User::create([
-            'name'     => 'Admin',
-            'email'    => 'admin@example.test',
-            'password' => bcrypt('secret'),
-            'active'   => 1,
-            'role'     => 1,
-        ]);
     }
 
     public function test_guests_cannot_reach_the_category_screen(): void

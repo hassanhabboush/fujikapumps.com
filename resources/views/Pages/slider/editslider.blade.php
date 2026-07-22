@@ -32,17 +32,16 @@
                            if (xmlhttp.readyState==4 && xmlhttp.status==200)
                             {
                                  var data = JSON.parse(xmlhttp.responseText);
-                                 console.log(data);
-                                 document.getElementById("Eid").value=data.data[0].id;
-                                 document.getElementById("Etext1").value=data.data[0].text1;
-                                 document.getElementById("Etext2").value=data.data[0].text2;
-                                 document.getElementById("Etext3").value=data.data[0].text3;
-                                 document.getElementById("Ebuttontext").value=data.data[0].buttontext;
-                                 document.getElementById("Ebuttonlink").value=data.data[0].buttonlink;
-                                 document.getElementById("Elogo_name").value=data.data[0].image;
+                                 document.getElementById("Etext1").value=data.data[0].text1 || '';
+                                 document.getElementById("Etext2").value=data.data[0].text2 || '';
+                                 document.getElementById("Etext3").value=data.data[0].text3 || '';
+                                 document.getElementById("Ebuttontext").value=data.data[0].buttontext || '';
+                                 document.getElementById("Ebuttonlink").value=data.data[0].buttonlink || '';
+                                 // The id lives in the action URL now that update is a PUT to sliders/{slider}.
+                                 document.getElementById("EditSliderForm").action="{{ url('sliders') }}/" + data.data[0].id;
                                }
-                       }     
-                           xmlhttp.open("GET", "getslider/" + atts.name , true);
+                       }
+                           xmlhttp.open("GET", "{{ url('sliders') }}/" + atts.name , true);
                            xmlhttp.send();
                            EshowMe();
                          }
@@ -62,10 +61,10 @@
                <div class="k-window-actions"><a role="button" href="#" onclick='Ehideme()' class="k-window-action k-link">
                    <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                                       <form method="POST" action="{{url('editslider')}}" enctype="multipart/form-data">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="text"  name="Eid" id="Eid" style="display:none;">
-                                             <input type="text"  name="Elogo_name" id="Elogo_name" style="display:none;">
+                                       <form method="POST" id="EditSliderForm" action="" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="_form" value="edit">
                                                 <div class="k-edit-form-container">
                                                     
                                  <div class="row" style="margin-left: 0px;margin-right: 0px;">
@@ -73,42 +72,42 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Text1</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="Etext1" id="Etext1"  >
+                                                    <input type="text" class="k-input k-textbox" name="text1" id="Etext1"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Text2</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="Etext2" id="Etext2"  >
+                                                    <input type="text" class="k-input k-textbox" name="text2" id="Etext2"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Text3</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="Etext3" id="Etext3"  >
+                                                    <input type="text" class="k-input k-textbox" name="text3" id="Etext3"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Button Text</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="Ebuttontext" id="Ebuttontext"  >
+                                                    <input type="text" class="k-input k-textbox" name="buttontext" id="Ebuttontext"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Button Link</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="Ebuttonlink" id="Ebuttonlink"  >
+                                                    <input type="text" class="k-input k-textbox" name="buttonlink" id="Ebuttonlink"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Image</label>
                                                     <br>
-                                                   <input type="file" name="Eimage" id="Elogo"  >                                            
+                                                   <input type="file" name="image" id="Elogo"  >                                            
                                                    </div>
                                      </div>
                                     

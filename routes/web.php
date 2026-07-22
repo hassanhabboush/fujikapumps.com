@@ -57,14 +57,8 @@ Route::group(['as' => 'admin.'], function () {
         Route::resource('categories', CategoryController::class)->except(['create', 'edit']);
 
         //slider related routes
-        Route::controller(SliderController::class)->group(function () {
-            Route::get('slider', 'index')->name('slider');
-            Route::get('readslider', 'readall');
-            Route::post('addslider', 'insert');
-            Route::post('editslider', 'edit');
-            Route::get('deleteslider', 'delete');
-            Route::get('getslider/{id}', 'getslider');
-        });
+        Route::get('sliders/data', [SliderController::class, 'data'])->name('sliders.data');
+        Route::resource('sliders', SliderController::class)->except(['create', 'edit']);
 
         //contact related routes
         Route::controller(ContactController::class)->group(function () {

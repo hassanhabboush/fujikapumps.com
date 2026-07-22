@@ -86,3 +86,5 @@
                     </div>
                 </div>
             </nav>
+
+@include('Layout.errors')

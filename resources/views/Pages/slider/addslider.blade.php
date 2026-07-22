@@ -44,8 +44,10 @@
        <div class="k-window-actions"><a role="button" href="#" onclick='hideme()' class="k-window-action k-link">
            <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                 <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                  <form method="POST" action="{{url('addslider')}}" enctype="multipart/form-data">
-                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <form method="POST" action="{{route('admin.sliders.store')}}" enctype="multipart/form-data">
+                      @csrf
+                      {{-- Tells Layout/errors which modal to re-open on failure. --}}
+                      <input type="hidden" name="_form" value="add">
                         <div class="k-edit-form-container">
                            
                                  <div class="row" style="margin-left: 0px;margin-right: 0px;">
@@ -53,7 +55,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Text1</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="text" >
+                                                    <input type="text" class="k-input k-textbox" name="text1" value="{{ old('text1') }}" >
                                             </div>
                                     </div>
 
@@ -61,28 +63,28 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Text2</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="text2"  >
+                                                    <input type="text" class="k-input k-textbox" name="text2" value="{{ old('text2') }}"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Text3</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="text3"  >
+                                                    <input type="text" class="k-input k-textbox" name="text3" value="{{ old('text3') }}"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Button Text</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="button_text"  >
+                                                    <input type="text" class="k-input k-textbox" name="buttontext" value="{{ old('buttontext') }}"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Button Link</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="buttonlink"  >
+                                                    <input type="text" class="k-input k-textbox" name="buttonlink" value="{{ old('buttonlink') }}"  >
                                             </div>
                                     </div>
                                     <div class="col-md-6">

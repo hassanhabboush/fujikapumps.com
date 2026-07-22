@@ -1,96 +1,94 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
+
+use App\Http\Requests\StoreSliderRequest;
+use App\Http\Requests\UpdateSliderRequest;
 use App\Models\Slider;
+use App\Traits\HandlesMediaUploads;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 class SliderController extends Controller
 {
-    public function index()
+    use HandlesMediaUploads;
+
+    private const IMAGE_DIR = 'slideruploads';
+
+    public function index(): View
     {
         return view('Pages.slider.slider');
     }
-    public function readall()  //list all slider
-    {
-       $sliders = Slider::select('id', 'image', 'text1', 'text2', 'text3', 'buttontext', 'buttonlink')->get()
-       ->map(function ($slider) {
-           $slider->image = $slider->image;
-           return $slider;
-       });
-       return response()->json(['data' => $sliders]);
-    } 
-      public function insert(Request $request)
-    {
-        $text1=$request->input('text');
-        $text2=$request->input('text2');
-        $text3=$request->input('text3');
-        $button_text=$request->input('button_text');
-        $buttonlink=$request->input('buttonlink');
-        
 
-        $file = $request->file('image');
-        $destinationPath = public_path('slideruploads');
-        $filepath = time() . $file->getClientOriginalName();
-        $file->move($destinationPath, $filepath);
-        Slider::create([
-            'image'      => 'public/slideruploads/' . $filepath,
-            'text1'      => $text1,
-            'text2'      => $text2,
-            'text3'      => $text3,
-            'buttontext' => $button_text,
-            'buttonlink' => $buttonlink,
+    public function data(): JsonResponse
+    {
+        $sliders = Slider::query()
+            ->get()
+            ->map(fn (Slider $slider): array => $this->toGridRow($slider))
+            ->all();
+
+        return response()->json(['data' => $sliders]);
+    }
+
+    public function show(Slider $slider): JsonResponse
+    {
+        return response()->json(['data' => [$this->toGridRow($slider)]]);
+    }
+
+    public function store(StoreSliderRequest $request): RedirectResponse
+    {
+        Slider::create($request->safe()->except('image') + [
+            'image' => $this->storeMedia($request->file('image'), self::IMAGE_DIR),
         ]);
-     return redirect()->back();
+
+        return redirect()->back()->with('status', 'Slide created.');
     }
-    public function delete(Request $request)
+
+    public function update(UpdateSliderRequest $request, Slider $slider): RedirectResponse
     {
-    $id = $request->input('id');
-    $slider = Slider::findOrFail($id);
-    $path = $slider->image;
-    $slider->delete();
-    return redirect()->back();
-    }
-     public function getslider ($id) // to show customer details
-    {
-        $slider = Slider::findOrFail($id);
-        return response()->json(['data' => [$slider]]);
-    }
-      public function edit(Request $request)
-    {
-        $id=$request->input('Eid');
-        $logo_name=$request->input('Elogo_name');
-        $text1=$request->input('Etext1');
-        $text2=$request->input('Etext2');
-        $text3=$request->input('Etext3');
-        $button_text=$request->input('Ebuttontext');
-        $buttonlink=$request->input('Ebuttonlink');     
-           $file = $request->file('Eimage');
-        $updated_at= date('Y-m-d H:i:s');
-        $slider = Slider::findOrFail($id);
-        if ($file != null) {
-            $destinationPath = public_path('slideruploads');
-            $filepath = time() . $file->getClientOriginalName();
-            $file->move($destinationPath, $filepath);
-            $slider->update([
-                'image'      => 'public/slideruploads/' . $filepath,
-                'text1'      => $text1,
-                'text2'      => $text2,
-                'text3'      => $text3,
-                'buttontext' => $button_text,
-                'buttonlink' => $buttonlink,
-            ]);
-        } else {
-            $slider->update([
-                'text1'      => $text1,
-                'text2'      => $text2,
-                'text3'      => $text3,
-                'buttontext' => $button_text,
-                'buttonlink' => $buttonlink,
-            ]);
+        $attributes = $request->safe()->except('image');
+        $oldImage = $slider->getRawOriginal('image');
+
+        if ($file = $request->file('image')) {
+            $attributes['image'] = $this->storeMedia($file, self::IMAGE_DIR);
         }
-    return redirect()->back();
+
+        $slider->update($attributes);
+
+        if (isset($attributes['image'])) {
+            $this->deleteMedia($oldImage, self::IMAGE_DIR);
+        }
+
+        return redirect()->back()->with('status', 'Slide updated.');
+    }
+
+    public function destroy(Slider $slider): Response
+    {
+        $image = $slider->getRawOriginal('image');
+
+        $slider->delete();
+        // The old delete() read the path but never removed the file.
+        $this->deleteMedia($image, self::IMAGE_DIR);
+
+        return response()->noContent();
+    }
+
+    /**
+     * HasMediaUrls resolves `image` in getAttribute(), which toArray()
+     * bypasses, so the row is assembled attribute-by-attribute.
+     */
+    private function toGridRow(Slider $slider): array
+    {
+        return [
+            'id'         => $slider->id,
+            'image'      => $slider->image,
+            'text1'      => $slider->text1,
+            'text2'      => $slider->text2,
+            'text3'      => $slider->text3,
+            'buttontext' => $slider->buttontext,
+            'buttonlink' => $slider->buttonlink,
+        ];
     }
 }
