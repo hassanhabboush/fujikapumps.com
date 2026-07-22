@@ -2,63 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdateOrderStatusRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Orders have no Eloquent model yet, so these stay on the query builder.
+ * Introducing an Order model is the right fix if this area grows.
+ */
 class OrderController extends Controller
 {
-    public function index()
+    public function data(): JsonResponse
     {
-        return view('Pages.order');
+        return response()->json(DB::table('orders')->get());
     }
 
-    public function readall()
+    public function show(int $order): JsonResponse
     {
-        $orders = DB::table('orders')->get();
-        return response()->json($orders);
+        return response()->json(DB::table('orders')->where('id', $order)->first());
     }
 
-    public function user_order($uid)
+    /**
+     * Replaces order_details() and readorderdetails(), which were identical.
+     */
+    public function items(int $order): JsonResponse
     {
-        $orders = DB::table('orders')->where('user_id', $uid)->get();
-        return response()->json($orders);
+        return response()->json(DB::table('order_items')->where('order_id', $order)->get());
     }
 
-    public function order_details($oid)
+    /**
+     * Replaces user_order() and readuserorder(), which were identical.
+     */
+    public function byUser(int $user): JsonResponse
     {
-        $items = DB::table('order_items')->where('order_id', $oid)->get();
-        return response()->json($items);
+        return response()->json(DB::table('orders')->where('user_id', $user)->get());
     }
 
-    public function readuserorder($uid)
+    public function userDetails(int $user): JsonResponse
     {
-        $orders = DB::table('orders')->where('user_id', $uid)->get();
-        return response()->json($orders);
+        return response()->json(DB::table('users')->where('id', $user)->first());
     }
 
-    public function readorderdetails($oid)
+    public function updateStatus(UpdateOrderStatusRequest $request, int $order): JsonResponse
     {
-        $items = DB::table('order_items')->where('order_id', $oid)->get();
-        return response()->json($items);
-    }
+        $updated = DB::table('orders')
+            ->where('id', $order)
+            ->update(['status' => $request->validated('status')]);
 
-    public function changestatus(Request $request)
-    {
-        $id     = $request->input('id');
-        $status = $request->input('status');
-        DB::table('orders')->where('id', $id)->update(['status' => $status]);
-        return response()->json(['success' => true]);
-    }
-
-    public function orderdetils($id)
-    {
-        $order = DB::table('orders')->where('id', $id)->first();
-        return response()->json($order);
-    }
-
-    public function user_details($id)
-    {
-        $user = DB::table('users')->where('id', $id)->first();
-        return response()->json($user);
+        return response()->json(['success' => $updated > 0]);
     }
 }

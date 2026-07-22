@@ -91,27 +91,34 @@ Route::group(['as' => 'admin.'], function () {
             ->name('families.categoryfamily');
         Route::resource('families', FamilyController::class)->except(['create', 'edit']);
 
-        //product related routes
+        //product related routes — literal segments before products/{product}
         Route::controller(ProductController::class)->group(function () {
-            Route::get('product', 'index')->name('product');
-            Route::get('readproduct', 'readall');
-            Route::get('featuredproduct', 'indexfeature')->name('featuredproduct');
-            Route::get('readfeaturedproduct', 'readallfeature');
-            Route::get('addproduct', 'add_product')->name('addproduct');
-            Route::post('addproduct', 'insert');
-            Route::post('updateproduct', 'edit');
-            Route::get('editproduct/{id}', 'edit_product');
-            Route::get('deleteproduct', 'delete');
-            Route::get('makefeature/{id}', 'feature');
-            Route::get('removefeature/{id}', 'remove_feature');
-            Route::get('getproduct1/{id}', 'getproduct');
-            Route::get('categoryproduct/{sid}', 'categoryproduct');
-            Route::get('readcategoryproduct/{sid}', 'readcategoryproduct')->name('readcategoryproduct');
-            Route::get('subcategoryproduct/{sid}', 'subcategoryproduct')->name('subcategory_product');
-            Route::get('readsubcategoryproduct/{sid}', 'readsubcategoryproduct');
-            Route::get('check_validity/{card_number}/{store_id}', 'check_validity');
-            Route::get('check_validity1/{card_number}/{store_id}/{card_number1}','check_validity1');
-            Route::get('productdetails/{id}', 'productdetails');
+            Route::get('products', 'index')->name('products.index');
+            Route::get('products/data', 'data')->name('products.data');
+            Route::get('products/create', 'create')->name('products.create');
+            Route::get('products/featured', 'featuredScreen')->name('products.featured');
+            Route::get('products/featured/data', 'featuredData')->name('products.featured.data');
+
+            Route::get('products/by-category/{id}', 'categoryScreen')->name('products.byCategory');
+            Route::get('products/by-category/{id}/data', 'byCategory')->name('products.byCategory.data');
+            Route::get('products/by-subcategory/{id}', 'subCategoryScreen')
+                ->name('products.bySubCategory');
+            Route::get('products/by-subcategory/{id}/data', 'bySubCategory')
+                ->name('products.bySubCategory.data');
+
+            Route::get('products/check-validity/{card_number}/{store_id}', 'checkValidity')
+                ->name('products.checkValidity');
+            Route::get('products/check-validity/{card_number}/{store_id}/{card_number1}', 'checkValidityPair')
+                ->name('products.checkValidityPair');
+
+            Route::post('products', 'store')->name('products.store');
+            Route::get('products/{product}', 'show')->name('products.show');
+            Route::get('products/{product}/edit', 'editForm')->name('products.edit');
+            Route::get('products/{product}/details', 'details')->name('products.details');
+            Route::put('products/{product}', 'update')->name('products.update');
+            Route::delete('products/{product}', 'destroy')->name('products.destroy');
+            Route::patch('products/{product}/feature', 'feature')->name('products.feature');
+            Route::patch('products/{product}/unfeature', 'unfeature')->name('products.unfeature');
         });
 
         //product gallery — nested so the product comes from the URL, not the session
@@ -167,17 +174,14 @@ Route::group(['as' => 'admin.'], function () {
             Route::delete('about_page/team/{team}', 'destroyTeamImage')->name('about.team.destroy');
         });
 
-        //orders related routes
+        //orders related routes — JSON only; there is no order screen (see below)
         Route::controller(OrderController::class)->group(function () {
-            Route::get('order', 'index')->name('order');
-            Route::get('readorder', 'readall');
-            Route::get('userorder/{uid}', 'user_order');
-            Route::get('orderitem/{oid}', 'order_details');
-            Route::get('readuserorder/{uid}', 'readuserorder');
-            Route::get('readorderitem/{oid}', 'readorderdetails');
-            Route::post('changestatus', 'changestatus');
-            Route::get('orderdetails/{id}', 'orderdetils');
-            Route::get('userdetails/{id}', 'user_details');
+            Route::get('orders/data', 'data')->name('orders.data');
+            Route::get('orders/{order}', 'show')->name('orders.show');
+            Route::get('orders/{order}/items', 'items')->name('orders.items');
+            Route::patch('orders/{order}/status', 'updateStatus')->name('orders.updateStatus');
+            Route::get('users/{user}/orders', 'byUser')->name('orders.byUser');
+            Route::get('users/{user}/details', 'userDetails')->name('orders.userDetails');
         });
 
     }); // end auth middleware group

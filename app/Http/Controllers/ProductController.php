@@ -1,292 +1,301 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
+
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\ProductGallery;
 use App\Models\ProductParameter;
+use App\Traits\HandlesMediaUploads;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function index()
+    use HandlesMediaUploads;
+
+    private const PHOTO_DIR   = 'productbackground';
+    private const GALLERY_DIR = 'productimage';
+    private const CSV_DIR     = 'productcsv';
+
+    /** Columns the parameter CSV supplies, in column order. */
+    private const CSV_COLUMNS = [
+        'Model', 'SerialNumber', 'PowerKw', 'PowerHp', 'q', 'h', 'v',
+        'Discharge_diameter', 'Hertz', 'Material', 'RPM', 'link',
+    ];
+
+    // ---- screens -------------------------------------------------------
+
+    public function index(): View
     {
-         $products= Cache::remember('products', 60, function () {
-            return Product::select('id','name','photo')->get();
-        });
-        return view('Pages.product.product')->with('products', $products); 
-    }
-    public function productdetails($id)
-    {
-        $productDetails= Cache::remember('product_'.$id, 60, function () use ($id) {
-            return Product::findOrFail($id);
-        });
-       
-        return view('Pages.product.productdetails', [
-            'productDetails' => $productDetails
-        ]); 
-        
-    }
-    public function readall()  //list all category
-    {
-       $products = Cache::remember('products_all', 60, function () {
-           return Product::select('is_featured','products.id', 'products.photo','products.name','products.link')->get();
-       })
-       ->map(function ($product) {
-           $product->photo = $product->photo;
-           return $product;
-       }); 
-       return response()->json(['data' => $products]);
-    } 
-    public function readallfeature()  //list all category
-    {
-       $products = Cache::remember('products_featured', 60, function () {
-           return Product::select('is_featured', 'id', 'photo', 'name', 'link')->where('is_featured', 1)->get();
-       })
-       ->map(function ($product) {
-           $product->photo = $product->photo;
-           return $product;
-       }); 
-       return response()->json(['data' => $products]);
-    } 
-    public function indexfeature()
-    {
-        return view('Pages.product.featureproduct'); 
-    }
-    public function categoryproduct($id)
-    {
-        return view('Pages.product.categoryproduct')->with('id',$id);
+        return view('Pages.product.product');
     }
 
-    public function readcategoryproduct($id)
+    public function create(): View
     {
-       
-        $products = Cache::remember('products_category_'.$id, 60, function () use ($id) {
-            return Product::whereHas('categories', function ($q) use ($id) {
-                $q->where('categories.id', $id);
-            })->select('is_featured', 'id', 'photo', 'name', 'link')->get();
-        });
-       return response()->json(['data' => $products]);
+        return view('Pages.product.addproduct');
     }
 
-    public function subcategoryproduct($id)
+    public function editForm(Product $product): View
     {
-        return view('Pages.product.subcategoryproduct')->with('id',$id);
+        return view('Pages.product.editproduct')->with('product', $product);
     }
 
-    public function readsubcategoryproduct($id)
+    public function details(Product $product): View
     {
-        $products = Cache::remember('products_subcategory_'.$id, 60, function () use ($id) {
-            return Product::whereHas('subCategories', function ($q) use ($id) {
-                $q->where('sub_category.id', $id);
-            })->select('is_featured', 'id', 'photo', 'name', 'link')->get();
-        });
-        return response()->json(['data' => $products]);
+        return view('Pages.product.productdetails', ['productDetails' => $product]);
     }
-    public function add_category($product_id, $category_id)
+
+    public function featuredScreen(): View
     {
-        Product::findOrFail($product_id)->categories()->attach($category_id);
+        return view('Pages.product.featureproduct');
     }
-    public function add_subcategory($product_id, $subcategory_id)
+
+    public function categoryScreen(int $id): View
     {
-        Product::findOrFail($product_id)->subCategories()->attach($subcategory_id);
+        return view('Pages.product.categoryproduct')->with('id', $id);
     }
-    public function add_gallery($product_id, $photo)
+
+    public function subCategoryScreen(int $id): View
     {
-        ProductGallery::create([
-            'product_id' => $product_id,
-            'path'       => $photo,
-        ]);
+        return view('Pages.product.subcategoryproduct')->with('id', $id);
     }
-    public function add_parameter($product_id, $parameter1, $parameter2, $parameter3, $parameter4, $parameter5, $parameter6, $parameter7, $parameter8, $parameter9, $parameter11, $parameter12, $parameter13)
+
+    // ---- feeds ---------------------------------------------------------
+
+    public function data(): JsonResponse
     {
-        ProductParameter::create([
-            'product_id'         => $product_id,
-            'Model'              => $parameter1,
-            'SerialNumber'       => $parameter2,
-            'PowerKw'            => $parameter3,
-            'PowerHp'            => $parameter4,
-            'q'                  => $parameter5,
-            'h'                  => $parameter6,
-            'v'                  => $parameter7,
-            'Discharge_diameter' => $parameter8,
-            'Hertz'              => $parameter9,
-            'Material'           => $parameter11,
-            'RPM'                => $parameter12,
-            'link'               => $parameter13,
-        ]);
+        return $this->rows('products_all', fn () => Product::query());
     }
-    public function checkUploadedFileProperties($extension, $fileSize)
-{
-$valid_extension = array("csv", "xlsx"); //Only want csv and excel files
-$maxFileSize = 2097152; // Uploaded file size limit is 2mb
-if (in_array(strtolower($extension), $valid_extension)) {
-if ($fileSize <= $maxFileSize) {
-} else {
-throw new \Exception('No file was uploaded', Response::HTTP_REQUEST_ENTITY_TOO_LARGE); //413 error
-}
-} else {
-throw new \Exception('Invalid file extension', Response::HTTP_UNSUPPORTED_MEDIA_TYPE); //415 error
-}
-}
-      public function insert(Request $request)
+
+    public function featuredData(): JsonResponse
     {
-        $english_name=$request->input('name');
-        $shortdescreption=$request->input('shortdescreption');
-        $file1 = $request->file('background');
-        $link=$request->input('link');
-        $destinationPath1 = public_path('productbackground');
-        $filepath1 = time() . $file1->getClientOriginalName();
-        $file1->move($destinationPath1, $filepath1);
-        $category_id=$request->input('cat_id');
-        $images = $request->file('images');
+        return $this->rows('products_featured', fn () => Product::where('is_featured', 1));
+    }
+
+    public function byCategory(int $id): JsonResponse
+    {
+        return $this->rows(
+            'products_category_' . $id,
+            fn () => Product::whereHas('categories', fn ($q) => $q->where('categories.id', $id))
+        );
+    }
+
+    public function bySubCategory(int $id): JsonResponse
+    {
+        return $this->rows(
+            'products_subcategory_' . $id,
+            fn () => Product::whereHas('subCategories', fn ($q) => $q->where('sub_category.id', $id))
+        );
+    }
+
+    public function show(Product $product): JsonResponse
+    {
+        return response()->json(['data' => [$this->toGridRow($product)]]);
+    }
+
+    // ---- writes --------------------------------------------------------
+
+    public function store(StoreProductRequest $request): RedirectResponse
+    {
         $product = Product::create([
-            'name'        => $english_name,
-            'descreption' => $shortdescreption,
-            'photo'       => 'public/productbackground/' . $filepath1,
+            'name'        => $request->validated('name'),
+            'descreption' => $request->validated('shortdescreption'),
+            'photo'       => $this->storeMedia($request->file('background'), self::PHOTO_DIR),
             'is_featured' => 0,
-            'family_id'   => $category_id,
-            'link'        => $link,
+            'family_id'   => $request->validated('cat_id'),
+            'link'        => $request->validated('link') ?? '',
         ]);
-    if($images !=null)
-    {
-     foreach($images as $image)
-     {
-        $destinationPath1 = public_path('productimage');
-        $filepath1 = time() . $image->getClientOriginalName();
-        $image->move($destinationPath1, $filepath1);
-        $this->add_gallery($product->id, 'public/productimage/'.$filepath1);
-     }
-    }
-     //import CSV
-      $file = $request->file('parameter');
-if ($file) {
-$filename = $file->getClientOriginalName();
-$extension = $file->getClientOriginalExtension(); //Get extension of uploaded file
-$tempPath = $file->getRealPath();
-$fileSize = $file->getSize(); //Get size of uploaded file in bytes
-//Check for file extension and size
-$this->checkUploadedFileProperties($extension, $fileSize);
-//Where uploaded file will be stored on the server 
-$location = public_path('productcsv');; //Created an "uploads" folder for that
-// Upload file
-$file->move($location, $filename);
-// In case the uploaded file path is to be stored in the database 
-$filepath ='public/productcsv/' . $filename;
-// Reading file
-$file = fopen($filepath, "r");
-$importData_arr = array(); // Read through the file and store the contents as an array
-$i = 0;
-//Read the contents of the uploaded file 
-while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
-$num = count($filedata);
-// Skip first row (Remove below comment if you want to skip the first row)
-if ($i == 0) {
-$i++;
-continue;
-}
-for ($c = 0; $c < $num; $c++) {
-    $importData_arr[$i][] = $filedata[$c];
-    }
-    $i++;
-    }
-    fclose($file); //Close after reading
-    $j = 0;
-    foreach ($importData_arr as $importData) {
-        $j++;
-        $this->add_parameter($product->id, $importData[0],$importData[1],$importData[2],$importData[3],$importData[4],$importData[5],$importData[6],$importData[7],$importData[8],$importData[9],$importData[10],$importData[11]);
-    }
-}
-    return redirect()->route('product');
-    }
-    public function delete(Request $request)
-    {
-    $id = $request->input('id');
-    Product::findOrFail($id)->delete();
-    ProductGallery::where('product_id', $id)->delete();
-    ProductParameter::where('product_id', $id)->delete();
-    return redirect()->back();
-    }
-     public function getproduct ($id) // to show customer details
-    {
-        $product = Product::findOrFail($id);
-        return response()->json(['data' => [$product]]);
-    }
-      public function edit(Request $request)
-    {
-        $id=$request->input('Eid');
-        $background_name=$request->input('Elogo_name');
-        $english_name=$request->input('Ename');
-        $short_descreption=$request->input('Eshortdescreption');
-        $link=$request->input('Elink');
-        $category_id=$request->input('Ecat_id');
-        $product = Product::findOrFail($id);
-        $file1 = $request->file('Ebackground');
-        if ($file1 != null) {
-            $destinationPath1 = public_path('productbackground');
-            $filepath1 = time() . $file1->getClientOriginalName();
-            $file1->move($destinationPath1, $filepath1);
-            $product->update([
-                'name'        => $english_name,
-                'descreption' => $short_descreption,
-                'family_id'   => $category_id,
-                'photo'       => 'public/productbackground/' . $filepath1,
-                'link'        => $link,
-            ]);
-        } else {
-            $product->update([
-                'name'        => $english_name,
-                'descreption' => $short_descreption,
-                'family_id'   => $category_id,
-                'link'        => $link,
+
+        foreach ($request->file('images') ?? [] as $image) {
+            ProductGallery::create([
+                'product_id' => $product->id,
+                'path'       => $this->storeMedia($image, self::GALLERY_DIR),
             ]);
         }
-        return redirect('product');
 
-    }
-public function add_product()
-{
-    return view('Pages.product.addproduct'); 
+        if ($csv = $request->file('parameter')) {
+            $this->importParameters($product, $csv);
+        }
 
-}
-public function edit_product($id)
-{
-    $product = Product::findOrFail($id);
-    return view('Pages.product.editproduct')->with('product',$product); 
+        $this->forgetProductCaches();
 
-}
-    public function feature($id)
-    {
-        Product::findOrFail($id)?->update(['is_featured' => 1]);
-        return redirect()->back();
-    }
-public function remove_feature($id)
-{
-  
-    Product::findOrFail($id)?->update(['is_featured' => 0]);
-
-     return redirect()->back();
-}
-
-    public function check_validity(Request $request, $card_number, $store_id)
-    {
-        $product = Product::where('card_number', $card_number)
-            ->where('store_id', $store_id)
-            ->first();
-
-        echo json_encode(['valid' => $product ? 1 : 0]);
+        return redirect()->route('admin.products.index')->with('status', 'Product created.');
     }
 
-    public function check_validity1(Request $request, $card_number, $store_id, $card_number1)
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
-        $products = Product::whereIn('card_number', [$card_number, $card_number1])
-            ->where('store_id', $store_id)
+        $attributes = [
+            'name'        => $request->validated('name'),
+            'descreption' => $request->validated('shortdescreption'),
+            'family_id'   => $request->validated('cat_id'),
+            'link'        => $request->validated('link') ?? '',
+        ];
+
+        $oldPhoto = $product->getRawOriginal('photo');
+
+        if ($file = $request->file('background')) {
+            $attributes['photo'] = $this->storeMedia($file, self::PHOTO_DIR);
+        }
+
+        $product->update($attributes);
+
+        if (isset($attributes['photo'])) {
+            $this->deleteMedia($oldPhoto, self::PHOTO_DIR);
+        }
+
+        $this->forgetProductCaches($product);
+
+        return redirect()->route('admin.products.index')->with('status', 'Product updated.');
+    }
+
+    public function destroy(Product $product): Response
+    {
+        $photo = $product->getRawOriginal('photo');
+        $galleryPaths = ProductGallery::where('product_id', $product->id)
+            ->get()
+            ->map(fn (ProductGallery $image) => $image->getRawOriginal('path'));
+
+        ProductGallery::where('product_id', $product->id)->delete();
+        ProductParameter::where('product_id', $product->id)->delete();
+        $product->categories()->detach();
+        $product->subCategories()->detach();
+        $product->delete();
+
+        // The old delete() left every uploaded file behind.
+        $this->deleteMedia($photo, self::PHOTO_DIR);
+
+        foreach ($galleryPaths as $path) {
+            $this->deleteMedia($path, self::GALLERY_DIR);
+        }
+
+        $this->forgetProductCaches($product);
+
+        return response()->noContent();
+    }
+
+    public function feature(Product $product): RedirectResponse
+    {
+        $product->update(['is_featured' => 1]);
+        $this->forgetProductCaches($product);
+
+        return redirect()->back()->with('status', 'Product featured.');
+    }
+
+    public function unfeature(Product $product): RedirectResponse
+    {
+        $product->update(['is_featured' => 0]);
+        $this->forgetProductCaches($product);
+
+        return redirect()->back()->with('status', 'Product unfeatured.');
+    }
+
+    // ---- card validity -------------------------------------------------
+    //
+    // These query a `card_number` column that is not in any migration, so they
+    // only work if the column was added to the database by hand. Left in place
+    // rather than removed, but they are almost certainly dead.
+
+    public function checkValidity(string $cardNumber, int $storeId): JsonResponse
+    {
+        $exists = Product::where('card_number', $cardNumber)
+            ->where('store_id', $storeId)
+            ->exists();
+
+        return response()->json(['valid' => $exists ? 1 : 0]);
+    }
+
+    public function checkValidityPair(string $cardNumber, int $storeId, string $cardNumber1): JsonResponse
+    {
+        $products = Product::whereIn('card_number', [$cardNumber, $cardNumber1])
+            ->where('store_id', $storeId)
             ->get();
 
-        echo json_encode(['valid' => $products->count(), 'products' => $products]);
+        return response()->json(['valid' => $products->count(), 'products' => $products]);
     }
 
+    // ---- internals -----------------------------------------------------
+
+    /**
+     * HasMediaUrls resolves `photo` in getAttribute(), which toArray()
+     * bypasses, so rows are cached as plain arrays already carrying URLs.
+     */
+    private function rows(string $cacheKey, callable $query): JsonResponse
+    {
+        $products = Cache::remember($cacheKey, now()->addMinutes(10), fn () => $query()
+            ->get()
+            ->map(fn (Product $product): array => $this->toGridRow($product))
+            ->all());
+
+        return response()->json(['data' => $products]);
+    }
+
+    private function toGridRow(Product $product): array
+    {
+        return [
+            'id'          => $product->id,
+            'name'        => $product->name,
+            'photo'       => $product->photo,
+            'link'        => $product->link,
+            'is_featured' => $product->is_featured,
+            'family_id'   => $product->family_id,
+            'descreption' => $product->descreption,
+        ];
+    }
+
+    /**
+     * Read the parameter CSV straight from its temporary upload path.
+     *
+     * The old importer moved the file into public/ under the caller's own
+     * filename and then reopened it through a *relative* path, which only
+     * resolved when the working directory happened to be the web root.
+     */
+    private function importParameters(Product $product, UploadedFile $csv): void
+    {
+        $handle = fopen($csv->getRealPath(), 'r');
+
+        if ($handle === false) {
+            return;
+        }
+
+        $isHeader = true;
+
+        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+            if ($isHeader) {
+                $isHeader = false;
+                continue;
+            }
+
+            $attributes = ['product_id' => $product->id];
+
+            foreach (self::CSV_COLUMNS as $i => $column) {
+                $attributes[$column] = $row[$i] ?? null;
+            }
+
+            ProductParameter::create($attributes);
+        }
+
+        fclose($handle);
+
+        // Keep a copy for reference, under a generated name rather than the
+        // uploaded one, which was user-controlled.
+        $csv->move(public_path(self::CSV_DIR), Str::uuid() . '.' . $csv->getClientOriginalExtension());
+    }
+
+    private function forgetProductCaches(?Product $product = null): void
+    {
+        foreach (['products', 'products_all', 'products_featured'] as $key) {
+            Cache::forget($key);
+        }
+
+        if ($product) {
+            Cache::forget('product_' . $product->id);
+        }
+    }
 }

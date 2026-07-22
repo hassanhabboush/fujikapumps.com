@@ -24,8 +24,9 @@
     width: 100%;">
      
                 <div  class="k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                  <form method="POST" action="{{url('addproduct')}}" enctype="multipart/form-data">
-                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
+                      @csrf
+                      <input type="hidden" name="_form" value="add">
                         <div class="k-edit-form-container">
                            
                                  <div class="row">

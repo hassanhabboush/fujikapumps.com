@@ -26,8 +26,9 @@
     width: 100%;">
      
                 <div  class="k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                  <form method="POST" action="{{url('updateproduct')}}" enctype="multipart/form-data">
-                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data">
+                      @csrf
+                      @method('PUT')
                         <div class="k-edit-form-container">
                            
                                  <div class="row">
@@ -35,25 +36,22 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Product Name</label>
                                                     <br>
-                                                    Elogo_name
-                                                    <input type="hidden" class="k-input k-textbox" name="Eid" value="{{$product->id}}" required="required" data-required-msg="is required.">
-                                                    <input type="hidden" class="k-input k-textbox" name=" Elogo_name" value="{{$product->photo}}" required="required" data-required-msg="is required.">
-
-                                                    <input type="text" class="k-input k-textbox" name="Ename" value="{{$product->name}}" required="required" data-required-msg="is required.">
+                                                                                                        
+                                                    <input type="text" class="k-input k-textbox" name="name" value="{{ old('name', $product->name) }}" required="required" data-required-msg="is required.">
                                             </div>
                                     </div>
                                      <div class="col-md-11">
                                             <div class="k-edit-label">
                                                     <label for="lname">Product Link</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="Elink" id="Elink" value="{{$product->link}} " required="required" data-required-msg="is required.">
+                                                    <input type="text" class="k-input k-textbox" name="link" id="Elink" value="{{ old('link', $product->link) }}" required="required" data-required-msg="is required.">
                                             </div>
                                     </div>
                                     <div class="col-md-11" style="display:none;">
                                             <div class="k-edit-label">
                                                     <label for="lname">Descreption</label>
                                                     <br>
-                                                    <textarea class="form-control" name="Eshortdescreption" id="summernote" require>{{$product->descreption}}</textarea>
+                                                    <textarea class="form-control" name="shortdescreption" id="summernote" require>{{$product->descreption}}</textarea>
 
                                             </div>
                                     </div>
@@ -65,7 +63,7 @@
                                             <div class="k-edit-label" style="margin:0px;">
                                                     <label for="lname">Family Name</label>
                                                     <br>
-                                                  <select class="k-input k-textbox selectbox" name="Ecat_id">
+                                                  <select class="k-input k-textbox selectbox" name="cat_id">
                                                           @foreach(DB::table('family')->get() as $item)
                                                           @if($item->id==$product->family_id)
                                                    <option style="color:gray;" value="{{ $item->id }}" selected>{{ $item->english_name}}</option>

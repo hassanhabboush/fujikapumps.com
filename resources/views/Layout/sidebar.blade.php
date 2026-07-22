@@ -50,14 +50,14 @@
                                     </a>
                                 </li>
                                 <li class="product">
-                                    <a href="{{route('admin.product')}}">
+                                    <a href="{{route('admin.products.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-cpu"></i></span>
                                         <span class="pcoded-mtext">Products</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('products')->count()}}</span>
                                     </a>
                                 </li>
                                 <li class="product">
-                                    <a href="{{route('admin.featuredproduct')}}">
+                                    <a href="{{route('admin.products.featured')}}">
                                         <span class="pcoded-micon"><i class="feather icon-info"></i></span>
                                         <span class="pcoded-mtext">Featured Products</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('products')->where('is_featured',1)->count()}}</span>
