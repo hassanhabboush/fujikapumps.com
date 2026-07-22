@@ -4,7 +4,14 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Store extends Migration
+/**
+ * Anonymous so this file stops declaring a global `Store` class. Composer
+ * classmaps database/, and once that class was loaded PHP's case-insensitive
+ * class lookup made class_exists('store') true — which breaks any
+ * Route::controller(...) group registering a route with the string action
+ * 'store' (see the family routes in routes/web.php).
+ */
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -32,4 +39,4 @@ class Store extends Migration
     {
         Schema::dropIfExists('stores');
     }
-}
+};

@@ -4,18 +4,19 @@ namespace App\Models;
 
 use App\Traits\HasMediaUrls;
 use App\Traits\InvalidatesCache;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SubCategory;
 
 class Category extends Model
 {
-    use HasMediaUrls, InvalidatesCache;
+    use HasFactory, HasMediaUrls, InvalidatesCache;
 
     protected $table = 'categories';
 
     protected $guarded = [];
 
-    protected array $cacheKeys = ['headerCategories'];
+    protected array $cacheKeys = ['headerCategories', 'categories'];
 
     public function subCategories()
     {

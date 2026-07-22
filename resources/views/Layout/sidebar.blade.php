@@ -6,7 +6,7 @@
                             <ul class="pcoded-item pcoded-left-item">
                                  @if(Auth::user()->role==1 || Auth::user()->role==2 )
                                 <li>
-                                    <a href="{{route('admin.category')}}">
+                                    <a href="{{route('admin.categories.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-box"></i></span>
                                         <span class="pcoded-mtext">Category</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('categories')->count()}}</span>

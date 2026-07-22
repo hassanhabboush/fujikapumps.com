@@ -44,7 +44,7 @@
        <div class="k-window-actions"><a role="button" href="#" onclick='hideme()' class="k-window-action k-link">
            <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                 <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                  <form method="POST" action="{{url('addcategory')}}" enctype="multipart/form-data">
+                  <form method="POST" action="{{route('admin.categories.store')}}" enctype="multipart/form-data">
                       <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="k-edit-form-container">
                             <div class="row" style="margin-left: 0px;margin-right: 0px;">

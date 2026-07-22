@@ -32,14 +32,12 @@
                            if (xmlhttp.readyState==4 && xmlhttp.status==200)
                             {
                                  var data = JSON.parse(xmlhttp.responseText);
-                                 console.log(data);
-                                 document.getElementById("Eid").value=data.data[0].id;
                                  document.getElementById("Eenglish_name").value=data.data[0].english_name;
-                                  document.getElementById("Ebackground_name").value=data.data[0].background;
-								
+                                 // The id lives in the action URL now that update is a PUT to categories/{category}.
+                                 document.getElementById("EditCategoryForm").action="{{ url('categories') }}/" + data.data[0].id;
                                }
-                       }     
-                           xmlhttp.open("GET", "getcategory/" + atts.name , true);
+                       }
+                           xmlhttp.open("GET", "{{ url('categories') }}/" + atts.name , true);
                            xmlhttp.send();
                            EshowMe();
                          }
@@ -59,17 +57,16 @@
                <div class="k-window-actions"><a role="button" href="#" onclick='Ehideme()' class="k-window-action k-link">
                    <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                                       <form method="POST" action="{{url('editcategory')}}" enctype="multipart/form-data">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="text"  name="Eid" id="Eid" style="display:none;">
-                                               <input type="text"  name="Ebackground_name" id="Ebackground_name" style="display:none;">
+                                       <form method="POST" id="EditCategoryForm" action="" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
                                                 <div class="k-edit-form-container">
                                                      <div class="row" style="margin-left: 0px;margin-right: 0px;">
                                 <div class="col-md-11">
                                    <div class="k-edit-label">
                                        <label for="fname">Category Name</label>
                                        <br>
-                                       <input type="text" class="k-input k-textbox" name="Eenglish_name" id="Eenglish_name" required="required" data-required-msg="is required.">
+                                       <input type="text" class="k-input k-textbox" name="english_name" id="Eenglish_name" required="required" data-required-msg="is required.">
                                    </div>
                                 </div>
                                
@@ -81,7 +78,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Background</label>
                                                     <br>
-                                                   <input type="file" style="    width: 98% !important;" name="Ebackground" id="Ebackground"  >                                            
+                                                   <input type="file" style="    width: 98% !important;" name="background" id="Ebackground"  >                                          
                                                    </div>
                                      </div>
                                     
