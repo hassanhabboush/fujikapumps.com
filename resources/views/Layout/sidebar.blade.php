@@ -27,7 +27,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{route('admin.family')}}">
+                                    <a href="{{route('admin.families.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-package"></i></span>
                                         <span class="pcoded-mtext">Family</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('family')->count()}}</span>
@@ -93,7 +93,7 @@
                                     </a>
                                 </li>
                                  <li class="source">
-                                    <a href="{{route('admin.contact')}}">
+                                    <a href="{{route('admin.contacts.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-feather"></i></span>
                                         <span class="pcoded-mtext">Contact Info</span>
                                     </a>

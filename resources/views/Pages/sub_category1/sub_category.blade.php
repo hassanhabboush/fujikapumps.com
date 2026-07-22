@@ -71,7 +71,7 @@
                            { field: "id" ,title:"ID"},
                        { field: "english_name" ,title:"Name"},
                        { field: "background" ,title:"Background",template: "<img src='${background}' style='width: 37px;' alt='Logo'>"},
-                       { field: "id" ,title:"Products",template: "<a title='Family' class='k-button k-button-icontext' href='subcategoryfamily/${id}'>Family</a>"},
+                       { field: "id" ,title:"Products",template: "<a title='Family' class='k-button k-button-icontext' href='{{ url("families/subcategory") }}/${id}'>Family</a>"},
                        { field: "id" ,title:"Edit",template: "<a title='Edit Store' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'>Edit</a>"},
                        {command: ["destroy"], title: "Delete" }
 

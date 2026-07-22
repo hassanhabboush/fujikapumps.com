@@ -60,12 +60,8 @@ Route::group(['as' => 'admin.'], function () {
         Route::get('sliders/data', [SliderController::class, 'data'])->name('sliders.data');
         Route::resource('sliders', SliderController::class)->except(['create', 'edit']);
 
-        //contact related routes
-        Route::controller(ContactController::class)->group(function () {
-            Route::get('contact', 'index')->name('contact');
-            Route::get('getcontact/{id}', 'getcontact');
-            Route::post('editcontact', 'edit');
-        });
+        //contact related routes — a single row, so no store/destroy
+        Route::resource('contacts', ContactController::class)->only(['index', 'show', 'update']);
 
         //subcategory related routes
         Route::controller(SubCategoryController::class)->group(function () {
@@ -92,16 +88,13 @@ Route::group(['as' => 'admin.'], function () {
         });
 
         //family related routes
-        Route::controller(FamilyController::class)->group(function () {
-            Route::get('family', 'index')->name('family');
-            Route::get('readfamily', 'list')->name('family.list');
-            Route::post('family', 'store')->name('family.store');
-            Route::get('family/{family}', 'show')->name('family.show');
-            Route::put('family/{family}', 'update')->name('family.update');
-            Route::delete('family/{family}', 'destroy')->name('family.destroy');
-            Route::get('subcategoryfamily/{cid}', 'categoryfamily')->name('family.categoryfamily');
-            Route::get('readsubfamily/{cid}', 'listByCategory')->name('family.listByCategory');
-        });
+        // Both declared before the resource so they are not read as families/{family}.
+        Route::get('families/data', [FamilyController::class, 'data'])->name('families.data');
+        Route::get('families/by-subcategory/{cid}', [FamilyController::class, 'listByCategory'])
+            ->name('families.listByCategory');
+        Route::get('families/subcategory/{cid}', [FamilyController::class, 'categoryfamily'])
+            ->name('families.categoryfamily');
+        Route::resource('families', FamilyController::class)->except(['create', 'edit']);
 
         //product related routes
         Route::controller(ProductController::class)->group(function () {

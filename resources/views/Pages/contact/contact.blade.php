@@ -66,7 +66,7 @@
                                  
                                }
                        }     
-                           xmlhttp.open("GET", "getcontact/1"  , true);
+                           xmlhttp.open("GET", "{{ url('contacts/1') }}"  , true);
                            xmlhttp.send();
                            EshowMe();
                          }
@@ -87,9 +87,10 @@
             width: 80%;">
 
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                                       <form method="POST" action="editcontact" enctype="multipart/form-data">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="text"  name="Eid" id="Eid" style="display:none;">
+                                       <form method="POST" action="{{ route('admin.contacts.update', 1) }}" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                            
                                             
                                                 <div class="k-edit-form-container">
                                                     
@@ -98,7 +99,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Facebook</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="facebook" id="facebook"   data-required-msg="is required.">
+                                                    <input type="text" class="k-input k-textbox" name="Facebook" id="facebook"   data-required-msg="is required.">
                                             </div>
                                     </div>
                                    
@@ -106,7 +107,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Twitter</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="twitter" id="twitter"   data-required-msg="is required.">
+                                                    <input type="text" class="k-input k-textbox" name="Twitter" id="twitter"   data-required-msg="is required.">
                                             </div>
                                     </div>
                         </div>
@@ -123,7 +124,7 @@
                                             <div class="k-edit-label" style="margin:0px;">
                                                     <label for="lname">Instagram</label>
                                                     <br>
-                                                    <input type="text" step="0.01" class="k-input k-textbox" name="Instagram" id="Instagram"   data-required-msg="is required.">
+                                                    <input type="text" step="0.01" class="k-input k-textbox" name="instagram" id="Instagram"   data-required-msg="is required.">
                                             </div>
                                     </div>
                         </div>
@@ -133,14 +134,14 @@
                                             <div class="k-edit-label" style="margin:0px;">
                                                     <label for="lname">Whatsapp</label>
                                                     <br>
-                                                    <input type="text" step="0.01" class="k-input k-textbox" name="Whatsapp" id="Whatsapp"   data-required-msg="is required.">
+                                                    <input type="text" step="0.01" class="k-input k-textbox" name="whatsapp" id="Whatsapp"   data-required-msg="is required.">
                                             </div>
                                     </div>
                                     <div class="col-md-6">
                                             <div class="k-edit-label" style="margin:0px;">
                                                     <label for="lname">Email</label>
                                                     <br>
-                                                    <input type="text" step="0.01" class="k-input k-textbox" name="Email" id="Email"   data-required-msg="is required.">
+                                                    <input type="text" step="0.01" class="k-input k-textbox" name="email" id="Email"   data-required-msg="is required.">
                                             </div>
                                     </div>
                         </div>
@@ -157,7 +158,7 @@
                                             <div class="k-edit-label" style="margin:0px;">
                                                     <label for="lname">Phone2</label>
                                                     <br>
-                                                    <input type="text" step="0.01" class="k-input k-textbox" name="phone2" id="phone2"   data-required-msg="is required.">
+                                                    <input type="text" step="0.01" class="k-input k-textbox" name="phon2" id="phone2"   data-required-msg="is required.">
                                             </div>
                                     </div>
                         </div>

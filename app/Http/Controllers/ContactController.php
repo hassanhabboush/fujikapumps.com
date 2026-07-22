@@ -1,34 +1,34 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
+
+use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class ContactController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         return view('Pages.contact.contact');
     }
-   
-     public function getcontact ($id) // to show customer details
+
+    public function show(Contact $contact): JsonResponse
     {
-        $contact = Contact::findOrFail($id);
         return response()->json(['data' => [$contact]]);
     }
-      public function edit(Request $request)
+
+    public function update(UpdateContactRequest $request, Contact $contact): RedirectResponse
     {
-        
-        Contact::findOrFail(1)->update([
-            'Facebook'  => $request->input('facebook'),
-            'Twitter'   => $request->input('twitter'),
-            'Linkedin'  => $request->input('Linkedin'),
-            'instagram' => $request->input('Instagram'),
-            'whatsapp'  => $request->input('Whatsapp'),
-            'email'     => $request->input('Email'),
-            'phone1'    => $request->input('phone1'),
-            'phon2'     => $request->input('phone2'),
-            'address'   => $request->input('address'),
-        ]);
-    return redirect()->back();
+        $contact->update($request->validated());
+
+        // AppServiceProvider shares this globally; Contact's InvalidatesCache
+        // covers it, but forget explicitly so the site never serves stale info.
+        Cache::forget('contact');
+
+        return redirect()->back()->with('status', 'Contact details updated.');
     }
 }

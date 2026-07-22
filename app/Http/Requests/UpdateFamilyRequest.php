@@ -21,4 +21,25 @@ class UpdateFamilyRequest extends FormRequest
             'link'       => ['nullable', 'string', 'max:255'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name'       => 'family name',
+            'cat_id'     => 'sub categories',
+            'background' => 'background image',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required'     => 'The family name is required.',
+            'cat_id.required'   => 'Please choose at least one sub category.',
+            'cat_id.*.exists'   => 'One of the selected sub categories does not exist.',
+            'background.image'  => 'The background must be a valid image file.',
+            'background.mimes'  => 'The background must be a jpg, jpeg, png or webp file.',
+            'background.max'    => 'The background image may not be larger than 2 MB.',
+        ];
+    }
 }

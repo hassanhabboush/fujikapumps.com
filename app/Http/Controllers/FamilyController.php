@@ -8,8 +8,9 @@ use App\Models\Family;
 use App\Models\FamilySubcategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class FamilyController extends Controller
 {
@@ -18,14 +19,17 @@ class FamilyController extends Controller
         return view('Pages.family.family');
     }
 
-    public function list(): JsonResponse
+    /**
+     * Cached as a plain array because HasMediaUrls resolves `background` in
+     * getAttribute(), which toArray() bypasses.
+     */
+    public function data(): JsonResponse
     {
-        $families = Cache::get('families', function () {
-            return Family::query()->get()->map(function ($family) {
-                // Access the background attribute which will trigger the trait's getAttribute method
-                $family->background = $family->background;
-                return $family;
-            });
+        $families = Cache::remember('families', now()->addHour(), function () {
+            return Family::query()
+                ->get()
+                ->map(fn (Family $family): array => $this->toGridRow($family))
+                ->all();
         });
 
         return response()->json(['data' => $families]);
@@ -33,9 +37,10 @@ class FamilyController extends Controller
 
     public function listByCategory(int $cid): JsonResponse
     {
-        $families = Family::whereHas('subCategory1s', function ($q) use ($cid) {
-            $q->where('sub_category_1.id', $cid);
-        })->select('id', 'link', 'english_name', 'background')->get();
+        $families = Family::whereHas('subCategory1s', fn ($q) => $q->where('sub_category_1.id', $cid))
+            ->get()
+            ->map(fn (Family $family): array => $this->toGridRow($family))
+            ->all();
 
         return response()->json(['data' => $families]);
     }
@@ -45,44 +50,37 @@ class FamilyController extends Controller
         return view('Pages.family.subcategory')->with('cid', $cid);
     }
 
-    public function store(StoreFamilyRequest $request): RedirectResponse
-    {
-        $path = $request->file('background')->store('categorybackground', 'public');
-
-        $family = Family::create([
-            'english_name' => $request->input('name'),
-            'background'   => $path,
-            'link'         => $request->input('link'),
-        ]);
-
-        foreach ($request->input('cat_id') as $category) {
-            FamilySubcategory::create([
-                'family_id'       => $family->id,
-                'sub_category_id' => $category,
-            ]);
-        }
-
-        return redirect()->back();
-    }
-
     public function show(Family $family): JsonResponse
     {
-        $sub = FamilySubcategory::where('family_id', $family->id)
+        $data = $this->toGridRow($family);
+        $data['sub'] = FamilySubcategory::where('family_id', $family->id)
             ->pluck('sub_category_id')
             ->implode(',');
 
-        $data        = $family->only(['id', 'english_name', 'background', 'link']);
-        $data['sub'] = $sub;
-
         return response()->json(['data' => $data]);
+    }
+
+    public function store(StoreFamilyRequest $request): RedirectResponse
+    {
+        $family = Family::create([
+            'english_name' => $request->validated('name'),
+            'background'   => $request->file('background')->store('categorybackground', 'public'),
+            'link'         => $request->validated('link'),
+        ]);
+
+        $this->syncSubCategories($family, $request->validated('cat_id'));
+
+        return redirect()->back()->with('status', 'Family created.');
     }
 
     public function update(UpdateFamilyRequest $request, Family $family): RedirectResponse
     {
         $data = [
-            'english_name' => $request->input('name'),
-            'link'         => $request->input('link'),
+            'english_name' => $request->validated('name'),
+            'link'         => $request->validated('link'),
         ];
+
+        $oldBackground = $family->getRawOriginal('background');
 
         if ($request->hasFile('background')) {
             $data['background'] = $request->file('background')->store('categorybackground', 'public');
@@ -90,23 +88,68 @@ class FamilyController extends Controller
 
         $family->update($data);
 
-        FamilySubcategory::where('family_id', $family->id)->delete();
+        $this->syncSubCategories($family, $request->validated('cat_id'));
 
-        foreach ($request->input('cat_id') as $category) {
-            FamilySubcategory::create([
-                'family_id'       => $family->id,
-                'sub_category_id' => $category,
-            ]);
+        if (isset($data['background']) && filled($oldBackground)) {
+            Storage::disk('public')->delete($oldBackground);
         }
 
-        return redirect()->back();
+        return redirect()->back()->with('status', 'Family updated.');
     }
 
     public function destroy(Family $family): RedirectResponse
     {
+        $background = $family->getRawOriginal('background');
+
+        FamilySubcategory::where('family_id', $family->id)->delete();
         $family->delete();
+
+        // The old destroy() left the uploaded background behind.
+        if (filled($background)) {
+            Storage::disk('public')->delete($background);
+        }
+
+        $this->forgetFamilyCaches();
+
+        return redirect()->back()->with('status', 'Family deleted.');
+    }
+
+    /**
+     * Rewrite a family's sub-category links.
+     *
+     * These are plain rows rather than a relation sync, and pivot writes fire
+     * no model events, so the caches that embed the category tree have to be
+     * forgotten by hand.
+     *
+     * @param  array<int, int|string>  $subCategoryIds
+     */
+    private function syncSubCategories(Family $family, array $subCategoryIds): void
+    {
         FamilySubcategory::where('family_id', $family->id)->delete();
 
-        return redirect()->back();
+        foreach ($subCategoryIds as $subCategoryId) {
+            FamilySubcategory::create([
+                'family_id'       => $family->id,
+                'sub_category_id' => $subCategoryId,
+            ]);
+        }
+
+        $this->forgetFamilyCaches();
+    }
+
+    private function forgetFamilyCaches(): void
+    {
+        Cache::forget('families');
+        Cache::forget('headerCategories');
+    }
+
+    private function toGridRow(Family $family): array
+    {
+        return [
+            'id'           => $family->id,
+            'english_name' => $family->english_name,
+            'background'   => $family->background,
+            'link'         => $family->link,
+        ];
     }
 }

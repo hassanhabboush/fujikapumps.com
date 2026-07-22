@@ -45,8 +45,10 @@
        <div class="k-window-actions"><a role="button" href="#" onclick='hideme()' class="k-window-action k-link">
            <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                 <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                  <form method="POST" action="{{ route('admin.family.store') }}" enctype="multipart/form-data">
+                  <form method="POST" action="{{ route('admin.families.store') }}" enctype="multipart/form-data">
                       @csrf
+                      {{-- Tells Layout/errors which modal to re-open on failure. --}}
+                      <input type="hidden" name="_form" value="add">
                         <div class="k-edit-form-container">
                            
                                  <div class="row">
@@ -54,7 +56,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Name</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="name" required="required" data-required-msg="is required.">
+                                                    <input type="text" class="k-input k-textbox" name="name" value="{{ old('name') }}" required="required" data-required-msg="is required.">
                                             </div>
                                     </div>
                                   
@@ -69,7 +71,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Family Link</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="link" required="required" data-required-msg="is required.">
+                                                    <input type="text" class="k-input k-textbox" name="link" value="{{ old('link') }}" required="required" data-required-msg="is required.">
                                             </div>
                                     </div>
                                     

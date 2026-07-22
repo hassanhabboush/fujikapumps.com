@@ -952,7 +952,7 @@
 
             }
         }
-        url='{{url("readsubfamily/id")}}';
+        url='{{url("families/by-subcategory/id")}}';
         url = url.replace('id', $value);
         xmlhttp.open("GET", url , true);
         xmlhttp.send();

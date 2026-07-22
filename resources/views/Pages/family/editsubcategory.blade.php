@@ -36,7 +36,7 @@
                                  console.log(data);
                                  $('#name').val(data.data['english_name']);
                                  $('#link').val(data.data['link']);
-                                 $('#Eform').attr('action', '{{ url("family") }}/' + data.data['id']);
+                                 $('#Eform').attr('action', '{{ url("families") }}/' + data.data['id']);
                                  $('.select3').select2();
                                  var selectedValues = new Array();
                                  selectedValues=data.data['sub'].split(',');
@@ -44,7 +44,7 @@
                                  $(".select3").val(selectedValues).trigger("change"); 
                                }
                        }     
-                           var url = '{{ url("family") }}/' + atts.name;
+                           var url = '{{ url("families") }}/' + atts.name;
                            xmlhttp.open("GET", url , true);
                            xmlhttp.send();
                            EshowMe();
@@ -68,6 +68,7 @@
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
                                        <form id="Eform" method="POST" action="" enctype="multipart/form-data">
                                             @csrf
+                                            <input type="hidden" name="_form" value="edit">
                                             @method('PUT')
                                              <div class="k-edit-form-container">
                                                     

@@ -40,11 +40,11 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "{{ route('admin.family.listByCategory', $cid) }}" 
+                                  url: "{{ route('admin.families.listByCategory', $cid) }}" 
                                },
                                destroy: function(options) {
                                    $.ajax({
-                                       url: '{{ url("family") }}/' + options.data.id,
+                                       url: '{{ url("families") }}/' + options.data.id,
                                        type: 'DELETE',
                                        dataType: 'text',
                                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
