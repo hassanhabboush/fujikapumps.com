@@ -17,6 +17,9 @@
                                             @include('Pages.about.team.add')
                                              <div id="grid"></div> 
         <script>
+             // Grid destroys and the activate/deactivate helpers leave GET, so CSRF has to ride along.
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
                  
@@ -36,11 +39,14 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "{{url('readallteam')}}" 
+                                  url: "{{ route('admin.about.team.data') }}"
                                },
                                destroy:
                                {
-                                   url: "{{url('deleteteam')}}"
+                                   url: function(row) {
+                                       return "{{ url('about_page/team') }}/" + row.id;
+                                   },
+                                   type: "DELETE"
                                }
                                
                            },

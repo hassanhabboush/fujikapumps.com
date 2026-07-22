@@ -1,106 +1,144 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
+
+use App\Http\Requests\StoreAboutImageRequest;
+use App\Http\Requests\UpdateAboutRequest;
 use App\Models\About;
 use App\Models\Gallery;
 use App\Models\Team;
+use App\Traits\HandlesMediaUploads;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
+/**
+ * The about page is a single row plus two flat image collections (gallery and
+ * team), so this controller exposes three small groups rather than one CRUD.
+ */
 class AboutController extends Controller
 {
-    public function index()
+    use HandlesMediaUploads;
+
+    private const ABOUT_DIR   = 'accessoriesuploads';
+    private const GALLERY_DIR = 'gallery';
+    private const TEAM_DIR    = 'team';
+
+    // ---- about details -------------------------------------------------
+
+    public function index(): View
     {
         return view('Pages.about.about');
     }
-     public function getabout () // to show customer details
+
+    public function show(): JsonResponse
     {
-        $about = About::firstOrFail();
-        return response()->json(['data' => $about]);
+        return response()->json(['data' => About::firstOrFail()]);
     }
-    public function edit(Request $request)
+
+    public function update(UpdateAboutRequest $request): RedirectResponse
     {
         $about = About::firstOrFail();
 
         $fields = [
-            'linkyoutube' => $request->input('link'),
-            'title1'      => $request->input('title1'),
-            'title2'      => $request->input('title2'),
-            'title3'      => $request->input('title3'),
-            'title4'      => $request->input('title4'),
-            'desc1'       => $request->input('desc1'),
-            'desc2'       => $request->input('desc2'),
-            'desc3'       => $request->input('desc3'),
-            'desc4'       => $request->input('desc4'),
-            'map'         => $request->input('map'),
+            'linkyoutube' => $request->validated('link'),
+            'title1'      => $request->validated('title1'),
+            'title2'      => $request->validated('title2'),
+            'title3'      => $request->validated('title3'),
+            'title4'      => $request->validated('title4'),
+            'desc1'       => $request->validated('desc1'),
+            'desc2'       => $request->validated('desc2'),
+            'desc3'       => $request->validated('desc3'),
+            'desc4'       => $request->validated('desc4'),
+            'map'         => $request->validated('map'),
         ];
 
-        if ($file = $request->file('Eimage')) {
-            $filepath        = time() . $file->getClientOriginalName();
-            $file->move(public_path('accessoriesuploads'), $filepath);
-            $fields['photo'] = 'public/accessoriesuploads/' . $filepath;
+        $oldPhoto = $about->getRawOriginal('photo');
+
+        if ($file = $request->file('image')) {
+            $fields['photo'] = $this->storeMedia($file, self::ABOUT_DIR);
         }
 
         $about->update($fields);
 
-        return redirect()->back();
-    }
-     public function gallery()
-    {
+        if (isset($fields['photo'])) {
+            $this->deleteMedia($oldPhoto, self::ABOUT_DIR);
+        }
 
+        return redirect()->back()->with('status', 'About page updated.');
+    }
+
+    // ---- gallery -------------------------------------------------------
+
+    public function gallery(): View
+    {
         return view('Pages.about.gallery.gallery');
+    }
 
-    }
-    public function readallgallery() //list all slider
+    public function galleryData(): JsonResponse
     {
-       $source = Gallery::select('id', 'path')->get();
-       return response()->json(['data' => $source]);
-    } 
-    public function add_gallery($photo)
-    {
-        Gallery::create(['path' => $photo]);
+        return response()->json([
+            'data' => Gallery::query()
+                ->get()
+                ->map(fn (Gallery $image): array => ['id' => $image->id, 'path' => $image->path])
+                ->all(),
+        ]);
     }
-      public function insertgallery(Request $request)
+
+    public function storeGalleryImage(StoreAboutImageRequest $request): RedirectResponse
     {
-        $file1 = $request->file('background');
-        $product_id=session('product_id');
-        $destinationPath1 = public_path('gallery');
-        $filepath1 = time() . $file1->getClientOriginalName();
-        $file1->move($destinationPath1, $filepath1);
-        $this->add_gallery('public/gallery/'.$filepath1);
-        return redirect()->back();
+        Gallery::create([
+            'path' => $this->storeMedia($request->file('background'), self::GALLERY_DIR),
+        ]);
+
+        return redirect()->back()->with('status', 'Gallery image added.');
     }
-    public function deletegallery(Request $request)
+
+    public function destroyGalleryImage(Gallery $gallery): Response
     {
-    $id = $request->input('id');
-    Gallery::findOrFail($id)->delete();
-    return redirect()->back();
+        $path = $gallery->getRawOriginal('path');
+
+        $gallery->delete();
+        // The old deletegallery() left the uploaded file behind.
+        $this->deleteMedia($path, self::GALLERY_DIR);
+
+        return response()->noContent();
     }
-     public function team()
+
+    // ---- team ----------------------------------------------------------
+
+    public function team(): View
     {
         return view('Pages.about.team.team');
     }
-    public function readallteam() //list all slider
+
+    public function teamData(): JsonResponse
     {
-       $source = Team::select('id', 'path')->get();
-       return response()->json(['data' => $source]);
-    } 
-    public function add_team($photo)
-    {
-        Team::create(['path' => $photo]);
+        return response()->json([
+            'data' => Team::query()
+                ->get()
+                ->map(fn (Team $member): array => ['id' => $member->id, 'path' => $member->path])
+                ->all(),
+        ]);
     }
-      public function insertteam(Request $request)
+
+    public function storeTeamImage(StoreAboutImageRequest $request): RedirectResponse
     {
-        $file1 = $request->file('background');
-        $product_id=session('product_id');
-        $destinationPath1 = public_path('team');
-        $filepath1 = time() . $file1->getClientOriginalName();
-        $file1->move($destinationPath1, $filepath1);
-        $this->add_team('public/team/'.$filepath1);
-        return redirect()->back();
+        Team::create([
+            'path' => $this->storeMedia($request->file('background'), self::TEAM_DIR),
+        ]);
+
+        return redirect()->back()->with('status', 'Team image added.');
     }
-    public function deleteteam(Request $request)
+
+    public function destroyTeamImage(Team $team): Response
     {
-    $id = $request->input('id');
-    Team::findOrFail($id)->delete();
-    return redirect()->back();
+        $path = $team->getRawOriginal('path');
+
+        $team->delete();
+        $this->deleteMedia($path, self::TEAM_DIR);
+
+        return response()->noContent();
     }
 }

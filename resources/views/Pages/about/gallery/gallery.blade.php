@@ -17,6 +17,9 @@
                                             @include('Pages.about.gallery.add')
                                              <div id="grid"></div> 
         <script>
+             // Grid destroys and the activate/deactivate helpers leave GET, so CSRF has to ride along.
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
                  
@@ -36,11 +39,14 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "{{url('readgalleryabout')}}" 
+                                  url: "{{ route('admin.about.gallery.data') }}"
                                },
                                destroy:
                                {
-                                   url: "{{url('deletegalleryabout')}}"
+                                   url: function(row) {
+                                       return "{{ url('about_page/gallery') }}/" + row.id;
+                                   },
+                                   type: "DELETE"
                                }
                                
                            },

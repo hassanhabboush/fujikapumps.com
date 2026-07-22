@@ -33,9 +33,10 @@
                             {
                                  var data = JSON.parse(xmlhttp.responseText);
                                  console.log(data);
-                                 document.getElementById("Eid").value=data.data[0].id;
+                                 // The id lives in the action URL now that update is a PUT.
+                                 document.getElementById("EditSystemUserForm").action="{{ url('system_users') }}/" + data.data[0].id;
                                  document.getElementById("Ename").value=data.data[0].name;
-                                 document.getElementById("Epassword").value=data.data[0].password;
+                                 
                                  document.getElementById("Eemail").value=data.data[0].email;
                                  document.getElementById("Erole").value=data.data[0].role;
 
@@ -43,7 +44,7 @@
                            
                                }
                        }     
-                           xmlhttp.open("GET", "/getsystem_user/" + atts.name , true);
+                           xmlhttp.open("GET", "{{ url('system_users') }}/" + atts.name , true);
                            xmlhttp.send();
                            EshowMe();
                          }
@@ -63,9 +64,11 @@
                <div class="k-window-actions"><a role="button" href="#" onclick='Ehideme()' class="k-window-action k-link">
                    <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                                       <form method="POST" action="editsystem_user" enctype="multipart/form-data">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="text"  name="Eid" id="Eid" style="display:none;">
+                                       <form method="POST" id="EditSystemUserForm" action="" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="_form" value="edit">
+                                            
                                              
                                                 <div class="k-edit-form-container">
                                                      <div class="row" style="margin-left: 0px;margin-right: 0px;">
@@ -73,14 +76,14 @@
                                    <div class="k-edit-label">
                                        <label for="fname">Email</label>
                                        <br>
-                                       <input type="email" class="k-input k-textbox" name="Eemail" readonly id="Eemail" required="required" data-required-msg="is required.">
+                                       <input type="email" class="k-input k-textbox" name="email" readonly id="Eemail" required="required" data-required-msg="is required.">
                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                         <div class="k-edit-label">
                                             <label for="mname">Password</label>
                                             <br>
-                                            <input required type="password" class="k-input k-textbox" name="Epassword" id="Epassword"  data-required-msg="is required.">
+                                            <input type="password" class="k-input k-textbox" name="password" id="Epassword"  data-required-msg="is required.">
                                         </div>
                                  </div>
                             </div>
@@ -90,14 +93,14 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Name</label>
                                                     <br>
-                                                    <input required type="text" class="k-input k-textbox" name="Ename" id="Ename" required="required" data-required-msg="is required.">
+                                                    <input required type="text" class="k-input k-textbox" name="name" id="Ename" required="required" data-required-msg="is required.">
                                             </div>
                                     </div>
                                      <div class="col-md-6">
                                             <div class="k-edit-label">
                                                     <label for="lname">Roll</label>
                                                     <br>
-                                        <select name ="Erole" id="Erole"  class="k-input k-textbox" required>
+                                        <select name="role" id="Erole"  class="k-input k-textbox" required>
                                         <option selected disabled>Select Roll</option>
                                         <option value="1">Administrator</option>
                                         <option value="2">User B</option>

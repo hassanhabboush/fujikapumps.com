@@ -23,6 +23,19 @@
                                              @include('Pages.system_user.editsystem_user')
                                              <div id="grid"></div> 
         <script>
+             // Activate/deactivate moved off GET, so submit a real form with the verb.
+             function patchTo(url) {
+                 var form = document.createElement('form');
+                 form.method = 'POST';
+                 form.action = url;
+                 form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}">'
+                                + '<input type="hidden" name="_method" value="PATCH">';
+                 document.body.appendChild(form);
+                 form.submit();
+             }
+
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
                  
@@ -42,13 +55,16 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "readsystem_user" 
+                                  url: "{{ route('admin.system_users.data') }}"
                                }
                                ,
                                
                                destroy:
                                {
-                                   url: "deletesystem_user"
+                                   url: function(row) {
+                                       return "{{ url('system_users') }}/" + row.id;
+                                   },
+                                   type: "DELETE"
                                }
                                
                            },
@@ -76,7 +92,7 @@
                        { field: "email" ,title:"Email"},
                        { field: "role" ,title:"Role"},
                        { field: "active" ,title:"status"},
-                       { field: "id" ,title:"action", width: "200px" , template: "<a title='Edit user' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'> Edit</a><br> <a title='Active' class='k-button k-button-icontext' href='activeuser/${id}'>Active</a> <a title='DisActive' class='k-button k-button-icontext' href='disactiveuser/${id}'>Inactive</a>"},
+                       { field: "id" ,title:"action", width: "200px" , template: "<a title='Edit user' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'> Edit</a><br> <a title='Active' class='k-button k-button-icontext' onclick='patchTo("{{ url("system_users") }}/${id}/activate")' style="cursor:pointer">Active</a> <a title='DisActive' class='k-button k-button-icontext' onclick='patchTo("{{ url("system_users") }}/${id}/deactivate")' style="cursor:pointer">Inactive</a>"},
                          {command: ["destroy"], title: "Delete" }
                         ],
                       editable:

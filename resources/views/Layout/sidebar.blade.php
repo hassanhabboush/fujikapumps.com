@@ -75,19 +75,19 @@
                             @endif
                                 @if(Auth::user()->role==1 || Auth::user()->role==2 || Auth::user()->role==3)
                                  <li class="source">
-                                    <a href="{{route('admin.aboutdetails')}}">
+                                    <a href="{{route('admin.about.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-feather"></i></span>
                                         <span class="pcoded-mtext">About</span>
                                     </a>
                                 </li>
                                   <li class="source">
-                                    <a href="{{route('admin.aboutgallery')}}">
+                                    <a href="{{route('admin.about.gallery.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-feather"></i></span>
                                         <span class="pcoded-mtext">Gallery</span>
                                     </a>
                                 </li>
                                   <li class="source">
-                                    <a href="{{route('admin.team')}}">
+                                    <a href="{{route('admin.about.team.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-feather"></i></span>
                                         <span class="pcoded-mtext">Team</span>
                                     </a>
@@ -102,7 +102,7 @@
                                 @endif
                                   @if(Auth::user()->role==1)
                                  <li class="source">
-                                    <a href="{{route('admin.system_user')}}">
+                                    <a href="{{route('admin.system_users.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-user"></i></span>
                                         <span class="pcoded-mtext">System User</span>
                                     </a>

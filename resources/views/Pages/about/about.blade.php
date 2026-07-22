@@ -47,7 +47,7 @@
                                  
                                }
                        }     
-                           xmlhttp.open("GET", "getabout"  , true);
+                           xmlhttp.open("GET", "{{ route('admin.about.show') }}"  , true);
                            xmlhttp.send();
                            EshowMe();
                          }
@@ -74,8 +74,9 @@
             ">
 
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                                       <form method="POST" action="editabout" enctype="multipart/form-data">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                       <form method="POST" action="{{ route('admin.about.update') }}" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
                                             <input type="text"  name="Eid" id="Eid" style="display:none;">
                                             <input type="text"  name="photo" id="photo" style="display:none;">
                                             
@@ -86,7 +87,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">photo</label>
                                                     <br>
-                                                   <input type="file" name="Eimage" id="Elogo"  >                                            
+                                                   <input type="file" name="image" id="Elogo"  >                                            
                                                    </div>
                                      </div>
                                     <div class="col-md-6">

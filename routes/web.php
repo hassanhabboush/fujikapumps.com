@@ -40,16 +40,13 @@ Route::group(['as' => 'admin.'], function () {
     Route::middleware('auth')->group(function () {
 
         //system_user related routes
-        Route::controller(SystemUserController::class)->group(function () {
-            Route::get('system_user', 'index')->name('system_user');
-            Route::get('readsystem_user', 'readall');
-            Route::post('addsystem_user', 'insert');
-            Route::post('editsystem_user', 'edit');
-            Route::get('deletesystem_user', 'delete')->name('deletesystem_user');
-            Route::get('activeuser/{id}', 'active_user');
-            Route::get('disactiveuser/{id}', 'disactive_user');
-            Route::get('getsystem_user/{id}', 'getsystem_user');
-        });
+        Route::get('system_users/data', [SystemUserController::class, 'data'])
+            ->name('system_users.data');
+        Route::patch('system_users/{system_user}/activate', [SystemUserController::class, 'activate'])
+            ->name('system_users.activate');
+        Route::patch('system_users/{system_user}/deactivate', [SystemUserController::class, 'deactivate'])
+            ->name('system_users.deactivate');
+        Route::resource('system_users', SystemUserController::class)->except(['create', 'edit']);
 
         //category related routes
         // Declared before the resource so "data" is not matched as categories/{category}.
@@ -152,23 +149,22 @@ Route::group(['as' => 'admin.'], function () {
             ->except(['create', 'edit']);
 
         
+        //about page — a single row plus two flat image collections
         Route::controller(AboutController::class)->group(function () {
-            //about related routes
-            Route::get('aboutdetails', 'index')->name('aboutdetails');
-            Route::get('getabout', 'getabout');
-            Route::post('editabout', 'edit');
-            
-            //about gallery related routes
-            Route::get('aboutgallery', 'gallery')->name('aboutgallery');
-            Route::get('readgalleryabout', 'readallgallery');
-            Route::post('addgalleryabout', 'insertgallery');
-            Route::get('deletegalleryabout', 'deletegallery');
-            
-            //team related routes
-            Route::get('team', 'team')->name('team');
-            Route::get('readallteam', 'readallteam');
-            Route::post('addteam', 'insertteam');
-            Route::get('deleteteam', 'deleteteam');
+            Route::get('about_page', 'index')->name('about.index');
+            Route::get('about_page/data', 'show')->name('about.show');
+            Route::put('about_page', 'update')->name('about.update');
+
+            Route::get('about_page/gallery', 'gallery')->name('about.gallery.index');
+            Route::get('about_page/gallery/data', 'galleryData')->name('about.gallery.data');
+            Route::post('about_page/gallery', 'storeGalleryImage')->name('about.gallery.store');
+            Route::delete('about_page/gallery/{gallery}', 'destroyGalleryImage')
+                ->name('about.gallery.destroy');
+
+            Route::get('about_page/team', 'team')->name('about.team.index');
+            Route::get('about_page/team/data', 'teamData')->name('about.team.data');
+            Route::post('about_page/team', 'storeTeamImage')->name('about.team.store');
+            Route::delete('about_page/team/{team}', 'destroyTeamImage')->name('about.team.destroy');
         });
 
         //orders related routes
