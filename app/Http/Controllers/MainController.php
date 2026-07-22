@@ -33,7 +33,7 @@ class MainController extends Controller
      {
    if(Auth::user()->active==1)
    {
-     return redirect()->route('admin.category');
+     return redirect()->route('admin.categories.index');
    }
    else
    {

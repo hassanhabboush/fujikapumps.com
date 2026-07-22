@@ -1,117 +1,136 @@
 <?php
+
 namespace App\Http\Controllers;
-use App\Models\Category;
+
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Http\Requests\DeleteCategoryRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
+use App\Models\Category;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    public function index()
+    /**
+     * Uploads still land in public/categorybackground/ rather than the public
+     * disk, so legacy rows and the .webp siblings HasMediaUrls looks for keep
+     * resolving from a single directory.
+     */
+    private const BACKGROUND_DIR = 'categorybackground';
+
+    public function index(): View
     {
         return view('Pages.category.category');
     }
-    public function readall()  //list all category
+
+    /**
+     * Grid feed. Cached as a plain array because HasMediaUrls resolves media
+     * columns in getAttribute(), which toArray() bypasses — the URLs have to be
+     * read attribute-by-attribute before anything is serialised.
+     */
+    public function data(): JsonResponse
     {
-        $categories = Cache::get('categories', function () {
-            return Category::query()->get()
-            ->map(function ($category) {
-                $category->background = $category->background;
-                return $category;
-            });
+        $categories = Cache::remember('categories', now()->addHour(), function () {
+            return Category::query()
+                ->get()
+                ->map(fn (Category $category): array => $this->toGridRow($category))
+                ->all();
         });
 
         return response()->json(['data' => $categories]);
-    } 
-      public function insert(StoreCategoryRequest $request)
+    }
+
+    public function show(Category $category): JsonResponse
     {
-        $validated = $request->validated();
-        $english_name=$validated['english_name'];     
-         $file1 = $request->file('background');
-        $destinationPath1 = public_path('categorybackground');
-        $filepath1 = time() . $file1->getClientOriginalName();
-        $file1->move($destinationPath1, $filepath1);
-        $created_at= date('Y-m-d H:i:s');
+        return response()->json(['data' => [$this->toGridRow($category)]]);
+    }
+
+    public function store(StoreCategoryRequest $request): RedirectResponse
+    {
         Category::create([
-            'created_at'   => $created_at,
-            'english_name' => $english_name,
+            'english_name' => $request->validated('english_name'),
             'logo'         => '',
-            'background'   => 'public/categorybackground/' . $filepath1,
+            'background'   => $this->storeBackground($request->file('background')),
         ]);
 
         return redirect()->back();
     }
-    public function delete(DeleteCategoryRequest $request)
+
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $id = $request->validated('id');
-        $category = Category::findOrFail($id);
-        $oldBackground = $category->background;
-        $category->delete();
-        $this->deleteBackgroundFile($oldBackground);
+        $attributes = ['english_name' => $request->validated('english_name')];
+        $oldBackground = $category->getRawOriginal('background');
 
-        return redirect()->back();
-    }
-    public function getcategory($id) // to show customer details
-    {
-        $category = Category::findOrFail($id);
-        return response()->json(['data' => [$category]]);
-    }
-    public function edit(UpdateCategoryRequest $request)
-    {
-        $request->validated();
-    
-        $id = $request->input('Eid');
-        $background_name = $request->input('Ebackground_name');
-        $english_name = $request->input('Eenglish_name');
-        $file = $request->file('Ebackground');
-        $updated_at = date('Y-m-d H:i:s');
-        $category = Category::findOrFail($id);
+        if ($file = $request->file('background')) {
+            $attributes['background'] = $this->storeBackground($file);
+        }
 
-        if ($file !== null) {
-            $oldBackground = $category->background;
-            $destinationPath = public_path('categorybackground');
-            $filepath = time() . $file->getClientOriginalName();
-            $file->move($destinationPath, $filepath);
+        $category->update($attributes);
 
-            $category->update([
-                'updated_at'   => $updated_at,
-                'background'   => 'public/categorybackground/' . $filepath,
-                'english_name' => $english_name,
-            ]);
-
-            $this->deleteBackgroundFile($oldBackground);
-        } else {
-            $category->update([
-                'updated_at'   => $updated_at,
-                'english_name' => $english_name,
-            ]);
+        if (isset($attributes['background'])) {
+            $this->deleteBackground($oldBackground);
         }
 
         return redirect()->back();
+    }
+
+    public function destroy(Category $category): Response
+    {
+        $background = $category->getRawOriginal('background');
+
+        $category->delete();
+        $this->deleteBackground($background);
+
+        // Called over AJAX by the grid, which has no use for a redirect.
+        return response()->noContent();
     }
 
     /**
-     * Remove a category background file from public storage.
-     *
-     * The `background` column stores a path like `public/categorybackground/<file>`,
-     * while the file physically lives in `public_path('categorybackground/<file>')`.
+     * @return array{id: int, english_name: string, background: ?string}
      */
-    private function deleteBackgroundFile(?string $storedPath): void
+    private function toGridRow(Category $category): array
     {
-        if (empty($storedPath)) {
+        return [
+            'id'           => $category->id,
+            'english_name' => $category->english_name,
+            'background'   => $category->background,
+        ];
+    }
+
+    /**
+     * Move an upload into the background directory and return the stored path.
+     */
+    private function storeBackground(UploadedFile $file): string
+    {
+        $name = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path(self::BACKGROUND_DIR), $name);
+
+        return 'public/' . self::BACKGROUND_DIR . '/' . $name;
+    }
+
+    /**
+     * Remove a background file given its stored `public/categorybackground/<file>`
+     * path, along with the .webp sibling HasMediaUrls prefers — leaving the
+     * sibling behind would orphan the image that was actually being served.
+     */
+    private function deleteBackground(?string $storedPath): void
+    {
+        if (blank($storedPath)) {
             return;
         }
 
-        $fullPath = public_path('categorybackground/' . basename($storedPath));
+        $fullPath = public_path(self::BACKGROUND_DIR . '/' . basename($storedPath));
+        $webpPath = preg_replace('/\.[^.]+$/', '.webp', $fullPath);
 
-        if (File::exists($fullPath)) {
-            File::delete($fullPath);
+        foreach (array_unique([$fullPath, $webpPath]) as $path) {
+            if (File::exists($path)) {
+                File::delete($path);
+            }
         }
     }
 }

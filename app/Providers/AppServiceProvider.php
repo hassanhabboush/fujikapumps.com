@@ -38,7 +38,11 @@ class AppServiceProvider extends ServiceProvider
 
             view()->share('headerCategories', Cache::remember('headerCategories', now()->addHours(1), fn () => Category::with('subCategories.subCategory1s.families')->get()));
         } catch (\Exception $e) {
-            // DB not available (e.g. during migrations or artisan commands)
+            // DB not available (e.g. during migrations or artisan commands).
+            // Share empty fallbacks anyway — without them the shared variables
+            // are simply undefined and every public view fatals on read.
+            view()->share('contact', null);
+            view()->share('headerCategories', collect());
         }
     }
 

@@ -52,14 +52,9 @@ Route::group(['as' => 'admin.'], function () {
         });
 
         //category related routes
-        Route::controller(CategoryController::class)->group(function () {
-            Route::get('category', 'index')->name('category');
-            Route::get('readcategory', 'readall');
-            Route::post('addcategory', 'insert');
-            Route::post('editcategory', 'edit');
-            Route::get('deletecategory', 'delete');
-            Route::get('getcategory/{id}', 'getcategory');
-        });
+        // Declared before the resource so "data" is not matched as categories/{category}.
+        Route::get('categories/data', [CategoryController::class, 'data'])->name('categories.data');
+        Route::resource('categories', CategoryController::class)->except(['create', 'edit']);
 
         //slider related routes
         Route::controller(SliderController::class)->group(function () {

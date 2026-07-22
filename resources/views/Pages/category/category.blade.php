@@ -22,9 +22,13 @@
                                              @include('Pages.category.editcategory')
                                              <div id="grid"></div> 
         <script>
+             // Every grid transport below mutates over POST/PUT/DELETE, so CSRF
+             // has to ride along on each jQuery-issued request.
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
-                 
+
                    $("#grid").kendoGrid({
                                        
                            edit: function(e) {
@@ -38,16 +42,19 @@
                            transport:
                            {
                                
-                               read: 
+                               read:
                                {
                                   dataType: "json",
-                                  url: "readcategory" 
+                                  url: "{{ route('admin.categories.data') }}"
                                },
                                destroy:
                                {
-                                   url: "deletecategory"
+                                   url: function(category) {
+                                       return "{{ url('categories') }}/" + category.id;
+                                   },
+                                   type: "DELETE"
                                }
-                               
+
                            },
                          serverPaging: false,
                          pageSize:8,
