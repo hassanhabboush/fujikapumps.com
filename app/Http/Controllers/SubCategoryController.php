@@ -1,96 +1,117 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+
+use App\Http\Requests\StoreSubCategoryRequest;
+use App\Http\Requests\UpdateSubCategoryRequest;
 use App\Models\SubCategory;
+use App\Traits\HandlesMediaUploads;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class SubCategoryController extends Controller
 {
-    public function index()
+    use HandlesMediaUploads;
+
+    private const BACKGROUND_DIR = 'categorybackground';
+
+    public function index(): View
     {
         return view('Pages.sub_category.sub_category');
     }
-    public function readall()  //list all sub_category
-    {
-        $categories = SubCategory::select('id', 'english_name', 'background')->get()
-        ->map(fn($category) => [
-            'id' => $category->id,
-            'english_name' => $category->english_name,
-            'background' => $category->background,
-        ]);
-        return response()->json(['data' => $categories]);
-    } 
-    public function readall_category($id)  //list all sub_category
-    {
-       $categories = SubCategory::whereHas('categories', function ($q) use ($id) {
-           $q->where('categories.id', $id);
-       })->select('id', 'english_name', 'background')->get()
-       ->map(fn($category) => [
-           'id' => $category->id,
-           'english_name' => $category->english_name,
-           'background' => $category->background,
-       ]);
-       return response()->json(['data' => $categories]);
-    } 
-    public function categorysub_category($id)
-    {
-        return view('Pages.sub_category.subcategory')->with('cid',$id);
 
-    }
-      public function insert(Request $request)
+    public function data(): JsonResponse
     {
-        $english_name=$request->input('name');
-        $parent_id=$request->input('cat_id');
-        $file1 = $request->file('background');
-        $destinationPath1 = public_path('categorybackground');
-        $filepath1 = time() . $file1->getClientOriginalName();
-        $file1->move($destinationPath1, $filepath1);
+        $subCategories = SubCategory::query()
+            ->get()
+            ->map(fn (SubCategory $subCategory): array => $this->toGridRow($subCategory))
+            ->all();
+
+        return response()->json(['data' => $subCategories]);
+    }
+
+    public function byCategory(int $id): JsonResponse
+    {
+        $subCategories = SubCategory::whereHas('categories', fn ($q) => $q->where('categories.id', $id))
+            ->get()
+            ->map(fn (SubCategory $subCategory): array => $this->toGridRow($subCategory))
+            ->all();
+
+        return response()->json(['data' => $subCategories]);
+    }
+
+    public function categoryScreen(int $id): View
+    {
+        return view('Pages.sub_category.subcategory')->with('cid', $id);
+    }
+
+    public function show(SubCategory $subCategory): JsonResponse
+    {
+        $data = $this->toGridRow($subCategory);
+
+        // The edit modal splits this on "," to preselect the multi-select.
+        $data['sub'] = $subCategory->categories()->pluck('categories.id')->implode(',');
+
+        return response()->json(['data' => $data]);
+    }
+
+    public function store(StoreSubCategoryRequest $request): RedirectResponse
+    {
         $subCategory = SubCategory::create([
-            'english_name' => $english_name,
-            'background'   => 'public/categorybackground/' . $filepath1,
+            'english_name' => $request->validated('name'),
+            'background'   => $this->storeMedia($request->file('background'), self::BACKGROUND_DIR),
         ]);
 
-        $subCategory->categories()->attach($parent_id);
+        $subCategory->categories()->attach($request->validated('cat_id'));
+        // attach() fires no model events, so InvalidatesCache never runs here.
         Cache::forget('headerCategories');
-     return redirect()->back();
-    }
-    public function delete(Request $request)
-    {
-        $id          = $request->input('id');
-        $subCategory = SubCategory::findOrFail($id);
-        $path1       = $subCategory->background;
-        $subCategory->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('status', 'Sub category created.');
     }
-     public function getsub_category($id) // to show customer details
-    {
-        $subCategory = SubCategory::select('id', 'english_name', 'background')->findOrFail($id);
-        $categoryIds = $subCategory->categories()->pluck('categories.id');
-        $subCategory->sub = $categoryIds->reduce(fn ($carry, $catId) => $carry . ',' . $catId, '');
-        return response()->json(['data' => $subCategory]);
-    }
-    public function edit(Request $request)
-    {
-        $id           = $request->input('Eid');
-        $english_name = $request->input('Ename');
-        $parent_id    = $request->input('Ecat_id');
-        $file1        = $request->file('Ebackground');
 
-        $subCategory = SubCategory::findOrFail($id);
-        $data        = ['english_name' => $english_name];
+    public function update(UpdateSubCategoryRequest $request, SubCategory $subCategory): RedirectResponse
+    {
+        $data = ['english_name' => $request->validated('name')];
+        $oldBackground = $subCategory->getRawOriginal('background');
 
-        if ($file1 !== null) {
-            $destinationPath1   = public_path('categorybackground');
-            $filepath1          = time() . $file1->getClientOriginalName();
-            $file1->move($destinationPath1, $filepath1);
-            $data['background'] = 'public/categorybackground/' . $filepath1;
+        if ($file = $request->file('background')) {
+            $data['background'] = $this->storeMedia($file, self::BACKGROUND_DIR);
         }
 
         $subCategory->update($data);
-        $subCategory->categories()->sync($parent_id);
+        $subCategory->categories()->sync($request->validated('cat_id'));
         Cache::forget('headerCategories');
 
-        return redirect()->back();
+        if (isset($data['background'])) {
+            $this->deleteMedia($oldBackground, self::BACKGROUND_DIR);
+        }
+
+        return redirect()->back()->with('status', 'Sub category updated.');
+    }
+
+    public function destroy(SubCategory $subCategory): Response
+    {
+        $background = $subCategory->getRawOriginal('background');
+
+        // The old delete() left both the pivot rows and the file behind.
+        $subCategory->categories()->detach();
+        $subCategory->delete();
+        $this->deleteMedia($background, self::BACKGROUND_DIR);
+
+        Cache::forget('headerCategories');
+
+        return response()->noContent();
+    }
+
+    private function toGridRow(SubCategory $subCategory): array
+    {
+        return [
+            'id'           => $subCategory->id,
+            'english_name' => $subCategory->english_name,
+            'background'   => $subCategory->background,
+        ];
     }
 }

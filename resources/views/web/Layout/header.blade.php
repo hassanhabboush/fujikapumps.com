@@ -854,7 +854,7 @@
 
             }
         }
-        url='{{url("readsubcetegory_category/id")}}';
+        url='{{url("sub_categories/by-category/id")}}';
         url = url.replace('id', $value);
         xmlhttp.open("GET", url , true);
         xmlhttp.send();
@@ -903,7 +903,7 @@
 
             }
         }
-        url='{{url("readsubcetegory_category1/id")}}';
+        url='{{url("sub_categories1/by-parent/id")}}';
         url = url.replace('id', $value);
         xmlhttp.open("GET", url , true);
         xmlhttp.send();

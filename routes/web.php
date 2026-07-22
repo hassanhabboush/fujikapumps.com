@@ -63,29 +63,27 @@ Route::group(['as' => 'admin.'], function () {
         //contact related routes — a single row, so no store/destroy
         Route::resource('contacts', ContactController::class)->only(['index', 'show', 'update']);
 
-        //subcategory related routes
-        Route::controller(SubCategoryController::class)->group(function () {
-            Route::get('sub_category', 'index')->name('sub_category');
-            Route::get('readsub_category', 'readall');
-            Route::post('addsub_category', 'insert');
-            Route::post('editsub_category', 'edit');
-            Route::get('deletesub_category', 'delete');
-            Route::get('getsub_category/{id}', 'getsub_category');
-            Route::get('categorysub_category/{cid}', 'categorysub_category');
-        });
+        //subcategory related routes — extras first so they beat {sub_category}
+        Route::get('sub_categories/data', [SubCategoryController::class, 'data'])
+            ->name('sub_categories.data');
+        Route::get('sub_categories/by-category/{id}', [SubCategoryController::class, 'byCategory'])
+            ->name('sub_categories.byCategory');
+        Route::get('sub_categories/category/{id}', [SubCategoryController::class, 'categoryScreen'])
+            ->name('sub_categories.categoryScreen');
+        Route::resource('sub_categories', SubCategoryController::class)->except(['create', 'edit']);
 
         //subcategory1 related routes
-        Route::controller(SubCategory1Controller::class)->group(function () {
-            Route::get('sub_category1', 'index')->name('sub_category1');
-            Route::get('readsub_category1', 'readall');
-            Route::post('addsub_category1', 'insert');
-            Route::post('editsub_category1', 'edit');
-            Route::get('deletesub_category1', 'delete');
-            Route::get('getsub_category1/{id}', 'getsub_category');
-            Route::get('sub_subcategory/{cid}', 'categorysub_category');
-            Route::get('readsubcetegory_category1/{cid}', 'readall_category');
-            Route::get('readsubcetegory_category11/{name}', 'readall_category');
-        });
+        Route::get('sub_categories1/data', [SubCategory1Controller::class, 'data'])
+            ->name('sub_categories1.data');
+        Route::get('sub_categories1/by-parent/{id}', [SubCategory1Controller::class, 'byParent'])
+            ->name('sub_categories1.byParent');
+        Route::get('sub_categories1/parent/{id}', [SubCategory1Controller::class, 'parentScreen'])
+            ->name('sub_categories1.parentScreen');
+        Route::get('sub_categories1/count-by-name/{name}', [SubCategory1Controller::class, 'countByName'])
+            ->name('sub_categories1.countByName');
+        Route::resource('sub_categories1', SubCategory1Controller::class)
+            ->parameters(['sub_categories1' => 'subCategory1'])
+            ->except(['create', 'edit']);
 
         //family related routes
         // Both declared before the resource so they are not read as families/{family}.
@@ -180,8 +178,6 @@ Route::group(['as' => 'admin.'], function () {
             Route::get('orderdetails/{id}', 'orderdetils');
             Route::get('userdetails/{id}', 'user_details');
         });
-        //misc admin routes
-        Route::get('getcat/{id}', [SubCategory1Controller::class, 'getscat']);
 
     }); // end auth middleware group
 

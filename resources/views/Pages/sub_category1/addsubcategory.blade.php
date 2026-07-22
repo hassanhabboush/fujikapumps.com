@@ -28,7 +28,7 @@
   
         var cat = document.getElementById('name').value;
         xmlhttp = new XMLHttpRequest();
-         url='{{url("getcat/name")}}';
+         url='{{url("sub_categories1/count-by-name/name")}}';
       url = url.replace('name', cat);
         xmlhttp.open("GET",url,true);
         xmlhttp.send();
@@ -79,8 +79,10 @@
        <div class="k-window-actions"><a role="button" href="#" onclick='hideme()' class="k-window-action k-link">
            <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                 <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                  <form method="POST" action="{{url('addsub_category1')}}" enctype="multipart/form-data" id="myform">
-                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <form method="POST" action="{{ route('admin.sub_categories1.store') }}" enctype="multipart/form-data" id="myform">
+                      @csrf
+                      {{-- Tells Layout/errors which modal to re-open on failure. --}}
+                      <input type="hidden" name="_form" value="add">
                         <div class="k-edit-form-container">
                            
                                  <div class="row">
@@ -88,7 +90,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Name</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="name" id="name" required="required" data-required-msg="is required.">
+                                                    <input type="text" class="k-input k-textbox" name="name" value="{{ old('name') }}" id="name" required="required" data-required-msg="is required.">
                                             </div>
                                     </div>
                                   

@@ -1,102 +1,132 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+
+use App\Http\Requests\StoreSubCategory1Request;
+use App\Http\Requests\UpdateSubCategory1Request;
 use App\Models\SubCategory1;
+use App\Traits\HandlesMediaUploads;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class SubCategory1Controller extends Controller
 {
-    public function getscat($name)
-    {
-        $count = SubCategory1::where('english_name', $name)->count();
-        return response()->json(['data' => $count]);
-    }
-    public function index()
+    use HandlesMediaUploads;
+
+    private const BACKGROUND_DIR = 'categorybackground';
+
+    public function index(): View
     {
         return view('Pages.sub_category1.sub_category');
     }
-    public function readall()  //list all sub_category
-    {
-        $categories = SubCategory1::select('id', 'english_name', 'background')->get()
-            ->map(fn ($category) => [
-                'id'           => $category->id,
-                'english_name' => $category->english_name,
-                'background'   => $category->background,
-            ]);
-        return response()->json(['data' => $categories]);
-    } 
-    public function readall_category($id)  //list all sub_category
-    {
-        $categories = SubCategory1::whereHas('parentSubCategories', function ($q) use ($id) {
-            $q->where('sub_category.id', $id);
-        })->select('id', 'english_name', 'background')->get()
-        ->map(fn ($category) => [
-            'id'           => $category->id,
-            'english_name' => $category->english_name,
-            'background'   => $category->background,
-        ]);
-        return response()->json(['data' => $categories]);
-    } 
-    public function categorysub_category($id)
-    {
-        return view('Pages.sub_category1.subcategory')->with('cid',$id);
 
-    }
-      public function insert(Request $request)
+    public function data(): JsonResponse
     {
-        $english_name=$request->input('name');
-        $parent_id=$request->input('cat_id');
-        $file1 = $request->file('background');
-        $destinationPath1 = public_path('categorybackground');
-        $filepath1 = time() . $file1->getClientOriginalName();
-        $file1->move($destinationPath1, $filepath1);
+        $subCategories = SubCategory1::query()
+            ->get()
+            ->map(fn (SubCategory1 $subCategory): array => $this->toGridRow($subCategory))
+            ->all();
+
+        return response()->json(['data' => $subCategories]);
+    }
+
+    public function byParent(int $id): JsonResponse
+    {
+        $subCategories = SubCategory1::whereHas(
+            'parentSubCategories',
+            fn ($q) => $q->where('sub_category.id', $id)
+        )
+            ->get()
+            ->map(fn (SubCategory1 $subCategory): array => $this->toGridRow($subCategory))
+            ->all();
+
+        return response()->json(['data' => $subCategories]);
+    }
+
+    public function parentScreen(int $id): View
+    {
+        return view('Pages.sub_category1.subcategory')->with('cid', $id);
+    }
+
+    /**
+     * Used by the add form to warn about a duplicate name before submitting.
+     */
+    public function countByName(string $name): JsonResponse
+    {
+        return response()->json([
+            'data' => SubCategory1::where('english_name', $name)->count(),
+        ]);
+    }
+
+    public function show(SubCategory1 $subCategory1): JsonResponse
+    {
+        $data = $this->toGridRow($subCategory1);
+
+        // The edit modal splits this on "," to preselect the multi-select.
+        $data['sub'] = $subCategory1->parentSubCategories()
+            ->pluck('sub_category.id')
+            ->implode(',');
+
+        return response()->json(['data' => $data]);
+    }
+
+    public function store(StoreSubCategory1Request $request): RedirectResponse
+    {
         $subCategory1 = SubCategory1::create([
-            'english_name' => $english_name,
-            'background'   => 'public/categorybackground/' . $filepath1,
+            'english_name' => $request->validated('name'),
+            'background'   => $this->storeMedia($request->file('background'), self::BACKGROUND_DIR),
         ]);
 
-        $subCategory1->parentSubCategories()->attach($parent_id);
+        $subCategory1->parentSubCategories()->attach($request->validated('cat_id'));
+        // attach() fires no model events, so InvalidatesCache never runs here.
         Cache::forget('headerCategories');
-     return redirect()->back();
-    }
-    public function delete(Request $request)
-    {
-        $id           = $request->input('id');
-        $subCategory1 = SubCategory1::findOrFail($id);
-        $path1        = $subCategory1->background;
-        $subCategory1->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('status', 'Sub category created.');
     }
-    public function getsub_category($id) // to show customer details
-    {
-        $subCategory1 = SubCategory1::select('id', 'english_name', 'background')->findOrFail($id);
-        $parentIds    = $subCategory1->parentSubCategories()->pluck('sub_category.id');
-        $subCategory1->sub = $parentIds->reduce(fn ($carry, $catId) => $carry . ',' . $catId, '');
-        return response()->json(['data' => $subCategory1]);
-    }
-    public function edit(Request $request)
-    {
-        $id           = $request->input('Eid');
-        $english_name = $request->input('Ename');
-        $parent_id    = $request->input('Ecat_id');
-        $file1        = $request->file('Ebackground');
 
-        $subCategory1 = SubCategory1::findOrFail($id);
-        $data         = ['english_name' => $english_name];
+    public function update(UpdateSubCategory1Request $request, SubCategory1 $subCategory1): RedirectResponse
+    {
+        $data = ['english_name' => $request->validated('name')];
+        $oldBackground = $subCategory1->getRawOriginal('background');
 
-        if ($file1 !== null) {
-            $destinationPath1   = public_path('categorybackground');
-            $filepath1          = time() . $file1->getClientOriginalName();
-            $file1->move($destinationPath1, $filepath1);
-            $data['background'] = 'public/categorybackground/' . $filepath1;
+        if ($file = $request->file('background')) {
+            $data['background'] = $this->storeMedia($file, self::BACKGROUND_DIR);
         }
 
         $subCategory1->update($data);
-        $subCategory1->parentSubCategories()->sync($parent_id);
+        $subCategory1->parentSubCategories()->sync($request->validated('cat_id'));
         Cache::forget('headerCategories');
 
-        return redirect()->back();
+        if (isset($data['background'])) {
+            $this->deleteMedia($oldBackground, self::BACKGROUND_DIR);
+        }
+
+        return redirect()->back()->with('status', 'Sub category updated.');
     }
-    
+
+    public function destroy(SubCategory1 $subCategory1): Response
+    {
+        $background = $subCategory1->getRawOriginal('background');
+
+        // The old delete() left both the pivot rows and the file behind.
+        $subCategory1->parentSubCategories()->detach();
+        $subCategory1->delete();
+        $this->deleteMedia($background, self::BACKGROUND_DIR);
+
+        Cache::forget('headerCategories');
+
+        return response()->noContent();
+    }
+
+    private function toGridRow(SubCategory1 $subCategory1): array
+    {
+        return [
+            'id'           => $subCategory1->id,
+            'english_name' => $subCategory1->english_name,
+            'background'   => $subCategory1->background,
+        ];
+    }
 }

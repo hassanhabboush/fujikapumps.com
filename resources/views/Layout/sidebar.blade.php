@@ -13,14 +13,14 @@
                                     </a>
                                     </li>
                                 <li>
-                                    <a href="{{route('admin.sub_category')}}">
+                                    <a href="{{route('admin.sub_categories.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-package"></i></span>
                                         <span class="pcoded-mtext">Sub Category1</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('sub_category')->count()}}</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{route('admin.sub_category1')}}">
+                                    <a href="{{route('admin.sub_categories1.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-package"></i></span>
                                         <span class="pcoded-mtext">Sub Category2</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('sub_category_1')->count()}}</span>

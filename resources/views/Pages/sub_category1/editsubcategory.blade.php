@@ -34,20 +34,18 @@
                            if (xmlhttp.readyState==4 && xmlhttp.status==200)
                             {
                                  var data = JSON.parse(xmlhttp.responseText);
-                                 console.log(data);
-                                 $('#Eid').val(data.data['id']);
+                                                                  // The id lives in the action URL now that update is a PUT to sub_categories1/{id}.
+                                 $('#Emyform').attr('action', '{{ url("sub_categories1") }}/' + data.data['id']);
                                  $('#Ename').val(data.data['english_name']);
                                    $('#Eoldname').val(data.data['english_name']);
                                  $('#Elogo_name').val(data.data['background']);
                                  $('.select3').select2();
                                  var selectedValues = new Array();
                                  selectedValues=data.data['sub'].split(',');
-                                 console.log(selectedValues);
-                                 $(".select3").val(selectedValues).trigger("change"); 
+                                                                  $(".select3").val(selectedValues).trigger("change"); 
                                }
                        }     
-                           url='{{url("getsub_category1/id")}}';
-                           url = url.replace('id', atts.name);
+                           url='{{ url("sub_categories1") }}/' + atts.name;
                            xmlhttp.open("GET", url , true);
                            xmlhttp.send();
                            EshowMe();
@@ -64,7 +62,7 @@
          else
          {
         xmlhttp = new XMLHttpRequest();
-         url='{{url("getcat/name")}}';
+         url='{{url("sub_categories1/count-by-name/name")}}';
       url = url.replace('name', cat);
         xmlhttp.open("GET",url,true);
         xmlhttp.send();
@@ -109,9 +107,10 @@
                <div class="k-window-actions"><a role="button" href="#" onclick='Ehideme()' class="k-window-action k-link">
                    <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                                       <form method="POST" action="{{url('editsub_category1')}}" enctype="multipart/form-data" id="Emyform">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="text"  name="Eid" id="Eid" style="display:none;">
+                                       <form method="POST" action="" enctype="multipart/form-data" id="Emyform">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="_form" value="edit">
                                              <input type="text"  name="Elogo_name" id="Elogo_name" style="display:none;">
                                              <input type="text"  name="Elogo_name" id="Eoldname" style="display:none;">
 
@@ -122,7 +121,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Name</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="Ename" id="Ename" required="required" data-required-msg="is required.">
+                                                    <input type="text" class="k-input k-textbox" name="name" id="Ename" required="required" data-required-msg="is required.">
                                             </div>
                                     </div>
                                     
@@ -130,7 +129,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Background</label>
                                                     <br>
-                                                   <input type="file" name="Ebackground" id="Ebackground"  >                                            
+                                                   <input type="file" name="background" id="Ebackground"  >                                            
                                                    </div>
                                      </div>
                                     
@@ -139,7 +138,7 @@
                                             <div class="k-edit-label" style="margin:0px;">
                                                     <label for="lname">Category Name</label>
                                                     <br>
-                                                  <select class="k-input k-textbox selectbox select3" name="Ecat_id[]" multiple="" id="Ecat_id" require>
+                                                  <select class="k-input k-textbox selectbox select3" name="cat_id[]" multiple="" id="Ecat_id" require>
                                                   @foreach(DB::table('sub_category')->get() as $item)
                                                    <option value="{{ $item->id }}">{{ $item->english_name}}</option>
                                                               @endforeach

@@ -20,6 +20,9 @@
                                             <!-- body Srart  -->
                                              <div id="grid"></div> 
         <script>
+             // The grid destroys over DELETE, so CSRF has to ride along.
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
                  
@@ -39,11 +42,14 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "../readsubcetegory_category1/{{$cid}}" 
+                                  url: "{{ route('admin.sub_categories1.byParent', $cid) }}"
                                },
                                destroy:
                                {
-                                   url: "../deletesub_category1"
+                                   url: function(row) {
+                                       return "{{ url('sub_categories1') }}/" + row.id;
+                                   },
+                                   type: "DELETE"
                                }
                                
                            },
