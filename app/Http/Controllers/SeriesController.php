@@ -1,103 +1,92 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
+
+use App\Http\Requests\StoreSeriesRequest;
+use App\Http\Requests\UpdateSeriesRequest;
 use App\Models\Series;
+use App\Traits\HandlesMediaUploads;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 class SeriesController extends Controller
 {
-    public function index()
+    use HandlesMediaUploads;
+
+    private const IMAGE_DIR = 'seriesuploads';
+
+    public function index(): View
     {
         return view('Pages.series.list');
     }
-    public function readall()  //list all slider
+
+    public function data(): JsonResponse
     {
-       $acc= Series::select('id','photo','english_name','link','text1','text2','text3')->get()
-       ->map(function ($acc) {
-           $acc->photo = $acc->photo;
-           return $acc;
-       }); 
-       return response()->json(['data' => $acc]);
-    } 
-      public function insert(Request $request)
-    {
-        $name=$request->input('name');
-        $link=$request->input('link');
-        $family=$request->input('cat_id');
-        $text1=$request->input('text');
-        $text2=$request->input('text2');
-        $text3=$request->input('text3');
-        $file = $request->file('image');
-        $destinationPath = public_path('seriesuploads');
-        $filepath = time() . $file->getClientOriginalName();
-        $file->move($destinationPath, $filepath);
-        $created_at= date('Y-m-d H:i:s');
-        $id = Series::create(
-        [
-            'photo'=>'public/seriesuploads/'.$filepath,
-            'english_name'=>$name,
-            'link'=>$link,
-            'family_id'=>$family,
-             'text1'=>$text1,
-            'text2'=>$text2,
-            'text3'=>$text3
-            
-        ]
-       );
-     return redirect()->back();
+        $series = Series::query()
+            ->with('family')
+            ->get()
+            ->map(fn (Series $item): array => $this->toGridRow($item))
+            ->all();
+
+        return response()->json(['data' => $series]);
     }
-    public function delete(Request $request)
+
+    public function show(Series $series): JsonResponse
     {
-    $id = $request->input('id');
-    $series = Series::findOrFail($id);
-    $path = $series->photo;
-    $series->delete();
-    return redirect()->back();
+        return response()->json(['data' => [$this->toGridRow($series)]]);
     }
-     public function getacc ($id) // to show customer details
+
+    public function store(StoreSeriesRequest $request): RedirectResponse
     {
-        $series = Series::findOrFail($id);
-        return response()->json(['data' => [$series]]);
+        Series::create($request->safe()->except('image') + [
+            'photo' => $this->storeMedia($request->file('image'), self::IMAGE_DIR),
+        ]);
+
+        return redirect()->back()->with('status', 'Series created.');
     }
-      public function edit(Request $request)
+
+    public function update(UpdateSeriesRequest $request, Series $series): RedirectResponse
     {
-        $id=$request->input('Eid');
-        $logo_name=$request->input('Elogo_name');
-        $name=$request->input('Ename');
-        $link=$request->input('Elink');
-        $family=$request->input('Ecat_id');
-            $text1=$request->input('Etext1');
-        $text2=$request->input('Etext2');
-        $text3=$request->input('Etext3');
-        $file = $request->file('Eimage');
-        $updated_at= date('Y-m-d H:i:s');
-        $series = Series::findOrFail($id);
-        if ($file != null) {
-            $destinationPath = public_path('seriesuploads');
-            $filepath = time() . $file->getClientOriginalName();
-            $file->move($destinationPath, $filepath);
-            $series->update([
-                'photo'        => 'public/seriesuploads/' . $filepath,
-                'english_name' => $name,
-                'link'         => $link,
-                'family_id'    => $family,
-                'text1'        => $text1,
-                'text2'        => $text2,
-                'text3'        => $text3,
-            ]);
-        } else {
-            $series->update([
-                'english_name' => $name,
-                'link'         => $link,
-                'family_id'    => $family,
-                'text1'        => $text1,
-                'text2'        => $text2,
-                'text3'        => $text3,
-            ]);
+        $attributes = $request->safe()->except('image');
+        $oldPhoto = $series->getRawOriginal('photo');
+
+        if ($file = $request->file('image')) {
+            $attributes['photo'] = $this->storeMedia($file, self::IMAGE_DIR);
         }
-    return redirect()->back();
+
+        $series->update($attributes);
+
+        if (isset($attributes['photo'])) {
+            $this->deleteMedia($oldPhoto, self::IMAGE_DIR);
+        }
+
+        return redirect()->back()->with('status', 'Series updated.');
+    }
+
+    public function destroy(Series $series): Response
+    {
+        $photo = $series->getRawOriginal('photo');
+
+        $series->delete();
+        // The old delete() read the path but never removed the file.
+        $this->deleteMedia($photo, self::IMAGE_DIR);
+
+        return response()->noContent();
+    }
+
+    private function toGridRow(Series $series): array
+    {
+        return [
+            'id'           => $series->id,
+            'photo'        => $series->photo,
+            'english_name' => $series->english_name,
+            'link'         => $series->link,
+            'text1'        => $series->text1,
+            'text2'        => $series->text2,
+            'text3'        => $series->text3,
+            'family_id'    => $series->family_id,
+        ];
     }
 }

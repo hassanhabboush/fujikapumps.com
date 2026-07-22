@@ -34,7 +34,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{route('admin.series')}}">
+                                    <a href="{{route('admin.series.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-package"></i></span>
                                         <span class="pcoded-mtext">Series</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('series')->count()}}</span>
@@ -43,7 +43,7 @@
                                @endif
                             @if(Auth::user()->role==1 || Auth::user()->role==2 || Auth::user()->role==3)
                             <li class="product">
-                                    <a href="{{route('admin.accessories')}}">
+                                    <a href="{{route('admin.accessories.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-cpu"></i></span>
                                         <span class="pcoded-mtext">Accessories</span>
                                         <span class="pcoded-badge label label-danger">{{$count_user = DB::table('accessories')->count()}}</span>

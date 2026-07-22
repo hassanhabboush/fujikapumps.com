@@ -18,6 +18,8 @@
                                              @include('Pages.series.edit')
                                              <div id="grid"></div> 
         <script>
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
                  
@@ -37,11 +39,14 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "readseries" 
+                                  url: "{{ route('admin.series.data') }}"
                                },
                                destroy:
                                {
-                                   url: "deleteseries"
+                                   url: function(series) {
+                                       return "{{ url('series') }}/" + series.id;
+                                   },
+                                   type: "DELETE"
                                }
                                
                            },

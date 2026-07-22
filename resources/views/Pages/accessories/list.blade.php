@@ -18,6 +18,8 @@
                                              @include('Pages.accessories.edit')
                                              <div id="grid"></div> 
         <script>
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
                  
@@ -37,11 +39,14 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "readaccessories" 
+                                  url: "{{ route('admin.accessories.data') }}"
                                },
                                destroy:
                                {
-                                   url: "deleteaccessories"
+                                   url: function(accessory) {
+                                       return "{{ url('accessories') }}/" + accessory.id;
+                                   },
+                                   type: "DELETE"
                                }
                                
                            },

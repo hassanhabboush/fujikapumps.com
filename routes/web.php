@@ -144,24 +144,16 @@ Route::group(['as' => 'admin.'], function () {
         });
 
         //accessories related routes
-        Route::controller(AccessoriesController::class)->group(function () {
-                Route::get('accessories', 'index')->name('accessories');
-                Route::get('readaccessories', 'readall');
-                Route::post('addaccessories', 'insert');
-                Route::post('editaccessories', 'edit');
-                Route::get('deleteaccessories', 'delete');
-                Route::get('getaccessories/{id}', 'getacc');
-        });
+        Route::get('accessories/data', [AccessoriesController::class, 'data'])->name('accessories.data');
+        Route::resource('accessories', AccessoriesController::class)
+            ->parameters(['accessories' => 'accessory'])
+            ->except(['create', 'edit']);
 
         //series related routes
-        Route::controller(SeriesController::class)->group(function () {
-            Route::get('series', 'index')->name('series');
-            Route::get('readseries', 'readall');
-            Route::post('addseries', 'insert');
-            Route::post('editseries', 'edit');
-            Route::get('deleteseries', 'delete');
-            Route::get('getseries/{id}', 'getacc');
-        });
+        Route::get('series/data', [SeriesController::class, 'data'])->name('series.data');
+        Route::resource('series', SeriesController::class)
+            ->parameters(['series' => 'series'])
+            ->except(['create', 'edit']);
 
         
         Route::controller(AboutController::class)->group(function () {

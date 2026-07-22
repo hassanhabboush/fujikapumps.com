@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Traits\HasMediaUrls;
 use App\Traits\InvalidatesCache;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Series;
 use App\Models\SubCategory1;
 
 class Family extends Model
 {
-    use HasMediaUrls, InvalidatesCache;
+    use HasFactory, HasMediaUrls, InvalidatesCache;
     protected $table = 'family';
     protected $guarded = [];
 

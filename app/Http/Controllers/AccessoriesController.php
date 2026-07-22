@@ -1,82 +1,94 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
+
+use App\Http\Requests\StoreAccessoryRequest;
+use App\Http\Requests\UpdateAccessoryRequest;
 use App\Models\Accessory;
+use App\Traits\HandlesMediaUploads;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class AccessoriesController extends Controller
 {
-    public function index()
+    use HandlesMediaUploads;
+
+    private const IMAGE_DIR = 'accessoriesuploads';
+
+    public function index(): View
     {
         return view('Pages.accessories.list');
     }
-    public function readall()  //list all slider
+
+    /**
+     * Cached as a plain array: HasMediaUrls resolves `photo` in getAttribute(),
+     * which toArray() bypasses.
+     */
+    public function data(): JsonResponse
     {
-       $acc = Cache::get('accessories', function () {
-           return Accessory::select('id', 'photo', 'name', 'link')->get()
-           ->map(function ($acc) {
-               $acc->photo = $acc->photo;
-               return $acc;
-           });
-       });
-       return response()->json(['data' => $acc]);
-    } 
-      public function insert(Request $request)
+        $accessories = Cache::remember('accessories', now()->addHour(), function () {
+            return Accessory::query()
+                ->get()
+                ->map(fn (Accessory $accessory): array => $this->toGridRow($accessory))
+                ->all();
+        });
+
+        return response()->json(['data' => $accessories]);
+    }
+
+    public function show(Accessory $accessory): JsonResponse
     {
-        $name=$request->input('name');
-        $link=$request->input('link');
-        $file = $request->file('image');
-        $destinationPath = public_path('accessoriesuploads');
-        $filepath = time() . $file->getClientOriginalName();
-        $file->move($destinationPath, $filepath);
-        Accessory::create([
-            'photo' => 'public/accessoriesuploads/' . $filepath,
-            'name'  => $name,
-            'link'  => $link,
+        return response()->json(['data' => [$this->toGridRow($accessory)]]);
+    }
+
+    public function store(StoreAccessoryRequest $request): RedirectResponse
+    {
+        Accessory::create($request->safe()->except('image') + [
+            'photo' => $this->storeMedia($request->file('image'), self::IMAGE_DIR),
         ]);
-     return redirect()->back();
+
+        return redirect()->back()->with('status', 'Accessory created.');
     }
-    public function delete(Request $request)
+
+    public function update(UpdateAccessoryRequest $request, Accessory $accessory): RedirectResponse
     {
-    $id = $request->input('id');
-    $acc = Accessory::findOrFail($id);
-    $path = $acc->photo;
-    $acc->delete();
-    return redirect()->back();
-    }
-     public function getacc ($id) // to show customer details
-    {
-        $acc = Accessory::findOrFail($id);
-        return response()->json(['data' => [$acc]]);
-    }
-      public function edit(Request $request)
-    {
-        $id=$request->input('Eid');
-        $logo_name=$request->input('Elogo_name');
-        $name=$request->input('Ename');
-        $link=$request->input('Elink');
-        $file = $request->file('Eimage');
-        $updated_at= date('Y-m-d H:i:s');
-        $acc = Accessory::findOrFail($id);
-        if ($file != null) {
-            $destinationPath = public_path('accessoriesuploads');
-            $filepath = time() . $file->getClientOriginalName();
-            $file->move($destinationPath, $filepath);
-            $acc->update([
-                'photo' => 'public/accessoriesuploads/' . $filepath,
-                'name'  => $name,
-                'link'  => $link,
-            ]);
-        } else {
-            $acc->update([
-                'name' => $name,
-                'link' => $link,
-            ]);
+        $attributes = $request->safe()->except('image');
+        $oldPhoto = $accessory->getRawOriginal('photo');
+
+        if ($file = $request->file('image')) {
+            $attributes['photo'] = $this->storeMedia($file, self::IMAGE_DIR);
         }
-    return redirect()->back();
+
+        $accessory->update($attributes);
+
+        if (isset($attributes['photo'])) {
+            $this->deleteMedia($oldPhoto, self::IMAGE_DIR);
+        }
+
+        return redirect()->back()->with('status', 'Accessory updated.');
+    }
+
+    public function destroy(Accessory $accessory): Response
+    {
+        $photo = $accessory->getRawOriginal('photo');
+
+        $accessory->delete();
+        // The old delete() read the path but never removed the file.
+        $this->deleteMedia($photo, self::IMAGE_DIR);
+
+        return response()->noContent();
+    }
+
+    private function toGridRow(Accessory $accessory): array
+    {
+        return [
+            'id'    => $accessory->id,
+            'photo' => $accessory->photo,
+            'name'  => $accessory->name,
+            'link'  => $accessory->link,
+        ];
     }
 }
