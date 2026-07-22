@@ -1,55 +1,78 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
+
+use App\Http\Requests\StoreProductGalleryRequest;
+use App\Models\Product;
 use App\Models\ProductGallery;
-use Session;
+use App\Traits\HandlesMediaUploads;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class GalleryController extends Controller
 {
-    public function index($id)
+    use HandlesMediaUploads;
+
+    private const IMAGE_DIR = 'productimage';
+
+    /**
+     * The product now comes from the URL rather than the session, which
+     * previously meant two open tabs would file uploads against whichever
+     * product was opened last.
+     */
+    public function index(Product $product): View
     {
-      Session::put('product_id', $id);
-
-        return view('Pages.product.gallery.gallery')->with('id',$id);
-
+        return view('Pages.product.gallery.gallery')->with('id', $product->id);
     }
-    public function readall($id)  //list all slider
+
+    public function data(Product $product): JsonResponse
     {
-       $source = Cache::get('gallery_'.$id, function () use ($id) {
-           return ProductGallery::select('id', 'path')->where('product_id', $id)->get()
-           ->map(function ($gallery) {
-               $gallery->path = $gallery->path;
-               return $gallery;
-           });
-       });
-       return response()->json(['data' => $source]);
-    } 
-    public function add_gallery($product_id,$photo)
+        $images = Cache::remember(
+            $this->cacheKey($product),
+            now()->addHour(),
+            fn () => ProductGallery::where('product_id', $product->id)
+                ->get()
+                ->map(fn (ProductGallery $image): array => [
+                    'id'   => $image->id,
+                    'path' => $image->path,
+                ])
+                ->all()
+        );
+
+        return response()->json(['data' => $images]);
+    }
+
+    public function store(StoreProductGalleryRequest $request, Product $product): RedirectResponse
     {
         ProductGallery::create([
-            'product_id' => $product_id,
-            'path'       => $photo,
+            'product_id' => $product->id,
+            'path'       => $this->storeMedia($request->file('background'), self::IMAGE_DIR),
         ]);
+
+        Cache::forget($this->cacheKey($product));
+
+        return redirect()->back()->with('status', 'Gallery image added.');
     }
-      public function insert(Request $request)
+
+    public function destroy(ProductGallery $gallery): Response
     {
-        $file1 = $request->file('background');
-        $product_id=session('product_id');
-        $destinationPath1 = public_path('productimage');
-        $filepath1 = time() . $file1->getClientOriginalName();
-        $file1->move($destinationPath1, $filepath1);
-        $this->add_gallery($product_id,'public/productimage/'.$filepath1);
-        return redirect()->back();
+        $path = $gallery->getRawOriginal('path');
+        $productId = $gallery->product_id;
+
+        $gallery->delete();
+        // The old delete() left the uploaded file behind.
+        $this->deleteMedia($path, self::IMAGE_DIR);
+
+        Cache::forget('gallery_' . $productId);
+
+        return response()->noContent();
     }
-    public function delete(Request $request)
+
+    private function cacheKey(Product $product): string
     {
-    $id = $request->input('id');
-    ProductGallery::findOrFail($id)->delete();
-    return redirect()->back();
+        return 'gallery_' . $product->id;
     }
 }

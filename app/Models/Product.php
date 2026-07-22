@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasMediaUrls;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Family;
 use App\Models\ProductParameter;
@@ -11,7 +12,7 @@ use App\Models\SubCategory;
 
 class Product extends Model
 {
-    use HasMediaUrls;
+    use HasFactory, HasMediaUrls;
     protected $table = 'products';
 
     protected $guarded = [];

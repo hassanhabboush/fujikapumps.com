@@ -44,8 +44,10 @@
        <div class="k-window-actions"><a role="button" href="#" onclick='hideme()' class="k-window-action k-link">
            <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                 <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                  <form method="POST" action="{{url('addgallery')}}" enctype="multipart/form-data">
-                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                  <form method="POST" action="{{ url('products/'.$id.'/gallery') }}" enctype="multipart/form-data">
+                      @csrf
+                      {{-- Tells Layout/errors which modal to re-open on failure. --}}
+                      <input type="hidden" name="_form" value="add">
                         <div class="k-edit-form-container">
                             
 								<div class="row" style="margin-left: 0px;margin-right: 0px;">

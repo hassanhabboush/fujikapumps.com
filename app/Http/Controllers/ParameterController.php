@@ -1,78 +1,74 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
+
+use App\Http\Requests\StoreProductParameterRequest;
+use App\Http\Requests\UpdateProductParameterRequest;
+use App\Models\Product;
 use App\Models\ProductParameter;
-use App\Models\ProductGallery;
-use Session;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class ParameterController extends Controller
 {
-    public function index($id)
+    /**
+     * The product comes from the URL rather than the session, so parameters
+     * can no longer be filed against whichever product a different tab
+     * happened to open last.
+     */
+    public function index(Product $product): View
     {
-      Session::put('product_id', $id);
-
-        return view('Pages.product.parameter.parameter')->with('id',$id);
-
+        return view('Pages.product.parameter.parameter')->with('id', $product->id);
     }
-    public function readall($id)  //list all slider
-    {
-       $source = Cache::get('parameter_'.$id, function () use ($id) {
-           return ProductParameter::where('product_id', $id)->get();
-       });
-       return response()->json(['data' => $source]);
-    } 
-    public function add_gallery($product_id,$photo)
-    {
-        ProductGallery::create([
-            'product_id' => $product_id,
-            'path'       => $photo,
-        ]);
-    }
-      public function insert(Request $request)
-    {
-      ProductParameter::create([
-          'product_id'        => session('product_id'),
-          'Model'             => $request['Model'],
-          'SerialNumber'      => $request['SerialNumber'],
-          'PowerKw'           => $request['PowerKw'],
-          'PowerHp'           => $request['PowerHp'],
-          'q'                 => $request['q'],
-          'h'                 => $request['h'],
-          'v'                 => $request['v'],
-          'Discharge_diameter'=> $request['Discharge_diameter'],
-          'Hertz'             => $request['Hertz'],
-          'Material'          => $request['Material'],
-          'RPM'               => $request['RPM'],
-          'link'              => $request['link'],
-      ]);
 
-    }
-    public function delete(Request $request)
+    public function data(Product $product): JsonResponse
     {
-    $id = $request->input('id');
-    ProductParameter::findOrFail($id)->delete();
-    return redirect()->back();
-    }
-    public function update(Request $request)
-    {
-      ProductParameter::findOrFail($request['id'])->update([
-          'Model'             => $request['Model'],
-          'SerialNumber'      => $request['SerialNumber'],
-          'PowerKw'           => $request['PowerKw'],
-          'PowerHp'           => $request['PowerHp'],
-          'q'                 => $request['q'],
-          'h'                 => $request['h'],
-          'v'                 => $request['v'],
-          'Discharge_diameter'=> $request['Discharge_diameter'],
-          'Hertz'             => $request['Hertz'],
-          'Material'          => $request['Material'],
-          'RPM'               => $request['RPM'],
-          'link'              => $request['link'],
-      ]);
+        $parameters = Cache::remember(
+            $this->cacheKey($product),
+            now()->addHour(),
+            fn () => ProductParameter::where('product_id', $product->id)->get()->all()
+        );
 
+        return response()->json(['data' => $parameters]);
+    }
+
+    /**
+     * The Kendo grid drives create/update inline and expects the saved row
+     * back as JSON, so these return the model rather than redirecting.
+     */
+    public function store(StoreProductParameterRequest $request, Product $product): JsonResponse
+    {
+        $parameter = ProductParameter::create(
+            $request->validated() + ['product_id' => $product->id]
+        );
+
+        Cache::forget($this->cacheKey($product));
+
+        return response()->json(['data' => [$parameter]]);
+    }
+
+    public function update(UpdateProductParameterRequest $request, ProductParameter $parameter): JsonResponse
+    {
+        $parameter->update($request->validated());
+
+        Cache::forget('parameter_' . $parameter->product_id);
+
+        return response()->json(['data' => [$parameter]]);
+    }
+
+    public function destroy(ProductParameter $parameter): JsonResponse
+    {
+        $productId = $parameter->product_id;
+        $parameter->delete();
+
+        Cache::forget('parameter_' . $productId);
+
+        return response()->json(['data' => []]);
+    }
+
+    private function cacheKey(Product $product): string
+    {
+        return 'parameter_' . $product->id;
     }
 }

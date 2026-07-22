@@ -17,6 +17,9 @@
                                             @include('Pages.product.parameter.add')
                                              <div id="grid"></div> 
         <script>
+             // create/update/destroy all leave GET now, so CSRF has to ride along.
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
                  
@@ -36,19 +39,24 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "{{url('readparameter/'.$id)}}" 
+                                  url: "{{ url('products/'.$id.'/parameters/data') }}"
                                },
                                destroy:
                                {
-                                   url: "{{url('deleteparameter')}}"
+                                   url: function(row) {
+                                       return "{{ url('parameters') }}/" + row.id;
+                                   },
+                                   type: "DELETE"
                                },
                                update: {
-                            url: "{{url('updateparameter')}}",
-                            type: "GET"
+                            url: function(row) {
+                                return "{{ url('parameters') }}/" + row.id;
+                            },
+                            type: "PUT"
                         },
                         create: {
-          url: "{{url('addparameter')}}",
-          type: "GET"
+          url: "{{ url('products/'.$id.'/parameters') }}",
+          type: "POST"
        }
                                
                            },

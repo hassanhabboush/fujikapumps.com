@@ -117,22 +117,27 @@ Route::group(['as' => 'admin.'], function () {
             Route::get('productdetails/{id}', 'productdetails');
         });
 
-        //gallery related routes
-        Route::controller(GalleryController::class)->group(function () {
-            Route::get('gallery/{id}', 'index');
-            Route::get('readgallery/{id}', 'readall');
-            Route::post('addgallery', 'insert');
-            Route::get('deletegallery', 'delete');
-        });
+        //product gallery — nested so the product comes from the URL, not the session
+        Route::get('products/{product}/gallery', [GalleryController::class, 'index'])
+            ->name('gallery.index');
+        Route::get('products/{product}/gallery/data', [GalleryController::class, 'data'])
+            ->name('gallery.data');
+        Route::post('products/{product}/gallery', [GalleryController::class, 'store'])
+            ->name('gallery.store');
+        Route::delete('gallery/{gallery}', [GalleryController::class, 'destroy'])
+            ->name('gallery.destroy');
 
-        //parameter related routes
-        Route::controller(ParameterController::class)->group(function () {
-            Route::get('parameter/{id}', 'index');
-            Route::get('readparameter/{id}', 'readall');
-            Route::get('addparameter', 'insert');
-            Route::get('updateparameter', 'update');
-            Route::get('deleteparameter', 'delete');
-        });
+        //product parameters — likewise nested
+        Route::get('products/{product}/parameters', [ParameterController::class, 'index'])
+            ->name('parameters.index');
+        Route::get('products/{product}/parameters/data', [ParameterController::class, 'data'])
+            ->name('parameters.data');
+        Route::post('products/{product}/parameters', [ParameterController::class, 'store'])
+            ->name('parameters.store');
+        Route::put('parameters/{parameter}', [ParameterController::class, 'update'])
+            ->name('parameters.update');
+        Route::delete('parameters/{parameter}', [ParameterController::class, 'destroy'])
+            ->name('parameters.destroy');
 
         //accessories related routes
         Route::get('accessories/data', [AccessoriesController::class, 'data'])->name('accessories.data');

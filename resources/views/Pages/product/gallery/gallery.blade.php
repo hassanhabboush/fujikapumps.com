@@ -17,6 +17,9 @@
                                             @include('Pages.product.gallery.add')
                                              <div id="grid"></div> 
         <script>
+             // The grid destroys over DELETE, so CSRF has to ride along.
+             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+
              $(function()
                 {
                  
@@ -36,11 +39,14 @@
                                read: 
                                {
                                   dataType: "json",
-                                  url: "{{url('readgallery/'.$id)}}" 
+                                  url: "{{ url('products/'.$id.'/gallery/data') }}"
                                },
                                destroy:
                                {
-                                   url: "{{url('deletegallery')}}"
+                                   url: function(row) {
+                                       return "{{ url('gallery') }}/" + row.id;
+                                   },
+                                   type: "DELETE"
                                }
                                
                            },
