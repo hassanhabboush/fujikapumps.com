@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\SubCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -45,5 +46,33 @@ class GridImageTemplateTest extends TestCase
         $response->assertSee("src='\${" . $field . "}'", false);
         $response->assertDontSee("../\${" . $field . "}", false);
         $response->assertDontSee("url('\${" . $field . "}')", false);
+    }
+
+    /**
+     * The flat image collections (about gallery, team, product gallery) all expose
+     * their media as "path" and hit the same broken prefix.
+     */
+    public static function imageListProvider(): array
+    {
+        return [
+            'about gallery' => ['about_page/gallery'],
+            'about team' => ['about_page/team'],
+            'product gallery' => ['products/{product}/gallery'],
+        ];
+    }
+
+    #[DataProvider('imageListProvider')]
+    public function test_image_list_grid_uses_the_media_url_unmodified(string $path): void
+    {
+        if (str_contains($path, '{product}')) {
+            $path = str_replace('{product}', (string) Product::factory()->create()->id, $path);
+        }
+
+        $response = $this->actingAs($this->admin())
+            ->get('/' . $path)
+            ->assertOk();
+
+        $response->assertSee("src='\${path}'", false);
+        $response->assertDontSee("url('\${path}')", false);
     }
 }

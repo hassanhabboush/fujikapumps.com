@@ -92,7 +92,7 @@
                        { field: "email" ,title:"Email"},
                        { field: "role" ,title:"Role"},
                        { field: "active" ,title:"status"},
-                       { field: "id" ,title:"action", width: "200px" , template: "<a title='Edit user' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'> Edit</a><br> <a title='Active' class='k-button k-button-icontext' onclick='patchTo("{{ url("system_users") }}/${id}/activate")' style="cursor:pointer">Active</a> <a title='DisActive' class='k-button k-button-icontext' onclick='patchTo("{{ url("system_users") }}/${id}/deactivate")' style="cursor:pointer">Inactive</a>"},
+                       { field: "id" ,title:"action", width: "200px" , template: "<a title='Edit user' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'> Edit</a><br> <a title='Active' class='k-button k-button-icontext' onclick='patchTo(\"{{ url("system_users") }}/${id}/activate\")' style='cursor:pointer'>Active</a> <a title='DisActive' class='k-button k-button-icontext' onclick='patchTo(\"{{ url("system_users") }}/${id}/deactivate\")' style='cursor:pointer'>Inactive</a>"},
                          {command: ["destroy"], title: "Delete" }
                         ],
                       editable:
