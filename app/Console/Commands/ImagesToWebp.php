@@ -89,6 +89,8 @@ class ImagesToWebp extends Command
             if ($success) {
                 $converted++;
 
+                Log::info('Converted image: ' . $filePath . ' to ' . $webpPath);
+
                 if ($deleteOriginals) {
                     @unlink($filePath);
                 }
