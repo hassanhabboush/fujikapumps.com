@@ -35,8 +35,13 @@ class AppDeploy extends Command
         }
 
         // database migration
-        // $this->info('Step 4/8 — migrate');
-        // $this->call('migrate:fresh');
+        $this->info('Step 4/8 — laravel.log file');
+        $logFile = storage_path('logs/laravel.log');
+        if (file_exists($logFile)) {
+            $this->line("  <info>Found laravel.log file.</info>");
+        } else {
+            $this->warn("  <error>laravel.log file not found.</error>");
+        }
 
         // $this->info('Step 5/8 — db:seed');
         // $this->call('db:seed');
