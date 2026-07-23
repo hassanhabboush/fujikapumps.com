@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -104,25 +105,29 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        $product = Product::create([
-            'name'        => $request->validated('name'),
-            'descreption' => $request->validated('shortdescreption'),
-            'photo'       => $this->storeMedia($request->file('background'), self::PHOTO_DIR),
-            'is_featured' => 0,
-            'family_id'   => $request->validated('cat_id'),
-            'link'        => $request->validated('link') ?? '',
-        ]);
-
-        foreach ($request->file('images') ?? [] as $image) {
-            ProductGallery::create([
-                'product_id' => $product->id,
-                'path'       => $this->storeMedia($image, self::GALLERY_DIR),
+        // One transaction so a rejected parameter row cannot leave an orphan
+        // product with no parameters behind.
+        DB::transaction(function () use ($request): void {
+            $product = Product::create([
+                'name'        => $request->validated('name'),
+                'descreption' => $request->validated('shortdescreption'),
+                'photo'       => $this->storeMedia($request->file('background'), self::PHOTO_DIR),
+                'is_featured' => 0,
+                'family_id'   => $request->validated('cat_id'),
+                'link'        => $request->validated('link') ?? '',
             ]);
-        }
 
-        if ($csv = $request->file('parameter')) {
-            $this->importParameters($product, $csv);
-        }
+            foreach ($request->file('images') ?? [] as $image) {
+                ProductGallery::create([
+                    'product_id' => $product->id,
+                    'path'       => $this->storeMedia($image, self::GALLERY_DIR),
+                ]);
+            }
+
+            if ($csv = $request->file('parameter')) {
+                $this->importParameters($product, $csv);
+            }
+        });
 
         $this->forgetProductCaches();
 

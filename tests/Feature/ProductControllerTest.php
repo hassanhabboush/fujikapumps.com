@@ -57,6 +57,40 @@ class ProductControllerTest extends TestCase
         $this->get('/products')->assertRedirect('/login');
     }
 
+    /**
+     * The action column embedded an unescaped double quote inside the Kendo
+     * template's own double-quoted string, so the whole <script> block was a
+     * syntax error and the grid silently rendered nothing.
+     */
+    public function test_product_grids_emit_parsable_action_templates(): void
+    {
+        $family  = Family::factory()->create();
+        $product = Product::factory()->create(['family_id' => $family->id]);
+        $category = Category::factory()->create();
+        $product->categories()->attach($category->id);
+
+        $screens = [
+            '/products',
+            '/products/featured',
+            '/products/by-category/' . $category->id,
+            '/products/by-subcategory/1',
+        ];
+
+        foreach ($screens as $screen) {
+            $html = $this->actingAs($this->admin())->get($screen)
+                ->assertOk()
+                ->getContent();
+
+            $this->assertStringNotContainsString(
+                'onclick=\'patchTo("',
+                $html,
+                $screen . ' emits an unescaped quote inside the Kendo template string.'
+            );
+            $this->assertStringContainsString('function patchTo(', $html, $screen);
+            $this->assertStringContainsString('X-CSRF-TOKEN', $html, $screen);
+        }
+    }
+
     public function test_data_returns_products_with_resolved_photo_urls(): void
     {
         $product = Product::factory()->create([
@@ -156,6 +190,50 @@ class ProductControllerTest extends TestCase
             'Model'      => 'M-1',
             'RPM'        => '1450',
         ]);
+    }
+
+    /**
+     * An xlsx used to pass validation and reach fgetcsv(), which fed the raw
+     * zip bytes into product_parameter until MySQL rejected them with a 500.
+     */
+    public function test_store_rejects_a_binary_parameter_file(): void
+    {
+        $family = Family::factory()->create();
+
+        // PK\x03\x04 header — what an .xlsx actually is on disk.
+        $workbook = "PK\x03\x04\x14\x00\x06\x00\x08\x00\x00\x00!\x00\xCAr\x96\xA0\x11V\x02\x00";
+
+        $this->actingAs($this->admin())
+            ->post('/products', [
+                'name'       => 'Pump',
+                'cat_id'     => $family->id,
+                'background' => UploadedFile::fake()->image('pump.jpg'),
+                'parameter'  => UploadedFile::fake()->createWithContent('params.xlsx', $workbook),
+            ])
+            ->assertSessionHasErrors('parameter');
+
+        $this->assertDatabaseCount('products', 0);
+        $this->assertDatabaseCount('product_parameter', 0);
+    }
+
+    /** A binary file renamed to .csv must not slip past the extension check. */
+    public function test_store_rejects_a_binary_file_renamed_to_csv(): void
+    {
+        $family = Family::factory()->create();
+
+        $this->actingAs($this->admin())
+            ->post('/products', [
+                'name'       => 'Pump',
+                'cat_id'     => $family->id,
+                'background' => UploadedFile::fake()->image('pump.jpg'),
+                'parameter'  => UploadedFile::fake()->createWithContent(
+                    'params.csv',
+                    "Model,SerialNumber\n\xCAr\x96\xA0\x11V,\xFF\xFE\x00"
+                ),
+            ])
+            ->assertSessionHasErrors('parameter');
+
+        $this->assertDatabaseCount('products', 0);
     }
 
     public function test_store_rejects_a_missing_name_and_an_unknown_family(): void

@@ -25,7 +25,8 @@
     ">
     <a href="{{ route('admin.products.create') }}" class="k-button k-button-icontext k-grid-add">+ Add new record</a>	
     </div>
-                                             <div id="grid"></div> 
+                                             <div id="grid"></div>
+        @include('Pages.product.partials.gridhelpers')
         <script>
              $(function()
                 {
@@ -83,7 +84,7 @@
                         @if(Auth::user()->role==1 || Auth::user()->role==2)
      
     
-                       { field: "is_featured" ,width:"225px" ,title:"Action",template: "#if(is_featured==0){#<a title='Make Feature' class='k-button k-button-icontext' onclick='patchTo("{{ url("products") }}/${id}/feature")' style='cursor:pointer'>Make Featured</a> #}else{#<a title='Make Feature' class='k-button k-button-icontext' onclick='patchTo("{{ url("products") }}/${id}/unfeature")' style='cursor:pointer'>Remove Featured</a>#}# <br><a title='Edit' class='k-button k-button-icontext' href='{{ url("products") }}/${id}/edit'>Edit</a><br> <a title='gallery' class='k-button k-button-icontext' href='{{ url("products") }}/${id}/gallery'>Gallery</a> <br> <a title='Parameter' class='k-button k-button-icontext' href='{{ url("products") }}/${id}/parameters'>Parameter</a>"},
+                       { field: "is_featured" ,width:"225px" ,title:"Action",template: "#if(is_featured==0){#<a title='Make Feature' class='k-button k-button-icontext' onclick='patchTo(\"{{ url("products") }}/${id}/feature\")' style='cursor:pointer'>Make Featured</a> #}else{#<a title='Make Feature' class='k-button k-button-icontext' onclick='patchTo(\"{{ url("products") }}/${id}/unfeature\")' style='cursor:pointer'>Remove Featured</a>#}# <br><a title='Edit' class='k-button k-button-icontext' href='{{ url("products") }}/${id}/edit'>Edit</a><br> <a title='gallery' class='k-button k-button-icontext' href='{{ url("products") }}/${id}/gallery'>Gallery</a> <br> <a title='Parameter' class='k-button k-button-icontext' href='{{ url("products") }}/${id}/parameters'>Parameter</a>"},
                        {command: ["destroy"], title: "Delete" }
 @endif 
                        ],
