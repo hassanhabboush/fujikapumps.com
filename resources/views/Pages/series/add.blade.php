@@ -55,7 +55,7 @@
                                             <div class="k-edit-label">
                                                     <label for="lname">Name</label>
                                                     <br>
-                                                    <input type="text" class="k-input k-textbox" name="name" >
+                                                    <input type="text" class="k-input k-textbox" name="english_name" >
                                             </div>
                                     </div>
                                       <div class="col-md-6">

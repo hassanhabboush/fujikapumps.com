@@ -42,17 +42,20 @@
                                   dataType: "json",
                                   url: "{{ route('admin.families.data') }}" 
                                },
-                               destroy: function(options) {
-                                   $.ajax({
-                                       url: '{{ url("families") }}/' + options.data.id,
-                                       type: 'DELETE',
-                                       dataType: 'text',
-                                       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                                       success: function() { options.success({}); },
-                                       error: function(xhr) { options.error(xhr); }
-                                   });
+                               // Must stay an object: this Kendo build's RemoteTransport
+                               // deep-extends transport.destroy, so a function value is
+                               // dropped and the row is only removed client-side.
+                               destroy:
+                               {
+                                  url: function(data) { return '{{ url("families") }}/' + data.id; },
+                                  type: "DELETE",
+                                  dataType: "text",
+                                  headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                               },
+                               parameterMap: function(data, type) {
+                                  return type === "destroy" ? {} : data;
                                }
-                               
+
                            },
                          serverPaging: false,
                          pageSize:8,

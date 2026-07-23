@@ -8,6 +8,7 @@ use App\Models\Family;
 use App\Models\FamilySubcategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -97,7 +98,11 @@ class FamilyController extends Controller
         return redirect()->back()->with('status', 'Family updated.');
     }
 
-    public function destroy(Family $family): RedirectResponse
+    /**
+     * Answered with 204 rather than a redirect: the grid deletes over AJAX and
+     * would follow a 302 with DELETE onto the index URL, which has no such route.
+     */
+    public function destroy(Family $family): Response
     {
         $background = $family->getRawOriginal('background');
 
@@ -111,7 +116,7 @@ class FamilyController extends Controller
 
         $this->forgetFamilyCaches();
 
-        return redirect()->back()->with('status', 'Family deleted.');
+        return response()->noContent();
     }
 
     /**

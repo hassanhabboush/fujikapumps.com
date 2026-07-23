@@ -20,5 +20,3 @@ yarn-error.log
 /dash
 /dash/*
 /.well-known
-
-/public

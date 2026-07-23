@@ -68,7 +68,6 @@
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
                                        <form id="Eform" method="POST" action="" enctype="multipart/form-data">
                                             @csrf
-                                            <input type="hidden" name="_form" value="edit">
                                             @method('PUT')
                                              <div class="k-edit-form-container">
                                                     

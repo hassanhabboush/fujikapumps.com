@@ -152,10 +152,36 @@ class FamilyControllerTest extends TestCase
 
         $this->actingAs($this->admin())
             ->delete('/families/' . $family->id)
-            ->assertRedirect();
+            ->assertNoContent();
 
         $this->assertDatabaseMissing('family', ['id' => $family->id]);
         $this->assertDatabaseMissing('family_subcategory', ['family_id' => $family->id]);
         Storage::disk('public')->assertMissing($family->getRawOriginal('background'));
+    }
+
+    /**
+     * The bundled Kendo RemoteTransport deep-extends transport.destroy, so a
+     * function value is silently dropped and the row only vanishes client-side.
+     */
+    public function test_the_grid_declares_destroy_as_a_transport_object(): void
+    {
+        $html = $this->actingAs($this->admin())->get('/families')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('destroy: function(options)', $html);
+        $this->assertStringContainsString('type: "DELETE"', $html);
+    }
+
+    /**
+     * The grid deletes over AJAX; a 302 was followed with DELETE onto /families,
+     * which has no such route, so the row came back as an error.
+     */
+    public function test_destroy_does_not_redirect(): void
+    {
+        $family = Family::factory()->create();
+
+        $response = $this->actingAs($this->admin())->delete('/families/' . $family->id);
+
+        $this->assertSame(204, $response->getStatusCode());
+        $response->assertHeaderMissing('Location');
     }
 }

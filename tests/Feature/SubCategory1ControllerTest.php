@@ -74,6 +74,24 @@ class SubCategory1ControllerTest extends TestCase
             ->assertJsonPath('data', 1);
     }
 
+    /**
+     * The forms used to build the URL with url.replace('name', cat), which hit the
+     * literal "name" inside count-by-name and produced /sub_categories1/count-by-<cat>/name —
+     * a 3-segment path swallowed by the public /{id}/{type}/{name2} route, so the
+     * duplicate check parsed an HTML page as JSON.
+     */
+    public function test_parent_screen_builds_the_duplicate_check_url_by_appending_the_name(): void
+    {
+        $parent = SubCategory::factory()->create();
+
+        $response = $this->actingAs($this->admin())
+            ->get('/sub_categories1/parent/' . $parent->id)
+            ->assertOk();
+
+        $response->assertSee(url('sub_categories1/count-by-name') . "/' + encodeURIComponent(cat)", false);
+        $response->assertDontSee("url.replace('name'", false);
+    }
+
     public function test_store_creates_a_row_and_links_parents(): void
     {
         $parent = SubCategory::factory()->create();

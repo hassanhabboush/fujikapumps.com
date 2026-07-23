@@ -28,8 +28,7 @@
   
         var cat = document.getElementById('name').value;
         xmlhttp = new XMLHttpRequest();
-         url='{{url("sub_categories1/count-by-name/name")}}';
-      url = url.replace('name', cat);
+         url='{{url("sub_categories1/count-by-name")}}/' + encodeURIComponent(cat);
         xmlhttp.open("GET",url,true);
         xmlhttp.send();
  xmlhttp.onreadystatechange=function()
