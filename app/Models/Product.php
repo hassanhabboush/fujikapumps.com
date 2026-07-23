@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Traits\HasMediaUrls;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Support\CatalogCache;
+use App\Traits\InvalidatesCache;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Family;
 use App\Models\ProductParameter;
@@ -12,10 +14,12 @@ use App\Models\SubCategory;
 
 class Product extends Model
 {
-    use HasFactory, HasMediaUrls;
+    use HasFactory, HasMediaUrls, InvalidatesCache;
     protected $table = 'products';
 
     protected $guarded = [];
+
+    protected array $cacheKeys = [CatalogCache::VERSION_KEY];
 
     public function family()
     {
