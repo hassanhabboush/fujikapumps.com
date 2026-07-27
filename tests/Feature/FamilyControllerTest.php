@@ -8,21 +8,32 @@ use App\Models\SubCategory1;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Tests\Concerns\ActsAsAdmin;
+use Tests\Concerns\CleansUploadDirectory;
 use Tests\TestCase;
 
 class FamilyControllerTest extends TestCase
 {
-    use ActsAsAdmin, RefreshDatabase;
+    use ActsAsAdmin, CleansUploadDirectory, RefreshDatabase;
+
+    private const BACKGROUND_DIR = 'categorybackground';
+
+    protected function uploadDirectory(): string
+    {
+        return self::BACKGROUND_DIR;
+    }
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->snapshotUploadDirectory();
+    }
 
-        // Family is the one entity already on the public disk rather than
-        // public/<dir>, so a fake disk is enough here.
-        Storage::fake('public');
+    protected function tearDown(): void
+    {
+        $this->cleanUploadDirectory();
+        parent::tearDown();
     }
 
     public function test_guests_cannot_reach_the_family_screen(): void
@@ -95,7 +106,11 @@ class FamilyControllerTest extends TestCase
             'family_id'       => $family->id,
             'sub_category_id' => $sub->id,
         ]);
-        Storage::disk('public')->assertExists($family->getRawOriginal('background'));
+
+        $stored = $family->getRawOriginal('background');
+
+        $this->assertStringStartsWith('public/' . self::BACKGROUND_DIR . '/', $stored);
+        $this->assertFileExists(public_path(self::BACKGROUND_DIR . '/' . basename($stored)));
     }
 
     public function test_store_requires_at_least_one_sub_category(): void
@@ -152,6 +167,79 @@ class FamilyControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * The old update() stored on the public disk (storage/app/public), so an
+     * updated family only rendered through the public/storage symlink and showed
+     * a broken thumbnail wherever that symlink does not exist.
+     */
+    public function test_update_stores_the_new_background_under_public(): void
+    {
+        $family = Family::factory()->create();
+        $sub = SubCategory1::factory()->create();
+
+        $this->actingAs($this->admin())
+            ->put('/families/' . $family->id, [
+                'name'       => 'Ceiling',
+                'cat_id'     => [$sub->id],
+                'background' => UploadedFile::fake()->image('new.jpg'),
+            ])
+            ->assertRedirect();
+
+        $stored = $family->refresh()->getRawOriginal('background');
+
+        $this->assertStringStartsWith('public/' . self::BACKGROUND_DIR . '/', $stored);
+        $this->assertFileExists(public_path(self::BACKGROUND_DIR . '/' . basename($stored)));
+        $this->assertFileDoesNotExist(storage_path('app/public/' . $stored));
+    }
+
+    public function test_update_removes_the_replaced_file_and_its_webp_sibling(): void
+    {
+        $jpg  = public_path(self::BACKGROUND_DIR . '/old.jpg');
+        $webp = public_path(self::BACKGROUND_DIR . '/old.webp');
+        File::put($jpg, 'jpg');
+        File::put($webp, 'webp');
+
+        $family = Family::factory()->create([
+            'background' => 'public/' . self::BACKGROUND_DIR . '/old.jpg',
+        ]);
+        $sub = SubCategory1::factory()->create();
+
+        $this->actingAs($this->admin())
+            ->put('/families/' . $family->id, [
+                'name'       => 'Ceiling',
+                'cat_id'     => [$sub->id],
+                'background' => UploadedFile::fake()->image('new.jpg'),
+            ])
+            ->assertRedirect();
+
+        $this->assertNotSame(
+            'public/' . self::BACKGROUND_DIR . '/old.jpg',
+            $family->refresh()->getRawOriginal('background')
+        );
+        $this->assertFileDoesNotExist($jpg);
+        $this->assertFileDoesNotExist($webp);
+    }
+
+    public function test_update_without_a_file_keeps_the_current_background(): void
+    {
+        $family = Family::factory()->create([
+            'background' => 'public/' . self::BACKGROUND_DIR . '/keep.jpg',
+        ]);
+        $sub = SubCategory1::factory()->create();
+
+        $this->actingAs($this->admin())
+            ->put('/families/' . $family->id, [
+                'name'   => 'Ceiling',
+                'cat_id' => [$sub->id],
+            ])
+            ->assertRedirect();
+
+        $this->assertSame(
+            'public/' . self::BACKGROUND_DIR . '/keep.jpg',
+            $family->refresh()->getRawOriginal('background')
+        );
+    }
+
     public function test_writes_invalidate_the_cached_tree(): void
     {
         $sub = SubCategory1::factory()->create();
@@ -182,7 +270,8 @@ class FamilyControllerTest extends TestCase
             'sub_category_id' => $sub->id,
         ]);
 
-        Storage::disk('public')->put($family->getRawOriginal('background'), 'bg');
+        $file = public_path(self::BACKGROUND_DIR . '/' . basename($family->getRawOriginal('background')));
+        File::put($file, 'bg');
 
         $this->actingAs($this->admin())
             ->delete('/families/' . $family->id)
@@ -190,7 +279,7 @@ class FamilyControllerTest extends TestCase
 
         $this->assertDatabaseMissing('family', ['id' => $family->id]);
         $this->assertDatabaseMissing('family_subcategory', ['family_id' => $family->id]);
-        Storage::disk('public')->assertMissing($family->getRawOriginal('background'));
+        $this->assertFileDoesNotExist($file);
     }
 
     /**
