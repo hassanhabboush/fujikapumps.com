@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GridPageRequest;
 use App\Http\Requests\StoreSubCategoryRequest;
 use App\Http\Requests\UpdateSubCategoryRequest;
 use App\Models\SubCategory;
 use App\Traits\HandlesMediaUploads;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -23,24 +25,17 @@ class SubCategoryController extends Controller
         return view('Pages.sub_category.sub_category');
     }
 
-    public function data(): JsonResponse
+    public function data(GridPageRequest $request): JsonResponse
     {
-        $subCategories = SubCategory::query()
-            ->get()
-            ->map(fn (SubCategory $subCategory): array => $this->toGridRow($subCategory))
-            ->all();
-
-        return response()->json(['data' => $subCategories]);
+        return $this->pagedRows(SubCategory::query(), $request);
     }
 
-    public function byCategory(int $id): JsonResponse
+    public function byCategory(GridPageRequest $request, int $id): JsonResponse
     {
-        $subCategories = SubCategory::whereHas('categories', fn ($q) => $q->where('categories.id', $id))
-            ->get()
-            ->map(fn (SubCategory $subCategory): array => $this->toGridRow($subCategory))
-            ->all();
-
-        return response()->json(['data' => $subCategories]);
+        return $this->pagedRows(
+            SubCategory::whereHas('categories', fn ($q) => $q->where('categories.id', $id)),
+            $request
+        );
     }
 
     public function categoryScreen(int $id): View
@@ -104,6 +99,27 @@ class SubCategoryController extends Controller
         Cache::forget('headerCategories');
 
         return response()->noContent();
+    }
+
+    /**
+     * One server-side page of a grid feed. These feeds are uncached, so the
+     * page is fetched at the database with LIMIT/OFFSET and the pager gets the
+     * unfiltered total from a separate count rather than the whole table.
+     */
+    private function pagedRows(Builder $query, GridPageRequest $request): JsonResponse
+    {
+        $page     = $request->pageNumber();
+        $pageSize = $request->perPage();
+
+        $total = (clone $query)->count();
+
+        $rows = $query->skip(($page - 1) * $pageSize)
+            ->take($pageSize)
+            ->get()
+            ->map(fn (SubCategory $subCategory): array => $this->toGridRow($subCategory))
+            ->all();
+
+        return response()->json(['data' => $rows, 'total' => $total]);
     }
 
     private function toGridRow(SubCategory $subCategory): array

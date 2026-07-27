@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\PaginatesGrid;
+use App\Http\Requests\GridPageRequest;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
@@ -15,6 +17,7 @@ use Illuminate\View\View;
 class CategoryController extends Controller
 {
     use HandlesMediaUploads;
+    use PaginatesGrid;
 
     private const BACKGROUND_DIR = 'categorybackground';
 
@@ -28,7 +31,7 @@ class CategoryController extends Controller
      * columns in getAttribute(), which toArray() bypasses — the URLs have to be
      * read attribute-by-attribute before anything is serialised.
      */
-    public function data(): JsonResponse
+    public function data(GridPageRequest $request): JsonResponse
     {
         $categories = Cache::remember('categories', now()->addHour(), function () {
             return Category::query()
@@ -37,7 +40,7 @@ class CategoryController extends Controller
                 ->all();
         });
 
-        return response()->json(['data' => $categories]);
+        return $this->paginateRows($categories, $request);
     }
 
     public function show(Category $category): JsonResponse

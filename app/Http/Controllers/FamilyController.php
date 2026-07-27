@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\PaginatesGrid;
+use App\Http\Requests\GridPageRequest;
 use App\Http\Requests\StoreFamilyRequest;
 use App\Http\Requests\UpdateFamilyRequest;
 use App\Models\Family;
@@ -15,6 +17,8 @@ use Illuminate\View\View;
 
 class FamilyController extends Controller
 {
+    use PaginatesGrid;
+
     public function index(): View
     {
         return view('Pages.family.family');
@@ -24,7 +28,7 @@ class FamilyController extends Controller
      * Cached as a plain array because HasMediaUrls resolves `background` in
      * getAttribute(), which toArray() bypasses.
      */
-    public function data(): JsonResponse
+    public function data(GridPageRequest $request): JsonResponse
     {
         $families = Cache::remember('families', now()->addHour(), function () {
             return Family::query()
@@ -33,17 +37,16 @@ class FamilyController extends Controller
                 ->all();
         });
 
-        return response()->json(['data' => $families]);
+        return $this->paginateRows($families, $request);
     }
 
-    public function listByCategory(int $cid): JsonResponse
+    public function listByCategory(GridPageRequest $request, int $cid): JsonResponse
     {
-        $families = Family::whereHas('subCategory1s', fn ($q) => $q->where('sub_category_1.id', $cid))
-            ->get()
-            ->map(fn (Family $family): array => $this->toGridRow($family))
-            ->all();
-
-        return response()->json(['data' => $families]);
+        return $this->paginateQuery(
+            Family::whereHas('subCategory1s', fn ($q) => $q->where('sub_category_1.id', $cid)),
+            $request,
+            fn (Family $family): array => $this->toGridRow($family)
+        );
     }
 
     public function categoryfamily(int $cid): View

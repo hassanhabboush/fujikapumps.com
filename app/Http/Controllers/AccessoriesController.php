@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\PaginatesGrid;
+use App\Http\Requests\GridPageRequest;
 use App\Http\Requests\StoreAccessoryRequest;
 use App\Http\Requests\UpdateAccessoryRequest;
 use App\Models\Accessory;
@@ -15,6 +17,7 @@ use Illuminate\View\View;
 class AccessoriesController extends Controller
 {
     use HandlesMediaUploads;
+    use PaginatesGrid;
 
     private const IMAGE_DIR = 'accessoriesuploads';
 
@@ -27,7 +30,7 @@ class AccessoriesController extends Controller
      * Cached as a plain array: HasMediaUrls resolves `photo` in getAttribute(),
      * which toArray() bypasses.
      */
-    public function data(): JsonResponse
+    public function data(GridPageRequest $request): JsonResponse
     {
         $accessories = Cache::remember('accessories', now()->addHour(), function () {
             return Accessory::query()
@@ -36,7 +39,7 @@ class AccessoriesController extends Controller
                 ->all();
         });
 
-        return response()->json(['data' => $accessories]);
+        return $this->paginateRows($accessories, $request);
     }
 
     public function show(Accessory $accessory): JsonResponse

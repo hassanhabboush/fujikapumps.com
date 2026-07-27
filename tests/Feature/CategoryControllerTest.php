@@ -63,6 +63,23 @@ class CategoryControllerTest extends TestCase
             ->assertJsonPath('data.0.background', asset(self::BACKGROUND_DIR . '/sample.jpg'));
     }
 
+    public function test_data_returns_only_the_requested_page_with_a_total(): void
+    {
+        Category::factory()->count(12)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/categories/data?page=1&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('total', 12);
+
+        $this->actingAs($this->admin())
+            ->getJson('/categories/data?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('total', 12);
+    }
+
     public function test_data_is_cached_and_invalidated_by_a_write(): void
     {
         Category::factory()->create(['english_name' => 'Fans']);

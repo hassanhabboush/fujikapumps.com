@@ -52,6 +52,23 @@ class SeriesControllerTest extends TestCase
             ->assertJsonPath('data.0.photo', asset('seriesuploads/sample.jpg'));
     }
 
+    public function test_data_returns_only_the_requested_page_with_a_total(): void
+    {
+        Series::factory()->count(12)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/series/data?page=1&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('total', 12);
+
+        $this->actingAs($this->admin())
+            ->getJson('/series/data?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('total', 12);
+    }
+
     public function test_store_creates_a_series_and_persists_the_upload(): void
     {
         $family = Family::factory()->create();

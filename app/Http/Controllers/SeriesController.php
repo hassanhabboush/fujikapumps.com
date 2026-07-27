@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\PaginatesGrid;
+use App\Http\Requests\GridPageRequest;
 use App\Http\Requests\StoreSeriesRequest;
 use App\Http\Requests\UpdateSeriesRequest;
 use App\Models\Series;
@@ -14,6 +16,7 @@ use Illuminate\View\View;
 class SeriesController extends Controller
 {
     use HandlesMediaUploads;
+    use PaginatesGrid;
 
     private const IMAGE_DIR = 'seriesuploads';
 
@@ -22,15 +25,13 @@ class SeriesController extends Controller
         return view('Pages.series.list');
     }
 
-    public function data(): JsonResponse
+    public function data(GridPageRequest $request): JsonResponse
     {
-        $series = Series::query()
-            ->with('family')
-            ->get()
-            ->map(fn (Series $item): array => $this->toGridRow($item))
-            ->all();
-
-        return response()->json(['data' => $series]);
+        return $this->paginateQuery(
+            Series::query()->with('family'),
+            $request,
+            fn (Series $item): array => $this->toGridRow($item)
+        );
     }
 
     public function show(Series $series): JsonResponse

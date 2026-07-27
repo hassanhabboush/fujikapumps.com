@@ -41,6 +41,40 @@ class FamilyControllerTest extends TestCase
             ->assertJsonPath('data.0.english_name', 'Ceiling');
     }
 
+    public function test_data_returns_only_the_requested_page_with_a_total(): void
+    {
+        Family::factory()->count(12)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/families/data?page=1&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('total', 12);
+
+        $this->actingAs($this->admin())
+            ->getJson('/families/data?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('total', 12);
+    }
+
+    public function test_list_by_category_paginates_and_totals_only_matches(): void
+    {
+        $sub = SubCategory1::factory()->create();
+
+        Family::factory()->count(10)->create()->each(function (Family $family) use ($sub): void {
+            FamilySubcategory::create(['family_id' => $family->id, 'sub_category_id' => $sub->id]);
+        });
+        // Noise that must not count toward the total.
+        Family::factory()->count(3)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/families/by-subcategory/' . $sub->id . '?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('total', 10);
+    }
+
     public function test_store_creates_a_family_and_links_sub_categories(): void
     {
         $sub = SubCategory1::factory()->create();
