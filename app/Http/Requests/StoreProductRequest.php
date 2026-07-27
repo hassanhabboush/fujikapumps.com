@@ -8,6 +8,22 @@ use Illuminate\Http\UploadedFile;
 
 class StoreProductRequest extends FormRequest
 {
+    /** Columns the parameter CSV supplies, in column order. */
+    public const CSV_COLUMNS = [
+        'Model', 'SerialNumber', 'PowerKw', 'PowerHp', 'q', 'h', 'v',
+        'Discharge_diameter', 'Hertz', 'Material', 'RPM', 'link',
+    ];
+
+    /**
+     * Columns a row must fill to be worth importing. Every column is required
+     * today — drop one from this list to start accepting rows that leave it
+     * blank.
+     */
+    public const CSV_REQUIRED_COLUMNS = self::CSV_COLUMNS;
+
+    /** @var array<int, array<string, string>>|null */
+    private ?array $parameterRows = null;
+
     public function authorize(): bool
     {
         return true;
@@ -80,6 +96,81 @@ class StoreProductRequest extends FormRequest
                     );
                 }
             },
+            function (Validator $validator): void {
+                $file = $this->file('parameter');
+
+                if (! $file instanceof UploadedFile || $validator->errors()->has('parameter')) {
+                    return;
+                }
+
+                if ($this->parameterRows() === []) {
+                    $validator->errors()->add(
+                        'parameter',
+                        'The parameter file has no usable rows — every column of a row must be filled in.'
+                    );
+                }
+            },
         ];
+    }
+
+    /**
+     * The importable data rows of the parameter CSV, keyed by column name.
+     *
+     * Spreadsheet exports trail blank lines and rows of bare commas, and
+     * fgetcsv() hands a blank line back as [null]; importing what it returns
+     * verbatim filled product_parameter with rows carrying nothing but a
+     * product_id. A row is only kept when every required column has a value.
+     *
+     * Parsed once and memoised, so the controller reads the same rows this
+     * validator checked without opening the upload a second time.
+     *
+     * @return array<int, array<string, string>>
+     */
+    public function parameterRows(): array
+    {
+        if ($this->parameterRows !== null) {
+            return $this->parameterRows;
+        }
+
+        $this->parameterRows = [];
+
+        $file = $this->file('parameter');
+
+        if (! $file instanceof UploadedFile || ! $file->isValid()) {
+            return $this->parameterRows;
+        }
+
+        $handle = fopen($file->getRealPath(), 'r');
+
+        if ($handle === false) {
+            return $this->parameterRows;
+        }
+
+        $isHeader = true;
+
+        while (($cells = fgetcsv($handle, 1000, ',')) !== false) {
+            if ($isHeader) {
+                $isHeader = false;
+                continue;
+            }
+
+            $row = [];
+
+            foreach (self::CSV_COLUMNS as $i => $column) {
+                $row[$column] = trim((string) ($cells[$i] ?? ''));
+            }
+
+            foreach (self::CSV_REQUIRED_COLUMNS as $column) {
+                if ($row[$column] === '') {
+                    continue 2;
+                }
+            }
+
+            $this->parameterRows[] = $row;
+        }
+
+        fclose($handle);
+
+        return $this->parameterRows;
     }
 }
