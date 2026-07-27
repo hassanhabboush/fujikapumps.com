@@ -106,6 +106,57 @@ class ProductControllerTest extends TestCase
             ->assertJsonPath('data.0.photo', asset('productbackground/sample.jpg'));
     }
 
+    public function test_data_returns_only_the_requested_page_with_a_total(): void
+    {
+        Product::factory()->count(12)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/products/data?page=1&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('total', 12);
+
+        $this->actingAs($this->admin())
+            ->getJson('/products/data?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('total', 12);
+    }
+
+    public function test_data_pages_do_not_overlap(): void
+    {
+        Product::factory()->count(12)->create();
+
+        $firstPage = collect(
+            $this->actingAs($this->admin())
+                ->getJson('/products/data?page=1&pageSize=8')
+                ->json('data')
+        )->pluck('id');
+
+        $secondPage = collect(
+            $this->actingAs($this->admin())
+                ->getJson('/products/data?page=2&pageSize=8')
+                ->json('data')
+        )->pluck('id');
+
+        $this->assertCount(8, $firstPage);
+        $this->assertCount(4, $secondPage);
+        $this->assertEmpty($firstPage->intersect($secondPage));
+    }
+
+    public function test_data_defaults_to_the_first_page(): void
+    {
+        Product::factory()->count(10)->create();
+
+        // No page params — Kendo's very first read and any bare call must still
+        // land on page one rather than 422 or an empty list.
+        $this->actingAs($this->admin())
+            ->getJson('/products/data')
+            ->assertOk()
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('total', 10);
+    }
+
     public function test_featured_data_returns_only_featured_products(): void
     {
         Product::factory()->create(['name' => 'Plain', 'is_featured' => 0]);
@@ -190,6 +241,104 @@ class ProductControllerTest extends TestCase
             'Model'      => 'M-1',
             'RPM'        => '1450',
         ]);
+    }
+
+    /**
+     * fgetcsv() returns [null] for a blank line, and spreadsheet exports trail
+     * both blank lines and rows of bare commas. Each of those used to become a
+     * product_parameter row holding nothing but a product_id.
+     */
+    public function test_store_skips_blank_and_comma_only_csv_rows(): void
+    {
+        $family = Family::factory()->create();
+
+        $csv = "Model,SerialNumber,PowerKw,PowerHp,q,h,v,Discharge,Hertz,Material,RPM,link\n"
+             . "M-1,SN-1,1.5,2,10,20,230,50mm,50,Steel,1450,https://example.test\n"
+             . "\n"
+             . ",,,,,,,,,,,\n"
+             . "   ,  ,,,,,,,,,,\n"
+             . "\n";
+
+        $this->actingAs($this->admin())
+            ->post('/products', [
+                'name'       => 'Pump',
+                'cat_id'     => $family->id,
+                'background' => UploadedFile::fake()->image('pump.jpg'),
+                'parameter'  => UploadedFile::fake()->createWithContent('params.csv', $csv),
+            ])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        $product = Product::firstWhere('name', 'Pump');
+
+        $this->assertSame(1, ProductParameter::where('product_id', $product->id)->count());
+        $this->assertDatabaseHas('product_parameter', [
+            'product_id' => $product->id,
+            'Model'      => 'M-1',
+        ]);
+    }
+
+    /** A row that leaves any column blank is filler, not data. */
+    public function test_store_skips_csv_rows_missing_a_column(): void
+    {
+        $family = Family::factory()->create();
+
+        $csv = "Model,SerialNumber,PowerKw,PowerHp,q,h,v,Discharge,Hertz,Material,RPM,link\n"
+             . "M-1,SN-1,1.5,2,10,20,230,50mm,50,Steel,1450,https://example.test\n"
+             // Complete but for an empty link.
+             . "M-2,SN-2,2.5,3,11,21,400,60mm,60,Iron,2900,\n"
+             // Short row — fgetcsv hands back fewer cells than there are columns.
+             . "M-3,SN-3,3.5\n";
+
+        $this->actingAs($this->admin())
+            ->post('/products', [
+                'name'       => 'Pump',
+                'cat_id'     => $family->id,
+                'background' => UploadedFile::fake()->image('pump.jpg'),
+                'parameter'  => UploadedFile::fake()->createWithContent('params.csv', $csv),
+            ])
+            ->assertRedirect();
+
+        $product = Product::firstWhere('name', 'Pump');
+
+        $this->assertSame(1, ProductParameter::where('product_id', $product->id)->count());
+        $this->assertDatabaseMissing('product_parameter', ['Model' => 'M-2']);
+        $this->assertDatabaseMissing('product_parameter', ['Model' => 'M-3']);
+    }
+
+    /**
+     * The check runs in the FormRequest, so a CSV of nothing but filler is
+     * turned away before the product row or any upload is written.
+     */
+    public function test_store_rejects_a_csv_with_no_usable_rows(): void
+    {
+        $family = Family::factory()->create();
+
+        $csv = "Model,SerialNumber,PowerKw,PowerHp,q,h,v,Discharge,Hertz,Material,RPM,link\n"
+             . "\n"
+             . ",,,,,,,,,,,\n";
+
+        $this->actingAs($this->admin())
+            ->post('/products', [
+                'name'       => 'Pump',
+                'cat_id'     => $family->id,
+                'background' => UploadedFile::fake()->image('pump.jpg'),
+                'parameter'  => UploadedFile::fake()->createWithContent('params.csv', $csv),
+            ])
+            ->assertSessionHasErrors('parameter');
+
+        $this->assertDatabaseCount('products', 0);
+        $this->assertDatabaseCount('product_parameter', 0);
+
+        // Nothing was moved into public/ either — the photo would otherwise be
+        // orphaned by the rollback.
+        foreach (['productcsv', 'productbackground'] as $dir) {
+            $this->assertSame(
+                [],
+                array_values(array_diff($this->filesIn($dir), $this->before[$dir])),
+                $dir . '/ gained a file from a rejected upload.'
+            );
+        }
     }
 
     /**
