@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\PaginatesGrid;
+use App\Http\Requests\GridPageRequest;
 use App\Http\Requests\StoreProductGalleryRequest;
 use App\Models\Product;
 use App\Models\ProductGallery;
@@ -15,6 +17,7 @@ use Illuminate\View\View;
 class GalleryController extends Controller
 {
     use HandlesMediaUploads;
+    use PaginatesGrid;
 
     private const IMAGE_DIR = 'productimage';
 
@@ -28,7 +31,7 @@ class GalleryController extends Controller
         return view('Pages.product.gallery.gallery')->with('id', $product->id);
     }
 
-    public function data(Product $product): JsonResponse
+    public function data(GridPageRequest $request, Product $product): JsonResponse
     {
         $images = Cache::remember(
             $this->cacheKey($product),
@@ -42,7 +45,7 @@ class GalleryController extends Controller
                 ->all()
         );
 
-        return response()->json(['data' => $images]);
+        return $this->paginateRows($images, $request);
     }
 
     public function store(StoreProductGalleryRequest $request, Product $product): RedirectResponse

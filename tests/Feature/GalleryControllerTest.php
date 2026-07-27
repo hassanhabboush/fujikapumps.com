@@ -58,6 +58,20 @@ class GalleryControllerTest extends TestCase
             ->assertJsonPath('data.0.path', asset('productimage/mine.jpg'));
     }
 
+    public function test_data_paginates_and_totals_only_that_products_images(): void
+    {
+        $product = Product::factory()->create();
+        ProductGallery::factory()->count(10)->create(['product_id' => $product->id]);
+        // Another product's images must not count toward the total.
+        ProductGallery::factory()->count(3)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/products/' . $product->id . '/gallery/data?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('total', 10);
+    }
+
     /**
      * The product used to come from the session, so an upload could land on
      * whichever product another tab had opened last.
