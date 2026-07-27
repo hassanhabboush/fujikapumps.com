@@ -37,6 +37,23 @@ class AccessoriesControllerTest extends TestCase
         $this->get('/accessories')->assertRedirect('/login');
     }
 
+    public function test_data_returns_only_the_requested_page_with_a_total(): void
+    {
+        Accessory::factory()->count(12)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/accessories/data?page=1&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('total', 12);
+
+        $this->actingAs($this->admin())
+            ->getJson('/accessories/data?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('total', 12);
+    }
+
     public function test_data_returns_accessories_with_resolved_photo_urls(): void
     {
         $accessory = Accessory::factory()->create([

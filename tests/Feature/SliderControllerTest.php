@@ -36,6 +36,23 @@ class SliderControllerTest extends TestCase
         $this->get('/sliders')->assertRedirect('/login');
     }
 
+    public function test_data_returns_only_the_requested_page_with_a_total(): void
+    {
+        Slider::factory()->count(12)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/sliders/data?page=1&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('total', 12);
+
+        $this->actingAs($this->admin())
+            ->getJson('/sliders/data?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('total', 12);
+    }
+
     public function test_guests_cannot_delete_a_slide(): void
     {
         $slider = Slider::factory()->create();

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\PaginatesGrid;
+use App\Http\Requests\GridPageRequest;
 use App\Http\Requests\StoreSliderRequest;
 use App\Http\Requests\UpdateSliderRequest;
 use App\Models\Slider;
@@ -14,6 +16,7 @@ use Illuminate\View\View;
 class SliderController extends Controller
 {
     use HandlesMediaUploads;
+    use PaginatesGrid;
 
     private const IMAGE_DIR = 'slideruploads';
 
@@ -22,14 +25,13 @@ class SliderController extends Controller
         return view('Pages.slider.slider');
     }
 
-    public function data(): JsonResponse
+    public function data(GridPageRequest $request): JsonResponse
     {
-        $sliders = Slider::query()
-            ->get()
-            ->map(fn (Slider $slider): array => $this->toGridRow($slider))
-            ->all();
-
-        return response()->json(['data' => $sliders]);
+        return $this->paginateQuery(
+            Slider::query(),
+            $request,
+            fn (Slider $slider): array => $this->toGridRow($slider)
+        );
     }
 
     public function show(Slider $slider): JsonResponse

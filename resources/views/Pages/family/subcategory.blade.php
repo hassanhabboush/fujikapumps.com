@@ -57,7 +57,7 @@
                                }
 
                            },
-                         serverPaging: false,
+                         serverPaging: true,
                          pageSize:8,
                        schema: 
                            {
@@ -70,9 +70,7 @@
                                    
                                    }
                            },
-                           total: function(response) {
-                              return $(response.data).length;
-                            }
+                           total: "total"
                            } 
          
                        },
