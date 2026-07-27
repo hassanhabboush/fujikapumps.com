@@ -64,6 +64,39 @@ class SubCategory1ControllerTest extends TestCase
             ->assertJsonPath('data.0.english_name', 'Mine');
     }
 
+    public function test_data_returns_only_the_requested_page_with_a_total(): void
+    {
+        SubCategory1::factory()->count(12)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/sub_categories1/data?page=1&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(8, 'data')
+            ->assertJsonPath('total', 12);
+
+        $this->actingAs($this->admin())
+            ->getJson('/sub_categories1/data?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('total', 12);
+    }
+
+    public function test_by_parent_paginates_and_totals_only_matches(): void
+    {
+        $parent = SubCategory::factory()->create();
+
+        SubCategory1::factory()->count(10)->create()
+            ->each(fn (SubCategory1 $sub) => $sub->parentSubCategories()->attach($parent->id));
+        // Noise that must not count toward the total.
+        SubCategory1::factory()->count(3)->create();
+
+        $this->actingAs($this->admin())
+            ->getJson('/sub_categories1/by-parent/' . $parent->id . '?page=2&pageSize=8')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('total', 10);
+    }
+
     public function test_count_by_name_reports_duplicates(): void
     {
         SubCategory1::factory()->create(['english_name' => 'Ceiling']);
