@@ -68,7 +68,7 @@
                             <li class="user-profile header-notification">
                                 <div class="dropdown-primary dropdown">
                                     <div class="dropdown-toggle" data-toggle="dropdown">
-                                        <img src="{{ asset('assets\images\avatar-5.jpg') }}" class="img-radius" alt="User-Profile-Image">
+                                        <img src="{{ asset('assets\images\avatar-5.jpg') }}" class="img-radius lazy-img" width="30" height="30" loading="lazy" decoding="async" alt="User-Profile-Image">
                                         <span> @if(isset(Auth::user()->email)){{ Auth::user()->email}}  @endif</span>
                                         <i class="feather icon-chevron-down"></i>
                                     </div>

@@ -72,7 +72,7 @@
                        },
                        columns: [
                        { field: "id" ,title:"ID"},
-                       { field: "photo" ,title:"Photo",template: "<img src='${photo}' style='width: 37px;' alt='Logo'>"},
+                       { field: "photo" ,title:"Photo",template: "<img src='${photo}' class='lazy-img' style='width: 37px; height: 37px; object-fit: contain;' width='37' height='37' loading='lazy' decoding='async' alt='Photo'>"},
                        { field: "name" ,title:"Name"},
                        { field: "is_featured" ,width:"225px" ,title:"Action",template: "#if(is_featured==0){#<a title='Make Feature' class='k-button k-button-icontext' onclick='patchTo(\"{{ url("products") }}/${id}/feature\")' style='cursor:pointer'>Make Featured</a> #}else{#<a title='Make Feature' class='k-button k-button-icontext' onclick='patchTo(\"{{ url("products") }}/${id}/unfeature\")' style='cursor:pointer'>Remove Featured</a>#}#"},
                        {command: ["destroy"], title: "Delete" }

@@ -78,7 +78,7 @@
                            { field: "id" ,title:"ID"},
                        { field: "english_name" ,title:"Name"},
                        { field: "link" ,title:"link",template: "<a title='link' class='k-button k-button-icontext' href='${link}'>Pdf</a>"},
-                       { field: "background" ,title:"Background",template: "<img src='${background}' style='width: 37px;' alt='Logo'>"},
+                       { field: "background" ,title:"Background",template: "<img src='${background}' class='lazy-img' style='width: 37px; height: 37px; object-fit: contain;' width='37' height='37' loading='lazy' decoding='async' alt='Background image'>"},
                        { field: "id" ,title:"Products",template: "<a title='Products' class='k-button k-button-icontext' href='{{ url("products/by-subcategory") }}/${id}'>Products</a>"},
                        { field: "id" ,title:"Edit",template: "<a title='Edit Store' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'>Edit</a>"},
                        {command: ["destroy"], title: "Delete" }

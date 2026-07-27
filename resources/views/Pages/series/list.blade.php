@@ -68,7 +68,7 @@
          
                        },
                        columns: [
-                       { field: "photo" ,title:"Image",template: "<img src='${photo}' style='width: 60px;' alt='Logo'>"},
+                       { field: "photo" ,title:"Image",template: "<img src='${photo}' class='lazy-img' style='width: 60px; height: 60px; object-fit: contain;' width='60' height='60' loading='lazy' decoding='async' alt='Photo'>"},
                        {field: "english_name" ,title:"Name"},
                        {field: "link" ,title:"Link",template: "<a href='${link}' class='k-button k-button-icontext'>PDF</a>"},
                        { field: "id" ,title:"Edit",template: "<a title='Edit' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'>Edit</a>"},

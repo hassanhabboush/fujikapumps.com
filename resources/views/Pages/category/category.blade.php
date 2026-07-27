@@ -76,7 +76,7 @@
                        columns: [
                            { field: "id" ,title:"ID"},
                        { field: "english_name" ,title:"Category Name"},
-                       { field: "background" ,title:"Background",template: "<img src='${background}' style='width: 37px;' alt='Logo'>"},
+                       { field: "background" ,title:"Background",template: "<img src='${background}' class='lazy-img' style='width: 37px; height: 37px; object-fit: contain;' width='37' height='37' loading='lazy' decoding='async' alt='Background image'>"},
                        { field: "id" ,title:"Sub Details",template: "<a title='Show Sub category' class='k-button k-button-icontext ' href='{{ url("sub_categories/category") }}/${id}'>Sub Category</a>"},
                        { field: "id" ,title:"Edit",template: "<a title='Edit Category' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'>Edit</a>"},
                        {command: ["destroy"], title: "Delete" }
