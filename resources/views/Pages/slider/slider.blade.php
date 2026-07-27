@@ -69,7 +69,7 @@
          
                        },
                        columns: [
-                       { field: "imag" ,title:"Image",template: "<img src='${image}' style='width: 60px;' alt='Logo'>"},
+                       { field: "imag" ,title:"Image",template: "<img src='${image}' class='lazy-img' style='width: 60px; height: 60px; object-fit: contain;' width='60' height='60' loading='lazy' decoding='async' alt='Image'>"},
                        { field: "id" ,title:"Edit",template: "<a title='Edit Slider' class='k-button k-button-icontext' name='${id}'  onclick='popedit(this)'>Edit</a>"},
                        {command: ["destroy"], title: "Delete" }
 

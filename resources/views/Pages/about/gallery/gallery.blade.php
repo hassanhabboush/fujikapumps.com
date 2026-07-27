@@ -71,7 +71,7 @@
                        },
                        columns: [
                        { field: "id" ,title:"ID"},
-                       { field: "path" ,title:"Photo",template: "<img src='${path}' style='width: 37px;' alt='Logo'>"},
+                       { field: "path" ,title:"Photo",template: "<img src='${path}' class='lazy-img' style='width: 37px; height: 37px; object-fit: contain;' width='37' height='37' loading='lazy' decoding='async' alt='Photo'>"},
                      {command: ["destroy"], title: "Delete" }
 
                        ],

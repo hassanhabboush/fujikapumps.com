@@ -77,7 +77,7 @@
                        },
                        columns: [
                        { field: "id" ,title:"ID"},
-                       { field: "photo" ,title:"Photo",template: "<img src='${photo}' style='width: 37px;' alt='Logo'>"},
+                       { field: "photo" ,title:"Photo",template: "<img src='${photo}' class='lazy-img' style='width: 37px; height: 37px; object-fit: contain;' width='37' height='37' loading='lazy' decoding='async' alt='Photo'>"},
                        { field: "name" ,title:"Name"},
                         @if(Auth::user()->role==1 || Auth::user()->role==2)
      

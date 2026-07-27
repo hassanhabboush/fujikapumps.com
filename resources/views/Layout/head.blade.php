@@ -47,4 +47,5 @@
     background-color: transparent !important;
 }
 </style>
+@include('Layout.lazyimages')
 </head>
