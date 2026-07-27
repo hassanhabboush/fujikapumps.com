@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductGridRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
@@ -24,12 +25,6 @@ class ProductController extends Controller
     private const PHOTO_DIR   = 'productbackground';
     private const GALLERY_DIR = 'productimage';
     private const CSV_DIR     = 'productcsv';
-
-    /** Columns the parameter CSV supplies, in column order. */
-    private const CSV_COLUMNS = [
-        'Model', 'SerialNumber', 'PowerKw', 'PowerHp', 'q', 'h', 'v',
-        'Discharge_diameter', 'Hertz', 'Material', 'RPM', 'link',
-    ];
 
     // ---- screens -------------------------------------------------------
 
@@ -70,29 +65,43 @@ class ProductController extends Controller
 
     // ---- feeds ---------------------------------------------------------
 
-    public function data(): JsonResponse
+    public function data(ProductGridRequest $request): JsonResponse
     {
-        return $this->rows('products_all', fn () => Product::query());
-    }
-
-    public function featuredData(): JsonResponse
-    {
-        return $this->rows('products_featured', fn () => Product::where('is_featured', 1));
-    }
-
-    public function byCategory(int $id): JsonResponse
-    {
-        return $this->rows(
-            'products_category_' . $id,
-            fn () => Product::whereHas('categories', fn ($q) => $q->where('categories.id', $id))
+        return $this->pagedRows(
+            'products_all',
+            fn () => Product::query(),
+            $request->pageNumber(),
+            $request->perPage()
         );
     }
 
-    public function bySubCategory(int $id): JsonResponse
+    public function featuredData(ProductGridRequest $request): JsonResponse
     {
-        return $this->rows(
+        return $this->pagedRows(
+            'products_featured',
+            fn () => Product::where('is_featured', 1),
+            $request->pageNumber(),
+            $request->perPage()
+        );
+    }
+
+    public function byCategory(ProductGridRequest $request, int $id): JsonResponse
+    {
+        return $this->pagedRows(
+            'products_category_' . $id,
+            fn () => Product::whereHas('categories', fn ($q) => $q->where('categories.id', $id)),
+            $request->pageNumber(),
+            $request->perPage()
+        );
+    }
+
+    public function bySubCategory(ProductGridRequest $request, int $id): JsonResponse
+    {
+        return $this->pagedRows(
             'products_subcategory_' . $id,
-            fn () => Product::whereHas('subCategories', fn ($q) => $q->where('sub_category.id', $id))
+            fn () => Product::whereHas('subCategories', fn ($q) => $q->where('sub_category.id', $id)),
+            $request->pageNumber(),
+            $request->perPage()
         );
     }
 
@@ -125,7 +134,7 @@ class ProductController extends Controller
             }
 
             if ($csv = $request->file('parameter')) {
-                $this->importParameters($product, $csv);
+                $this->importParameters($product, $csv, $request->parameterRows());
             }
         });
 
@@ -228,17 +237,25 @@ class ProductController extends Controller
     // ---- internals -----------------------------------------------------
 
     /**
-     * HasMediaUrls resolves `photo` in getAttribute(), which toArray()
-     * bypasses, so rows are cached as plain arrays already carrying URLs.
+     * One server-side page of a grid feed. The full mapped collection is still
+     * cached under a single key — kept in sync by forgetProductCaches() — so the
+     * invalidation contract is unchanged; the grid just receives the requested
+     * slice plus the unfiltered `total` Kendo needs to size its pager.
+     *
+     * HasMediaUrls resolves `photo` in getAttribute(), which toArray() bypasses,
+     * so rows are cached as plain arrays already carrying absolute URLs.
      */
-    private function rows(string $cacheKey, callable $query): JsonResponse
+    private function pagedRows(string $cacheKey, callable $query, int $page, int $pageSize): JsonResponse
     {
-        $products = Cache::remember($cacheKey, now()->addMinutes(10), fn () => $query()
+        $rows = Cache::remember($cacheKey, now()->addMinutes(10), fn () => $query()
             ->get()
             ->map(fn (Product $product): array => $this->toGridRow($product))
             ->all());
 
-        return response()->json(['data' => $products]);
+        return response()->json([
+            'data'  => array_values(array_slice($rows, ($page - 1) * $pageSize, $pageSize)),
+            'total' => count($rows),
+        ]);
     }
 
     private function toGridRow(Product $product): array
@@ -255,38 +272,21 @@ class ProductController extends Controller
     }
 
     /**
-     * Read the parameter CSV straight from its temporary upload path.
+     * Write the parameter rows the request already parsed and validated.
      *
-     * The old importer moved the file into public/ under the caller's own
-     * filename and then reopened it through a *relative* path, which only
-     * resolved when the working directory happened to be the web root.
+     * Parsing lives in StoreProductRequest::parameterRows(), which drops the
+     * blank and comma-only filler lines spreadsheet exports leave behind and
+     * rejects the upload outright when nothing usable is left — so a filler CSV
+     * fails before the product and its images are ever written, and every row
+     * reaching this point is complete.
+     *
+     * @param array<int, array<string, string>> $rows
      */
-    private function importParameters(Product $product, UploadedFile $csv): void
+    private function importParameters(Product $product, UploadedFile $csv, array $rows): void
     {
-        $handle = fopen($csv->getRealPath(), 'r');
-
-        if ($handle === false) {
-            return;
+        foreach ($rows as $row) {
+            ProductParameter::create($row + ['product_id' => $product->id]);
         }
-
-        $isHeader = true;
-
-        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
-            if ($isHeader) {
-                $isHeader = false;
-                continue;
-            }
-
-            $attributes = ['product_id' => $product->id];
-
-            foreach (self::CSV_COLUMNS as $i => $column) {
-                $attributes[$column] = $row[$i] ?? null;
-            }
-
-            ProductParameter::create($attributes);
-        }
-
-        fclose($handle);
 
         // Keep a copy for reference, under a generated name rather than the
         // uploaded one, which was user-controlled.
