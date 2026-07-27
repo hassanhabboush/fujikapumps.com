@@ -8,16 +8,19 @@ use App\Http\Requests\StoreFamilyRequest;
 use App\Http\Requests\UpdateFamilyRequest;
 use App\Models\Family;
 use App\Models\FamilySubcategory;
+use App\Traits\HandlesMediaUploads;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class FamilyController extends Controller
 {
+    use HandlesMediaUploads;
     use PaginatesGrid;
+
+    private const BACKGROUND_DIR = 'categorybackground';
 
     public function index(): View
     {
@@ -68,7 +71,7 @@ class FamilyController extends Controller
     {
         $family = Family::create([
             'english_name' => $request->validated('name'),
-            'background'   => $request->file('background')->store('categorybackground', 'public'),
+            'background'   => $this->storeMedia($request->file('background'), self::BACKGROUND_DIR),
             'link'         => $request->validated('link'),
         ]);
 
@@ -79,23 +82,28 @@ class FamilyController extends Controller
 
     public function update(UpdateFamilyRequest $request, Family $family): RedirectResponse
     {
+
+        $validatedData = $request->validated();
+
+        // `name` is `sometimes` and `link` is nullable, so neither key is
+        // guaranteed to be in the validated set.
         $data = [
-            'english_name' => $request->validated('name'),
-            'link'         => $request->validated('link'),
+            'english_name' => $validatedData['name'] ?? $family->english_name,
+            'link'         => $validatedData['link'] ?? null,
         ];
 
         $oldBackground = $family->getRawOriginal('background');
 
-        if ($request->hasFile('background')) {
-            $data['background'] = $request->file('background')->store('categorybackground', 'public');
+        if ($file = $request->file('background')) {
+            $data['background'] = $this->storeMedia($file, self::BACKGROUND_DIR);
         }
 
         $family->update($data);
 
         $this->syncSubCategories($family, $request->validated('cat_id'));
 
-        if (isset($data['background']) && filled($oldBackground)) {
-            Storage::disk('public')->delete($oldBackground);
+        if (isset($data['background'])) {
+            $this->deleteMedia($oldBackground, self::BACKGROUND_DIR);
         }
 
         return redirect()->back()->with('status', 'Family updated.');
@@ -113,9 +121,7 @@ class FamilyController extends Controller
         $family->delete();
 
         // The old destroy() left the uploaded background behind.
-        if (filled($background)) {
-            Storage::disk('public')->delete($background);
-        }
+        $this->deleteMedia($background, self::BACKGROUND_DIR);
 
         $this->forgetFamilyCaches();
 

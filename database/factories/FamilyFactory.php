@@ -16,8 +16,7 @@ class FamilyFactory extends Factory
     {
         return [
             'english_name' => fake()->unique()->words(2, true),
-            // Family stores on the public disk, so the path has no public/ prefix.
-            'background'   => 'categorybackground/' . fake()->uuid() . '.jpg',
+            'background'   => 'public/categorybackground/' . fake()->uuid() . '.jpg',
             'link'         => 'https://example.test',
         ];
     }
