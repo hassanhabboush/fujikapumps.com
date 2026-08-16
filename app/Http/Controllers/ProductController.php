@@ -15,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -114,8 +115,6 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        // One transaction so a rejected parameter row cannot leave an orphan
-        // product with no parameters behind.
         DB::transaction(function () use ($request): void {
             $product = Product::create([
                 'name'        => $request->validated('name'),
@@ -169,30 +168,33 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('status', 'Product updated.');
     }
 
-    public function destroy(Product $product): Response
-    {
-        $photo = $product->getRawOriginal('photo');
-        $galleryPaths = ProductGallery::where('product_id', $product->id)
-            ->get()
-            ->map(fn (ProductGallery $image) => $image->getRawOriginal('path'));
+public function destroy(Product $product): Response
+{
+    $photo = $product->getRawOriginal('photo');
+    $galleryPaths = DB::table('product_gallery')
+        ->where('product_id', $product->id)
+        ->pluck('path');
 
-        ProductGallery::where('product_id', $product->id)->delete();
-        ProductParameter::where('product_id', $product->id)->delete();
-        $product->categories()->detach();
-        $product->subCategories()->detach();
-        $product->delete();
-
-        // The old delete() left every uploaded file behind.
-        $this->deleteMedia($photo, self::PHOTO_DIR);
-
-        foreach ($galleryPaths as $path) {
-            $this->deleteMedia($path, self::GALLERY_DIR);
+    DB::transaction(function () use ($product): void {
+        DB::table('product_gallery')->where('product_id', $product->id)->delete();
+        DB::table('product_parameter')->where('product_id', $product->id)->delete();
+        if (Schema::hasTable('product_category')) {
+            DB::table('product_category')->where('product_id', $product->id)->delete();
         }
+        if (Schema::hasTable('product_subcategory')) {
+            DB::table('product_subcategory')->where('product_id', $product->id)->delete();
+        }
+        $product->delete();
+    });
 
-        $this->forgetProductCaches($product);
-
-        return response()->noContent();
+    $this->deleteMedia($photo, self::PHOTO_DIR);
+    foreach ($galleryPaths as $path) {
+        $this->deleteMedia($path, self::GALLERY_DIR);
     }
+    $this->forgetProductCaches($product);
+
+    return response()->noContent();
+}
 
     public function feature(Product $product): RedirectResponse
     {
@@ -209,12 +211,6 @@ class ProductController extends Controller
 
         return redirect()->back()->with('status', 'Product unfeatured.');
     }
-
-    // ---- card validity -------------------------------------------------
-    //
-    // These query a `card_number` column that is not in any migration, so they
-    // only work if the column was added to the database by hand. Left in place
-    // rather than removed, but they are almost certainly dead.
 
     public function checkValidity(string $cardNumber, int $storeId): JsonResponse
     {
@@ -234,17 +230,6 @@ class ProductController extends Controller
         return response()->json(['valid' => $products->count(), 'products' => $products]);
     }
 
-    // ---- internals -----------------------------------------------------
-
-    /**
-     * One server-side page of a grid feed. The full mapped collection is still
-     * cached under a single key — kept in sync by forgetProductCaches() — so the
-     * invalidation contract is unchanged; the grid just receives the requested
-     * slice plus the unfiltered `total` Kendo needs to size its pager.
-     *
-     * HasMediaUrls resolves `photo` in getAttribute(), which toArray() bypasses,
-     * so rows are cached as plain arrays already carrying absolute URLs.
-     */
     private function pagedRows(string $cacheKey, callable $query, int $page, int $pageSize): JsonResponse
     {
         $rows = Cache::remember($cacheKey, now()->addMinutes(10), fn () => $query()
@@ -272,14 +257,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Write the parameter rows the request already parsed and validated.
-     *
-     * Parsing lives in StoreProductRequest::parameterRows(), which drops the
-     * blank and comma-only filler lines spreadsheet exports leave behind and
-     * rejects the upload outright when nothing usable is left — so a filler CSV
-     * fails before the product and its images are ever written, and every row
-     * reaching this point is complete.
-     *
      * @param array<int, array<string, string>> $rows
      */
     private function importParameters(Product $product, UploadedFile $csv, array $rows): void
@@ -288,8 +265,6 @@ class ProductController extends Controller
             ProductParameter::create($row + ['product_id' => $product->id]);
         }
 
-        // Keep a copy for reference, under a generated name rather than the
-        // uploaded one, which was user-controlled.
         $csv->move(public_path(self::CSV_DIR), Str::uuid() . '.' . $csv->getClientOriginalExtension());
     }
 
