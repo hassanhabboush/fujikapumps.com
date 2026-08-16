@@ -51,12 +51,14 @@
                                },
                                destroy:
                                {
-                                   url: function(row) {
-                                       return "{{ url('products') }}/" + row.id;
-                                   },
-                                   type: "DELETE"
+                                  url: function(data) { return '{{ url("products") }}/' + data.id; },
+                                  type: "DELETE",
+                                  dataType: "text",
+                                  headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                               },
+                               parameterMap: function(data, type) {
+                                  return type === "destroy" ? {} : data;
                                }
-                               
                            },
                          serverPaging: true,
                          pageSize:8,
@@ -139,3 +141,5 @@
 </body>
 
 </html>
+
+
