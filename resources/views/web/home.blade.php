@@ -2,7 +2,7 @@
 <script>
 function validateForm() {
     var x = document.getElementById('hertz1').value;
-    console.log(x);
+    
     if (x == null || x == "") {
         alert("Hertz must be filled out");
         return false;
@@ -10,7 +10,6 @@ function validateForm() {
 }
 </script>
 <!-- End WOWSlider.com HEAD section -->
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="{{ asset('assets/css/pump-search.css') }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -54,8 +53,8 @@ function validateForm() {
      .form-group {
     margin-bottom: 0rem !important;
 }
-     .about-us-area.about-bg {
-    background: url(../img/bg/about-shape.png) no-repeat padding-box;
+  .about-us-area.about-bg {
+    background: none;
     height: 60%;
     display: block;
     opacity: 1;
@@ -64,7 +63,7 @@ function validateForm() {
     top: 0;
     border-bottom: solid #b7212e 4px;
     border-top: solid #b7212e 4px;
-     }
+}
  }
 @media (max-width: 768px) {
     .heroSwiper {
