@@ -124,17 +124,13 @@ class WebsiteCatalog
     /**
      * Distinct, non-empty values of one parameter column, for the filter API.
      */
-    public function parameterValues(string $column): Collection
-    {
-        return CatalogCache::remember(
-            'parameter_values.' . $column,
-            fn () => ProductParameter::select($column)
-                ->whereNotNull($column)
-                ->where($column, '<>', '')
-                ->distinct()
-                ->get()
-        );
-    }
+   public function parameterValues(string $column): Collection
+{
+    return $this->parameterOptions()
+        ->unique($column)
+        ->filter(fn ($item) => ! empty($item[$column]))
+        ->values();
+}
 
     /**
      * Third-level sub-categories reachable from a top-level category.
