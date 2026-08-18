@@ -1,4 +1,3 @@
-
 <div class="pcoded-wrapper">
                     <nav class="pcoded-navbar">
                         <div class="pcoded-inner-navbar main-menu">
@@ -9,35 +8,35 @@
                                     <a href="{{route('admin.categories.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-box"></i></span>
                                         <span class="pcoded-mtext">Category</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('categories')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['categories'] }}</span>
                                     </a>
                                     </li>
                                 <li>
                                     <a href="{{route('admin.sub_categories.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-package"></i></span>
                                         <span class="pcoded-mtext">Sub Category1</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('sub_category')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['sub_category'] }}</span>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{route('admin.sub_categories1.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-package"></i></span>
                                         <span class="pcoded-mtext">Sub Category2</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('sub_category_1')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['sub_category_1'] }}</span>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{route('admin.families.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-package"></i></span>
                                         <span class="pcoded-mtext">Family</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('family')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['family'] }}</span>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{route('admin.series.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-package"></i></span>
                                         <span class="pcoded-mtext">Series</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('series')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['series'] }}</span>
                                     </a>
                                 </li>
                                @endif
@@ -46,21 +45,21 @@
                                     <a href="{{route('admin.accessories.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-cpu"></i></span>
                                         <span class="pcoded-mtext">Accessories</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('accessories')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['accessories'] }}</span>
                                     </a>
                                 </li>
                                 <li class="product">
                                     <a href="{{route('admin.products.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-cpu"></i></span>
                                         <span class="pcoded-mtext">Products</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('products')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['products'] }}</span>
                                     </a>
                                 </li>
                                 <li class="product">
                                     <a href="{{route('admin.products.featured')}}">
                                         <span class="pcoded-micon"><i class="feather icon-info"></i></span>
                                         <span class="pcoded-mtext">Featured Products</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('products')->where('is_featured',1)->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['featured'] }}</span>
                                     </a>
                                 </li>
                             @endif
@@ -69,7 +68,7 @@
                                     <a href="{{route('admin.sliders.index')}}">
                                         <span class="pcoded-micon"><i class="feather icon-aperture rotate-refresh"></i><b>A</b></span>
                                         <span class="pcoded-mtext">Sliders</span>
-                                        <span class="pcoded-badge label label-danger">{{$count_user = DB::table('slider')->count()}}</span>
+                                        <span class="pcoded-badge label label-danger">{{ $sidebarCounts['slider'] }}</span>
                                     </a>
                                 </li>
                             @endif
