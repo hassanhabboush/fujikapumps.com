@@ -268,17 +268,11 @@
 </div> -->
 <!-- preloader area end -->
 
-    <!-- jquery -->
-    <script defer src="{{ asset('assets/web/assets/js/jquery.min.js')}}"></script>
-    <!-- popper -->
-    <script defer src="{{ asset('assets/web/assets/js/popper.min.js')}}"></script>
-    <!-- bootstrap -->
-    <script defer src="{{ asset('assets/web/assets/js/bootstrap.min.js')}}"></script>
+  
+    
     <script defer src="{{ asset('assets/web/assets/js/jquery.min.js')}}"></script>
     <script defer src="{{ asset('assets/web/assets/js/popper.min.js')}}"></script>
     <script defer src="{{ asset('assets/web/assets/js/bootstrap.min.js')}}"></script>
-    <script defer src="{{ versioned_asset('assets/web/assets/js/main2.js') }}"></script>
-     <!-- main js -->
     <script defer src="{{ versioned_asset('assets/web/assets/js/main2.js') }}"></script>
     <!-- lazy loading & blur-up -->
    <script>
