@@ -227,10 +227,9 @@
     
 @include('web.Layout.header')
 @php
-$type=session('type')+1;
-if($type==3)
-{
-$type=4;
+$linkType = $type + 1;
+if ($linkType == 3) {
+    $linkType = 4;
 }
 @endphp
     <!-- Breadcumb area start  -->
@@ -271,8 +270,8 @@ $type=4;
                                 <div class="prod-card">
 
                                     <div class="prod-image">
-                                        <img src="{{url($cat->background)}}"
-                                             alt="{{$cat->english_name}}" loading="lazy">
+                                                    <img src="{{$cat->background}}"
+                          alt="{{$cat->english_name}}" loading="lazy">
                                     </div>
 
                                     <div class="prod-body">
@@ -280,18 +279,16 @@ $type=4;
                                             {{$cat->english_name}}
                                         </h4>
 
-                                        @if($type==5)
-                                            <a href="{{$cat->link}}"
-                                               target="_blank"
-                                               class="prod-pdf">
-                                                <i class="fa fa-file-pdf-o"></i>
-                                            </a>
-                                        @endif
-
-                                        <a href="{{url($cat->id.'/'.$type.'/'.$cat->english_name)}}"
-                                           class="prod-button">
-                                            Show More →
-                                        </a>
+                                           @if($linkType==5)
+                                                 <a href="{{$cat->link}}" target="_blank" class="prod-pdf">
+                                                     <i class="fa fa-file-pdf-o"></i>
+                                                 </a>
+                                             @endif
+                                             
+                                             <a href="{{url($cat->id.'/'.$linkType.'/'.$cat->english_name)}}"
+                                                class="prod-button">
+                                                 Show More →
+                                             </a>
                                     </div>
 
                                 </div>
