@@ -274,24 +274,10 @@
     <script defer src="{{ asset('assets/web/assets/js/popper.min.js')}}"></script>
     <!-- bootstrap -->
     <script defer src="{{ asset('assets/web/assets/js/bootstrap.min.js')}}"></script>
-    <!-- magnific popup -->
-    <script defer src="{{ asset('assets/web/assets/js/jquery.magnific-popup.js')}}"></script>
-    <!-- wow -->
-    <script defer src="{{ asset('assets/web/assets/js/wow.min.js')}}"></script>
-    <!-- owl carousel -->
-    <script defer src="{{ asset('assets/web/assets/js/owl.carousel.min.js')}}"></script>
-    <!-- waypoint -->
-    <script defer src="{{ asset('assets/web/assets/js/waypoints.min.js')}}"></script>
-    <!-- counterup -->
-    <script defer src="{{ asset('assets/web/assets/js/jquery.counterup.min.js')}}"></script>
-    <!-- imageloaded -->
-    <script defer src="{{ asset('assets/web/assets/js/imagesloaded.pkgd.min.js')}}"></script>
-    <!-- isotope -->
-    <script defer src="{{ asset('assets/web/assets/js/isotope.pkgd.min.js')}}"></script>
-    <!-- slick slider -->
-    <script defer src="{{ asset('assets/web/assets/js/slick.min.js')}}"></script>
-    <!-- Slick Animation -->
-    <script defer src="{{ asset('assets/web/assets/js/slick-animation.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/jquery.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/popper.min.js')}}"></script>
+    <script defer src="{{ asset('assets/web/assets/js/bootstrap.min.js')}}"></script>
+    <script defer src="{{ versioned_asset('assets/web/assets/js/main2.js') }}"></script>
      <!-- main js -->
     <script defer src="{{ versioned_asset('assets/web/assets/js/main2.js') }}"></script>
     <!-- lazy loading & blur-up -->
