@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasMediaUrls;
 use App\Support\CatalogCache;
+use App\Support\AdminSidebarCounts;
 use App\Traits\InvalidatesCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +17,7 @@ class Family extends Model
     protected $table = 'family';
     protected $guarded = [];
 
-    protected array $cacheKeys = ['headerCategories', CatalogCache::VERSION_KEY];
-
+    protected array $cacheKeys = ['headerCategories', 'families', CatalogCache::VERSION_KEY, AdminSidebarCounts::CACHE_KEY];
 
     public function series()
     {
