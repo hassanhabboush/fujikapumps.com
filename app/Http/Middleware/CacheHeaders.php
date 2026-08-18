@@ -12,8 +12,14 @@ class CacheHeaders
     {
         $response = $next($request);
 
-        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
-        $response->headers->set('Pragma', 'no-cache');
+        if ($response->isSuccessful()) {
+            $response->headers->set(
+                'Cache-Control',
+                'public, max-age=60, s-maxage=300, stale-while-revalidate=60'
+            );
+            $response->headers->remove('Pragma');
+            $response->headers->set('Vary', 'Accept-Encoding');
+        }
 
         return $response;
     }
