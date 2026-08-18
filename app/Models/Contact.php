@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\InvalidatesCache;
+use App\Support\CatalogCache;
 use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
@@ -13,5 +14,5 @@ class Contact extends Model
 
     protected $guarded = [];
 
-    protected array $cacheKeys = ['contact'];
+    protected array $cacheKeys = ['contact', CatalogCache::VERSION_KEY];
 }
