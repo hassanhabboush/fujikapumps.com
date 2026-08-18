@@ -196,6 +196,11 @@ function validateForm() {
     object-fit: contain;
 }
 
+ .cooli-image.js-defer-img:not([src]) {
+    min-height: 180px;
+    background: #f4f4f4;
+}
+
 .productSwiper .swiper-button-next,
 .productSwiper .swiper-button-prev {
     color: #000;
@@ -519,7 +524,7 @@ function toggleAdvancedFields() {
                         <div class="cooli-card h-100 d-flex flex-column">
 
                             <div class="cooli-img-wrap">
-                                <img src="{{$fam->background}}" class="cooli-image" loading="lazy">
+                                <img data-src="{{$fam->background}}" class="cooli-image js-defer-img" width="400" height="400" alt="{{$fam->english_name}}">
                             </div>
 
                             <div class="cooli-content">
@@ -616,7 +621,7 @@ function toggleAdvancedFields() {
             @foreach($sub_category1 as $sub1)
                 <div class="swiper-slide">
                     <div class="product-card">
-                        <img src="{{$sub1->background}}" alt="" loading="lazy">
+                       <img data-src="{{$sub1->background}}" alt="" class="js-defer-img" width="300" height="150">
                         <a href="{{url('/'.$sub1->id.'/4/'.$sub1->english_name)}}" class="read"><h6>{{$sub1->english_name}}</h6></a>
                     </div>
                 </div>
@@ -982,6 +987,10 @@ function carousel() {
             }
         }
     });
+
+    if (typeof window.observeDeferImgs === 'function') {
+    window.observeDeferImgs();
+}
 </script>
 
 
