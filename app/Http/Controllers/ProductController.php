@@ -27,8 +27,6 @@ class ProductController extends Controller
     private const GALLERY_DIR = 'productimage';
     private const CSV_DIR     = 'productcsv';
 
-    // ---- screens -------------------------------------------------------
-
     public function index(): View
     {
         return view('Pages.product.product');
@@ -64,45 +62,29 @@ class ProductController extends Controller
         return view('Pages.product.subcategoryproduct')->with('id', $id);
     }
 
-    // ---- feeds ---------------------------------------------------------
-
     public function data(ProductGridRequest $request): JsonResponse
     {
-        return $this->pagedRows(
-            'products_all',
-            fn () => Product::query(),
-            $request->pageNumber(),
-            $request->perPage()
-        );
+        return $this->pagedRows(fn () => $this->gridQuery(), $request);
     }
 
     public function featuredData(ProductGridRequest $request): JsonResponse
     {
-        return $this->pagedRows(
-            'products_featured',
-            fn () => Product::where('is_featured', 1),
-            $request->pageNumber(),
-            $request->perPage()
-        );
+        return $this->pagedRows(fn () => $this->gridQuery()->where('is_featured', 1), $request);
     }
 
     public function byCategory(ProductGridRequest $request, int $id): JsonResponse
     {
         return $this->pagedRows(
-            'products_category_' . $id,
-            fn () => Product::whereHas('categories', fn ($q) => $q->where('categories.id', $id)),
-            $request->pageNumber(),
-            $request->perPage()
+            fn () => $this->gridQuery()->whereHas('categories', fn ($q) => $q->where('categories.id', $id)),
+            $request
         );
     }
 
     public function bySubCategory(ProductGridRequest $request, int $id): JsonResponse
     {
         return $this->pagedRows(
-            'products_subcategory_' . $id,
-            fn () => Product::whereHas('subCategories', fn ($q) => $q->where('sub_category.id', $id)),
-            $request->pageNumber(),
-            $request->perPage()
+            fn () => $this->gridQuery()->whereHas('subCategories', fn ($q) => $q->where('sub_category.id', $id)),
+            $request
         );
     }
 
@@ -110,8 +92,6 @@ class ProductController extends Controller
     {
         return response()->json(['data' => [$this->toGridRow($product)]]);
     }
-
-    // ---- writes --------------------------------------------------------
 
     public function store(StoreProductRequest $request): RedirectResponse
     {
@@ -168,33 +148,33 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('status', 'Product updated.');
     }
 
-public function destroy(Product $product): Response
-{
-    $photo = $product->getRawOriginal('photo');
-    $galleryPaths = DB::table('product_gallery')
-        ->where('product_id', $product->id)
-        ->pluck('path');
+    public function destroy(Product $product): Response
+    {
+        $photo = $product->getRawOriginal('photo');
+        $galleryPaths = DB::table('product_gallery')
+            ->where('product_id', $product->id)
+            ->pluck('path');
 
-    DB::transaction(function () use ($product): void {
-        DB::table('product_gallery')->where('product_id', $product->id)->delete();
-        DB::table('product_parameter')->where('product_id', $product->id)->delete();
-        if (Schema::hasTable('product_category')) {
-            DB::table('product_category')->where('product_id', $product->id)->delete();
-        }
-        if (Schema::hasTable('product_subcategory')) {
-            DB::table('product_subcategory')->where('product_id', $product->id)->delete();
-        }
-        $product->delete();
-    });
+        DB::transaction(function () use ($product): void {
+            DB::table('product_gallery')->where('product_id', $product->id)->delete();
+            DB::table('product_parameter')->where('product_id', $product->id)->delete();
+            if (Schema::hasTable('product_category')) {
+                DB::table('product_category')->where('product_id', $product->id)->delete();
+            }
+            if (Schema::hasTable('product_subcategory')) {
+                DB::table('product_subcategory')->where('product_id', $product->id)->delete();
+            }
+            $product->delete();
+        });
 
-    $this->deleteMedia($photo, self::PHOTO_DIR);
-    foreach ($galleryPaths as $path) {
-        $this->deleteMedia($path, self::GALLERY_DIR);
+        $this->deleteMedia($photo, self::PHOTO_DIR);
+        foreach ($galleryPaths as $path) {
+            $this->deleteMedia($path, self::GALLERY_DIR);
+        }
+        $this->forgetProductCaches($product);
+
+        return response()->noContent();
     }
-    $this->forgetProductCaches($product);
-
-    return response()->noContent();
-}
 
     public function feature(Product $product): RedirectResponse
     {
@@ -230,17 +210,23 @@ public function destroy(Product $product): Response
         return response()->json(['valid' => $products->count(), 'products' => $products]);
     }
 
-    private function pagedRows(string $cacheKey, callable $query, int $page, int $pageSize): JsonResponse
+    private function gridQuery()
     {
-        $rows = Cache::remember($cacheKey, now()->addMinutes(10), fn () => $query()
+        return Product::query()
+            ->select('id', 'name', 'photo', 'link', 'is_featured', 'family_id', 'descreption')
+            ->orderBy('id');
+    }
+
+    private function pagedRows(callable $query, ProductGridRequest $request): JsonResponse
+    {
+        $builder = $query();
+        $total = (clone $builder)->count();
+        $rows = $builder->forPage($request->pageNumber(), $request->perPage())
             ->get()
             ->map(fn (Product $product): array => $this->toGridRow($product))
-            ->all());
+            ->all();
 
-        return response()->json([
-            'data'  => array_values(array_slice($rows, ($page - 1) * $pageSize, $pageSize)),
-            'total' => count($rows),
-        ]);
+        return response()->json(['data' => $rows, 'total' => $total]);
     }
 
     private function toGridRow(Product $product): array
@@ -256,9 +242,6 @@ public function destroy(Product $product): Response
         ];
     }
 
-    /**
-     * @param array<int, array<string, string>> $rows
-     */
     private function importParameters(Product $product, UploadedFile $csv, array $rows): void
     {
         foreach ($rows as $row) {
