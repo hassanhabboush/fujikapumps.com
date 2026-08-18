@@ -27,10 +27,8 @@ class WebsiteController extends Controller
             'about'         => $this->catalog->about(),
             'slider'        => $this->catalog->sliders(),
             'category'      => $this->catalog->categories(),
-            'sub_category'  => $this->catalog->subCategories(),
             'sub_category1' => $this->catalog->subCategories1(),
             'family'        => $this->catalog->families(),
-            'products'      => $this->catalog->featuredProducts(),
             'Hertz'         => $this->distinctOptions($params, 'Hertz'),
             'dm'            => $this->distinctOptions($params, 'Discharge_diameter'),
             'material'      => $this->distinctOptions($params, 'Material'),
@@ -56,15 +54,8 @@ class WebsiteController extends Controller
         ]);
     }
 
-    /**
-     * Single entry point for every catalog page. $type selects the level of the
-     * tree being browsed; the numbers are baked into published URLs and into
-     * category.blade.php (which reads session('type')), so they stay as they are.
-     */
     public function categories(string $id, string $type, string $name): View
     {
-        // This route is the site's catch-all, so anything non-numeric that
-        // reaches it is a bad URL rather than a type error.
         if (! ctype_digit($id) || ! ctype_digit($type)) {
             abort(404);
         }
@@ -128,8 +119,6 @@ class WebsiteController extends Controller
               . 'Company:' . ($data['company'] ?? '') . "\n"
               . 'Enquiry:' . $data['inquiry'];
 
-        // Sent from the site's own address so it passes SPF; the visitor's
-        // address goes on Reply-To so sales can just hit reply.
         Mail::raw($body, function ($message) use ($data): void {
             $message->to(config('contact.receiver'), config('contact.receiver_name'))
                 ->subject('Fujika Contact Form')
@@ -171,10 +160,6 @@ class WebsiteController extends Controller
         ]);
     }
 
-    /**
-     * web.product indexes into $product, so the single model is wrapped rather
-     * than passed bare.
-     */
     private function productPage(mixed $category, int $id): View
     {
         $product = $this->catalog->product($id);
@@ -186,10 +171,6 @@ class WebsiteController extends Controller
         ]);
     }
 
-    /**
-     * Unique, non-empty values of one parameter column, reusing the single
-     * cached parameter fetch instead of hitting the table five more times.
-     */
     private function distinctOptions(mixed $params, string $column): mixed
     {
         return $params->unique($column)
