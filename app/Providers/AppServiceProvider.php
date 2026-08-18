@@ -6,65 +6,58 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use App\Models\Contact;
 use App\Models\Category;
+use App\Support\AdminSidebarCounts;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
     public function boot()
     {
-
         @ini_set('memory_limit', '512M');
-        // @ini_set('max_upload_size', '256M');
 
-
-        if ($this->app->environment('production')) {
+        if (! $this->app->environment('local')) {
             URL::forceScheme('https');
+            if ($root = config('app.url')) {
+                URL::forceRootUrl($root);
+            }
         }
 
         Schema::defaultStringLength(191);
 
-        // Cache invalidation is now handled per-model via the
-        // App\Traits\InvalidatesCache trait, which forgets only the
-        // cache keys each model is responsible for on save/delete.
+        View::composer('Layout.sidebar', function ($view) {
+            try {
+                $view->with('sidebarCounts', AdminSidebarCounts::all());
+            } catch (\Exception $e) {
+                $view->with('sidebarCounts', [
+                    'categories' => 0, 'sub_category' => 0, 'sub_category_1' => 0,
+                    'family' => 0, 'series' => 0, 'accessories' => 0,
+                    'products' => 0, 'featured' => 0, 'slider' => 0,
+                ]);
+            }
+        });
 
-        try {
-            view()->share('contact', Cache::remember('contact', now()->addHours(1), fn () => Contact::first()));
-
-            view()->share('headerCategories', Cache::remember('headerCategories', now()->addHours(1), fn () => Category::with('subCategories.subCategory1s.families')->get()));
-        } catch (\Exception $e) {
-            // DB not available (e.g. during migrations or artisan commands).
-            // Share empty fallbacks anyway — without them the shared variables
-            // are simply undefined and every public view fatals on read.
-            view()->share('contact', null);
-            view()->share('headerCategories', collect());
-        }
+        View::composer(['web.Layout.header', 'web.Layout.footer', 'web.Layout.head', 'web.Layout.menu-bar', 'web.contact', 'web.home'], function ($view) {
+            try {
+                $view->with('contact', Cache::remember('contact', now()->addHours(1), fn () => Contact::first()));
+                $view->with(
+                    'headerCategories',
+                    Cache::remember(
+                        'headerCategories',
+                        now()->addHours(1),
+                        fn () => Category::with('subCategories.subCategory1s.families')->get()
+                    )
+                );
+            } catch (\Exception $e) {
+                $view->with('contact', null);
+                $view->with('headerCategories', collect());
+            }
+        });
     }
 
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register()
     {
         //
-    }
-
-      public function boot(): void
-    {
-        $this->app['validator']->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
-            $fromValidation = trans('validation.attributes');
-            if (!is_array($fromValidation)) {
-                $fromValidation = array();
-            }
-            $customAttributes = array_merge(validationFieldNames(), $fromValidation, $customAttributes);
-            return new \Illuminate\Validation\Validator($translator, $data, $rules, $messages, $customAttributes);
-        });
     }
 }
