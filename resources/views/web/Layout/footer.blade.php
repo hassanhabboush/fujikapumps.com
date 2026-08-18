@@ -295,49 +295,70 @@
      <!-- main js -->
     <script defer src="{{ versioned_asset('assets/web/assets/js/main2.js') }}"></script>
     <!-- lazy loading & blur-up -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Blur-up effect for all native lazy images
-        document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
-            img.classList.add('lazy-img');
-            if (img.complete && img.naturalWidth > 0) {
-                img.classList.add('loaded');
-            } else {
-                img.addEventListener('load', function () {
-                    img.classList.add('loaded');
-                });
-                img.addEventListener('error', function () {
-                    img.classList.add('loaded');
-                });
-            }
-        });
-
-        // Background-image lazy loading via IntersectionObserver
-        if ('IntersectionObserver' in window) {
-            var bgObserver = new IntersectionObserver(function (entries) {
-                entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        var el = entry.target;
-                        var bg = el.dataset.bg;
-                        if (bg) {
-                            el.style.backgroundImage = 'linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url("' + bg + '")';
-                            bgObserver.unobserve(el);
-                        }
-                    }
-                });
-            }, { rootMargin: '200px 0px' });
-
-            document.querySelectorAll('[data-bg]').forEach(function (el) {
-                bgObserver.observe(el);
-            });
+   <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
+        img.classList.add('lazy-img');
+        if (img.complete && img.naturalWidth > 0) {
+            img.classList.add('loaded');
         } else {
-            // Fallback for browsers without IntersectionObserver
-            document.querySelectorAll('[data-bg]').forEach(function (el) {
-                var bg = el.dataset.bg;
-                if (bg) {
-                    el.style.backgroundImage = 'linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url("' + bg + '")';
-                }
+            img.addEventListener('load', function () {
+                img.classList.add('loaded');
+            });
+            img.addEventListener('error', function () {
+                img.classList.add('loaded');
             });
         }
     });
-    </script>
+
+    if ('IntersectionObserver' in window) {
+        var bgObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    var el = entry.target;
+                    var bg = el.dataset.bg;
+                    if (bg) {
+                        el.style.backgroundImage = 'linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url("' + bg + '")';
+                        bgObserver.unobserve(el);
+                    }
+                }
+            });
+        }, { rootMargin: '200px 0px' });
+
+        document.querySelectorAll('[data-bg]').forEach(function (el) {
+            bgObserver.observe(el);
+        });
+
+        var imgObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                var img = entry.target;
+                var src = img.getAttribute('data-src');
+                if (src) {
+                    img.src = src;
+                    img.removeAttribute('data-src');
+                }
+                imgObserver.unobserve(img);
+            });
+        }, { rootMargin: '80px 0px' });
+
+        window.observeDeferImgs = function () {
+            document.querySelectorAll('img.js-defer-img[data-src]').forEach(function (img) {
+                imgObserver.observe(img);
+            });
+        };
+        window.observeDeferImgs();
+    } else {
+        document.querySelectorAll('[data-bg]').forEach(function (el) {
+            var bg = el.dataset.bg;
+            if (bg) {
+                el.style.backgroundImage = 'linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url("' + bg + '")';
+            }
+        });
+        document.querySelectorAll('img.js-defer-img[data-src]').forEach(function (img) {
+            img.src = img.getAttribute('data-src');
+            img.removeAttribute('data-src');
+        });
+    }
+});
+</script>
