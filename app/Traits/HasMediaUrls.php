@@ -4,19 +4,8 @@ namespace App\Traits;
 
 trait HasMediaUrls
 {
-    /**
-     * Columns whose values should be resolved through url() on read.
-     * Override this in any model to customise the list.
-     *
-     * @var array<int, string>
-     */
     protected array $mediaFields = ['background', 'photo', 'image', 'path'];
 
-    /**
-     * Intercept attribute reads and wrap media paths with url().
-     * The underlying $attributes array is never modified, so fill/save
-     * operations always work with the original stored value.
-     */
     public function getAttribute($key): mixed
     {
         $value = parent::getAttribute($key);
@@ -34,12 +23,25 @@ trait HasMediaUrls
             $webpPath = preg_replace('/\.[^.]+$/', '', $relativePath) . '.webp';
 
             if (file_exists(public_path($webpPath))) {
-                return asset($webpPath);
+                return $this->publicMediaUrl($webpPath);
             }
 
-            return asset($relativePath);
+            if (file_exists(public_path($relativePath))) {
+                return $this->publicMediaUrl($relativePath);
+            }
+
+            return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         }
 
         return $value;
+    }
+
+    private function publicMediaUrl(string $relativePath): string
+    {
+        $encoded = collect(explode('/', $relativePath))
+            ->map(fn (string $segment) => rawurlencode($segment))
+            ->implode('/');
+
+        return asset($encoded);
     }
 }
