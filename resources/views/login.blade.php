@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html>
  <head>
   <title>Fujika Dashboard</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="{{ asset('kendo/jquery.min.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset('bower_components/bootstrap/css/bootstrap.min.css') }}" />
+  <script src="{{ asset('bower_components/bootstrap/js/bootstrap.min.js') }}"></script>
   <style type="text/css">
    .box{
      width: 600px;
@@ -16,11 +15,10 @@
     background-color: #0000008f;
     color: white;
    }
-   body 
-   {
-       background: url("https://static.vecteezy.com/system/resources/previews/004/968/002/original/cute-abstract-modern-background-free-vector.jpg");
-        background-repeat: no-repeat;
-       background-size: cover;
+   body {
+       background: #1a1a1a;
+       background: linear-gradient(160deg, #2a0a0d 0%, #1a1a1a 55%, #111 100%);
+       min-height: 100vh;
    }
   </style>
  </head>
