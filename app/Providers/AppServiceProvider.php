@@ -55,4 +55,16 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
+
+      public function boot(): void
+    {
+        $this->app['validator']->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
+            $fromValidation = trans('validation.attributes');
+            if (!is_array($fromValidation)) {
+                $fromValidation = array();
+            }
+            $customAttributes = array_merge(validationFieldNames(), $fromValidation, $customAttributes);
+            return new \Illuminate\Validation\Validator($translator, $data, $rules, $messages, $customAttributes);
+        });
+    }
 }
