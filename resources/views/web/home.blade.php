@@ -245,7 +245,7 @@ function validateForm() {
 
             @foreach($slider as $slide1)
                 <div class="swiper-slide">
-                    <img src="{{$slide1->image}}" alt="">
+                   <img src="{{$slide1->image}}" alt="" @if($loop->first) fetchpriority="high" @else loading="lazy" @endif>
                 </div>
             @endforeach
 <!--            <div class="swiper-slide">
