@@ -27,6 +27,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\WebsiteController;
+use App\Support\StatelessWeb;
 
 Route::group(['as' => 'admin.'], function () {
     // Route::get('/', function () {
@@ -200,18 +201,24 @@ Route::get('noaccess', function () {
 });
 
 //public website routes
-Route::controller(WebsiteController::class)->middleware('cache.html')->group(function () {
+Route::controller(WebsiteController::class)->group(function () {
     Route::get('sendemail', 'send_email');
     Route::get('filter', 'filter');
     Route::get('filterpop', 'filterpop');
-    Route::get('/', 'index')->name('web');
-    Route::get('/about', 'about')->name('/about');
-    Route::get('/contactus', 'contact')->name('/contactus');
-    Route::get('/{id}/{type}/{name2}', 'categories')->name('/{id}/{type}/{name2}');
-    Route::get('web/getcategory/', 'get_category');
-    Route::get('web/getvolt/', 'get_volt');
-    Route::get('web/gethertz/', 'get_hertz');
-    Route::get('web/getdm/', 'get_dm');
-    Route::get('web/getrpm/', 'get_rpm');
-    Route::get('web/getmaterial/', 'get_material');
 });
+
+Route::controller(WebsiteController::class)
+    ->middleware(['cache.html', 'cache.public'])
+    ->withoutMiddleware(StatelessWeb::sessionMiddleware())
+    ->group(function () {
+        Route::get('/', 'index')->name('web');
+        Route::get('/about', 'about')->name('/about');
+        Route::get('/contactus', 'contact')->name('/contactus');
+        Route::get('web/getcategory/', 'get_category');
+        Route::get('web/getvolt/', 'get_volt');
+        Route::get('web/gethertz/', 'get_hertz');
+        Route::get('web/getdm/', 'get_dm');
+        Route::get('web/getrpm/', 'get_rpm');
+        Route::get('web/getmaterial/', 'get_material');
+        Route::get('/{id}/{type}/{name2}', 'categories')->name('/{id}/{type}/{name2}');
+    });
