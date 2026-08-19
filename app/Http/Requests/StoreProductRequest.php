@@ -8,18 +8,38 @@ use Illuminate\Http\UploadedFile;
 
 class StoreProductRequest extends FormRequest
 {
-    /** Columns the parameter CSV supplies, in column order. */
+    /** Columns written to product_parameter, in column order. */
     public const CSV_COLUMNS = [
         'Model', 'SerialNumber', 'PowerKw', 'PowerHp', 'q', 'h', 'v',
         'Discharge_diameter', 'Hertz', 'Material', 'RPM', 'link',
     ];
 
     /**
-     * Columns a row must fill to be worth importing. Every column is required
-     * today — drop one from this list to start accepting rows that leave it
-     * blank.
+     * A data row is imported when Model is filled. Other cells may be blank.
+     * Empty / header-only files do not block creating the product.
      */
-    public const CSV_REQUIRED_COLUMNS = self::CSV_COLUMNS;
+    public const CSV_REQUIRED_COLUMNS = ['Model'];
+
+    /** @var array<string, string> */
+    private const HEADER_ALIASES = [
+        'model' => 'Model',
+        'serialnumber' => 'SerialNumber',
+        'powerkw' => 'PowerKw',
+        'powerhp' => 'PowerHp',
+        'q' => 'q',
+        'qm3h' => 'q',
+        'h' => 'h',
+        'head' => 'h',
+        'headm' => 'h',
+        'v' => 'v',
+        'discharge' => 'Discharge_diameter',
+        'dischargediameter' => 'Discharge_diameter',
+        'dischargediameteroutlet' => 'Discharge_diameter',
+        'hertz' => 'Hertz',
+        'material' => 'Material',
+        'rpm' => 'RPM',
+        'link' => 'link',
+    ];
 
     /** @var array<int, array<string, string>>|null */
     private ?array $parameterRows = null;
@@ -39,10 +59,6 @@ class StoreProductRequest extends FormRequest
             'background'        => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'images'            => ['nullable', 'array'],
             'images.*'          => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-            // Judge by extension, not MIME. Excel's "Save as CSV" on Windows is
-            // often reported as application/vnd.ms-excel, which fails mimes:csv
-            // even though the file is plain comma-separated text. Binary .xlsx
-            // still fails extensions, and the after() hooks reject non-UTF-8.
             'parameter'         => ['nullable', 'file', 'extensions:csv,txt', 'max:2048'],
         ];
     }
@@ -73,12 +89,8 @@ class StoreProductRequest extends FormRequest
     }
 
     /**
-     * A file can pass the extension check and still not be readable text
-     * (a renamed workbook, a UTF-16 export). Reject it here rather than letting
-     * fgetcsv() feed binary into product_parameter.
-     *
-     * The CSV itself is optional: no file, or a file with no complete rows,
-     * still creates the product. Parameters can be added later.
+     * Reject binary workbooks. Encoding mismatches are converted, not failed,
+     * so Excel's Windows CSV still imports. A missing or empty CSV is fine.
      */
     public function after(): array
     {
@@ -94,12 +106,12 @@ class StoreProductRequest extends FormRequest
                     return;
                 }
 
-                $head = (string) file_get_contents($file->getRealPath(), false, null, 0, 8192);
+                $head = (string) file_get_contents($file->getRealPath(), false, null, 0, 8);
 
-                if ($head !== '' && ! mb_check_encoding($head, 'UTF-8')) {
+                if (str_starts_with($head, "PK\x03\x04")) {
                     $validator->errors()->add(
                         'parameter',
-                        'The parameter file must be a plain UTF-8 csv file.'
+                        'The parameter file must be a .csv file. Excel workbooks (.xlsx / .xls) are not accepted — in Excel use File → Save As → CSV (Comma delimited).'
                     );
                 }
             },
@@ -107,16 +119,6 @@ class StoreProductRequest extends FormRequest
     }
 
     /**
-     * The importable data rows of the parameter CSV, keyed by column name.
-     *
-     * Spreadsheet exports trail blank lines and rows of bare commas, and
-     * fgetcsv() hands a blank line back as [null]; importing what it returns
-     * verbatim filled product_parameter with rows carrying nothing but a
-     * product_id. A row is only kept when every required column has a value.
-     *
-     * Parsed once and memoised, so the controller reads the same rows this
-     * validator checked without opening the upload a second time.
-     *
      * @return array<int, array<string, string>>
      */
     public function parameterRows(): array
@@ -133,37 +135,109 @@ class StoreProductRequest extends FormRequest
             return $this->parameterRows;
         }
 
-        $handle = fopen($file->getRealPath(), 'r');
+        $raw = (string) file_get_contents($file->getRealPath());
+
+        if ($raw === '') {
+            return $this->parameterRows;
+        }
+
+        $raw = $this->toUtf8Csv($raw);
+
+        if ($raw === '' || str_starts_with($raw, "PK\x03\x04")) {
+            return $this->parameterRows;
+        }
+
+        $delimiter = substr_count($raw, ';') > substr_count($raw, ',') ? ';' : ',';
+        $handle = fopen('php://temp', 'r+');
 
         if ($handle === false) {
             return $this->parameterRows;
         }
 
-        $isHeader = true;
+        fwrite($handle, $raw);
+        rewind($handle);
 
-        while (($cells = fgetcsv($handle, 1000, ',')) !== false) {
-            if ($isHeader) {
-                $isHeader = false;
-                continue;
-            }
+        $first = fgetcsv($handle, 0, $delimiter);
+        $headerMap = is_array($first) ? $this->headerMap($first) : [];
 
-            $row = [];
+        if ($headerMap === []) {
+            $this->ingestCells(is_array($first) ? $first : []);
+        }
 
-            foreach (self::CSV_COLUMNS as $i => $column) {
-                $row[$column] = trim((string) ($cells[$i] ?? ''));
-            }
-
-            foreach (self::CSV_REQUIRED_COLUMNS as $column) {
-                if ($row[$column] === '') {
-                    continue 2;
-                }
-            }
-
-            $this->parameterRows[] = $row;
+        while (($cells = fgetcsv($handle, 0, $delimiter)) !== false) {
+            $this->ingestCells($cells, $headerMap);
         }
 
         fclose($handle);
 
         return $this->parameterRows;
+    }
+
+    /**
+     * @param  array<int, string|null>  $cells
+     * @param  array<int, string>  $headerMap  index => column name
+     */
+    private function ingestCells(array $cells, array $headerMap = []): void
+    {
+        $row = array_fill_keys(self::CSV_COLUMNS, '');
+
+        if ($headerMap === []) {
+            foreach (self::CSV_COLUMNS as $i => $column) {
+                $row[$column] = trim((string) ($cells[$i] ?? ''));
+            }
+        } else {
+            foreach ($headerMap as $i => $column) {
+                $row[$column] = trim((string) ($cells[$i] ?? ''));
+            }
+        }
+
+        foreach (self::CSV_REQUIRED_COLUMNS as $column) {
+            if ($row[$column] === '') {
+                return;
+            }
+        }
+
+        $this->parameterRows[] = $row;
+    }
+
+    /**
+     * @param  array<int, string|null>  $cells
+     * @return array<int, string>
+     */
+    private function headerMap(array $cells): array
+    {
+        $map = [];
+
+        foreach ($cells as $i => $cell) {
+            $alias = self::HEADER_ALIASES[$this->normalizeHeader((string) $cell)] ?? null;
+
+            if ($alias !== null) {
+                $map[$i] = $alias;
+            }
+        }
+
+        return count($map) >= 3 ? $map : [];
+    }
+
+    private function normalizeHeader(string $header): string
+    {
+        $header = strtolower(trim(preg_replace('/\s+/u', '', $header) ?? $header));
+
+        return (string) preg_replace('/[^a-z0-9]/', '', $header);
+    }
+
+    private function toUtf8Csv(string $raw): string
+    {
+        if (str_starts_with($raw, "\xFF\xFE") || str_starts_with($raw, "\xFE\xFF")) {
+            $raw = mb_convert_encoding($raw, 'UTF-8', 'UTF-16');
+        } elseif (! mb_check_encoding($raw, 'UTF-8')) {
+            $raw = mb_convert_encoding($raw, 'UTF-8', 'Windows-1252');
+        }
+
+        if (str_starts_with($raw, "\xEF\xBB\xBF")) {
+            $raw = substr($raw, 3);
+        }
+
+        return $raw;
     }
 }
