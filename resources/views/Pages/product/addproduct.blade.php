@@ -91,7 +91,8 @@
                                 <div class="k-edit-label">
                                         <label for="gallry">Import Parameter Table</label>
                                         <br>
-                                        <input required type="file"  name="parameter" placeholder="Parameter table" accept=".csv,text/csv,text/plain">
+                                        <input type="file" name="parameter" placeholder="Parameter table" accept=".csv,text/csv,text/plain,.txt">
+                                        <small style="display:block;color:#9aa4b2;margin-top:6px;">Optional. CSV only — not Excel (.xlsx). In Excel: File → Save As → CSV.</small>
 </div>
                                 </div>
                                      </div>
