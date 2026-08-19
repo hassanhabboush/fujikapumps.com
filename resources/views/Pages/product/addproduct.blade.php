@@ -24,7 +24,7 @@
     width: 100%;">
      
                 <div  class="k-content" style="width:100% !important" data-role="window" tabindex="0">   
-                  <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
+                  <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" novalidate>
                       @csrf
                       <input type="hidden" name="_form" value="add">
                         <div class="k-edit-form-container">
