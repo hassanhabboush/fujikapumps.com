@@ -39,10 +39,11 @@ class StoreProductRequest extends FormRequest
             'background'        => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'images'            => ['nullable', 'array'],
             'images.*'          => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-            // xlsx is not accepted: there is no spreadsheet library, and the
-            // importer reads the upload with fgetcsv(), so a binary workbook
-            // lands in product_parameter as garbage bytes and MySQL rejects it.
-            'parameter'         => ['nullable', 'file', 'mimes:csv,txt', 'extensions:csv,txt', 'max:2048'],
+            // Judge by extension, not MIME. Excel's "Save as CSV" on Windows is
+            // often reported as application/vnd.ms-excel, which fails mimes:csv
+            // even though the file is plain comma-separated text. Binary .xlsx
+            // still fails extensions, and the after() hooks reject non-UTF-8.
+            'parameter'         => ['nullable', 'file', 'extensions:csv,txt', 'max:2048'],
         ];
     }
 
@@ -66,8 +67,7 @@ class StoreProductRequest extends FormRequest
             'cat_id.exists'       => 'The selected family does not exist.',
             'background.required' => 'A product image is required.',
             'background.image'    => 'The product image must be a valid image file.',
-            'parameter.mimes'      => 'The parameter file must be a csv file.',
-            'parameter.extensions' => 'The parameter file must be a csv file.',
+            'parameter.extensions' => 'The parameter file must be a .csv file. Excel workbooks (.xlsx / .xls) are not accepted — in Excel use File → Save As → CSV (Comma delimited).',
             'parameter.max'        => 'The parameter file may not be larger than 2 MB.',
         ];
     }
