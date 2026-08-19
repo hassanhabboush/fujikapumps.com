@@ -73,17 +73,24 @@ class StoreProductRequest extends FormRequest
     }
 
     /**
-     * A file can pass the mime/extension checks and still not be readable text
+     * A file can pass the extension check and still not be readable text
      * (a renamed workbook, a UTF-16 export). Reject it here rather than letting
      * fgetcsv() feed binary into product_parameter.
+     *
+     * The CSV itself is optional: no file, or a file with no complete rows,
+     * still creates the product. Parameters can be added later.
      */
     public function after(): array
     {
         return [
             function (Validator $validator): void {
+                if (! $this->hasFile('parameter') || $validator->errors()->has('parameter')) {
+                    return;
+                }
+
                 $file = $this->file('parameter');
 
-                if (! $file instanceof UploadedFile || $validator->errors()->has('parameter')) {
+                if (! $file instanceof UploadedFile || ! $file->isValid()) {
                     return;
                 }
 
@@ -93,20 +100,6 @@ class StoreProductRequest extends FormRequest
                     $validator->errors()->add(
                         'parameter',
                         'The parameter file must be a plain UTF-8 csv file.'
-                    );
-                }
-            },
-            function (Validator $validator): void {
-                $file = $this->file('parameter');
-
-                if (! $file instanceof UploadedFile || $validator->errors()->has('parameter')) {
-                    return;
-                }
-
-                if ($this->parameterRows() === []) {
-                    $validator->errors()->add(
-                        'parameter',
-                        'The parameter file has no usable rows — every column of a row must be filled in.'
                     );
                 }
             },
