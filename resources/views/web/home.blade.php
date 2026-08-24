@@ -202,27 +202,30 @@
         height: auto !important;
     }
     .families-grid-v2 .cooli-img-wrap {
-        height: 220px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        line-height: 0 !important;
-        overflow: hidden !important;
-    }
+    height: 220px !important;
+    display: block !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+}
     .families-grid-v2 .cooli-image {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-        object-position: center !important;
-        display: block !important;
-        margin: 0 !important;
-    }
-    .families-grid-v2 .cooli-content {
-        margin: 0 !important;
-        padding: 8px 8px 10px !important;
-    }
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+}
+   .families-grid-v2 .cooli-content {
+    margin: 0 !important;
+    padding: 8px 8px 10px !important;
+}
     .families-grid-v2 .cooli-title {
-        margin: 0 0 6px !important;
-    }
+    margin: 0 0 6px !important;
+}
 
     .productSwiper .swiper-button-next,
     .productSwiper .swiper-button-prev {
