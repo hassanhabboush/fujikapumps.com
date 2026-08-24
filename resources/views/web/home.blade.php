@@ -199,31 +199,36 @@
     }
     .families-grid-v2 .cooli-card-wrap,
     .families-grid-v2 .cooli-card {
-        height: auto !important;
-    }
-    .families-grid-v2 .cooli-img-wrap {
+    height: auto !important;
+    overflow: hidden !important;
+}
+  .families-grid-v2 .cooli-img-wrap {
     height: 220px !important;
     display: block !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
     margin: 0 !important;
     padding: 0 !important;
     line-height: 0 !important;
     overflow: hidden !important;
 }
-    .families-grid-v2 .cooli-image {
+ .families-grid-v2 .cooli-image {
     width: 100% !important;
-    height: 100% !important;
+    height: 220px !important;
     object-fit: cover !important;
     object-position: center !important;
     display: block !important;
     margin: 0 !important;
+    transform: scale(1.08);
 }
-   .families-grid-v2 .cooli-content {
+ .families-grid-v2 .cooli-card:hover .cooli-image {
+    transform: scale(1.08);
+}
+.families-grid-v2 .cooli-content {
     margin: 0 !important;
     padding: 8px 8px 10px !important;
+    position: relative;
+    z-index: 1;
 }
-    .families-grid-v2 .cooli-title {
+.families-grid-v2 .cooli-title {
     margin: 0 0 6px !important;
 }
 
