@@ -2,14 +2,12 @@
 <script>
 function validateForm() {
     var x = document.getElementById('hertz1').value;
-    
     if (x == null || x == "") {
         alert("Hertz must be filled out");
         return false;
     }
 }
 </script>
-<!-- End WOWSlider.com HEAD section -->
 <link rel="stylesheet" href="{{ asset('assets/css/pump-search.css') }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -53,7 +51,7 @@ function validateForm() {
      .form-group {
     margin-bottom: 0rem !important;
 }
-  .about-us-area.about-bg {
+     .about-us-area.about-bg {
     background: none;
     height: 60%;
     display: block;
@@ -63,7 +61,7 @@ function validateForm() {
     top: 0;
     border-bottom: solid #b7212e 4px;
     border-top: solid #b7212e 4px;
-}
+     }
  }
 @media (max-width: 768px) {
     .heroSwiper {
@@ -193,10 +191,10 @@ function validateForm() {
     width: 100%;
     height: 150px;
     object-fit: contain;
+    background: #f4f4f4;
 }
-
- .cooli-image.js-defer-img:not([src]) {
-    min-height: 180px;
+.cooli-image.js-defer-img:not([src]) {
+    min-height: 0;
     background: #f4f4f4;
 }
 
@@ -249,7 +247,7 @@ function validateForm() {
 
             @foreach($slider as $slide1)
                 <div class="swiper-slide">
-                   <img src="{{$slide1->image}}" alt="" @if($loop->first) fetchpriority="high" @else loading="lazy" @endif>
+                    <img src="{{$slide1->image}}" alt="" @if($loop->first) fetchpriority="high" @else loading="lazy" @endif>
                 </div>
             @endforeach
 <!--            <div class="swiper-slide">
@@ -523,7 +521,8 @@ function toggleAdvancedFields() {
                         <div class="cooli-card h-100 d-flex flex-column">
 
                             <div class="cooli-img-wrap">
-                                <img data-src="{{$fam->background}}" class="cooli-image js-defer-img" width="400" height="400" alt="{{$fam->english_name}}">
+                                <img data-src="{{$fam->background}}"
+                                     class="cooli-image js-defer-img" alt="{{$fam->english_name}}">
                             </div>
 
                             <div class="cooli-content">
@@ -620,7 +619,7 @@ function toggleAdvancedFields() {
             @foreach($sub_category1 as $sub1)
                 <div class="swiper-slide">
                     <div class="product-card">
-                       <img data-src="{{$sub1->background}}" alt="" class="js-defer-img" width="300" height="150">
+                        <img data-src="{{$sub1->background}}" alt="" class="js-defer-img" width="300" height="150">
                         <a href="{{url('/'.$sub1->id.'/4/'.$sub1->english_name)}}" class="read"><h6>{{$sub1->english_name}}</h6></a>
                     </div>
                 </div>
@@ -986,10 +985,9 @@ function carousel() {
             }
         }
     });
-
     if (typeof window.observeDeferImgs === 'function') {
-    window.observeDeferImgs();
-}
+        window.observeDeferImgs();
+    }
 </script>
 
 
