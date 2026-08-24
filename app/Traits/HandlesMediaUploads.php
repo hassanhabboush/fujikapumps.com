@@ -12,17 +12,33 @@ use Illuminate\Support\Str;
  * Files still land in public/<dir>/ rather than the public disk, so the
  * legacy rows and the .webp siblings HasMediaUrls looks for keep resolving
  * from a single directory per entity.
+ *
+ * Every upload is resized (longest side) and stored as WebP so a phone
+ * photo cannot hang the public site the way unoptimized PNG/JPEG did.
  */
 trait HandlesMediaUploads
 {
+    private const DEFAULT_MAX_SIDE = 1600;
+
+    private const WEBP_QUALITY = 80;
+
     /**
-     * Move an upload into public/<dir>/ and return the path to store.
+     * Optimize an upload into public/<dir>/ and return the path to store.
      *
      * Named with a uuid rather than time() . getClientOriginalName(), which
      * collided under concurrent uploads and preserved user-supplied names.
      */
-    protected function storeMedia(UploadedFile $file, string $dir): string
+    protected function storeMedia(UploadedFile $file, string $dir, int $maxSide = self::DEFAULT_MAX_SIDE): string
     {
+        File::ensureDirectoryExists(public_path($dir));
+
+        $name = Str::uuid() . '.webp';
+        $destination = public_path($dir . '/' . $name);
+
+        if ($this->writeOptimizedWebp($file->getRealPath(), $destination, $maxSide)) {
+            return 'public/' . $dir . '/' . $name;
+        }
+
         $name = Str::uuid() . '.' . $file->getClientOriginalExtension();
         $file->move(public_path($dir), $name);
 
@@ -47,5 +63,61 @@ trait HandlesMediaUploads
                 File::delete($path);
             }
         }
+    }
+
+    /**
+     * Resize so the longest side is at most $maxSide, then write WebP.
+     * Returns false if GD cannot load or write the file (caller stores original).
+     */
+    private function writeOptimizedWebp(string $source, string $destination, int $maxSide): bool
+    {
+        if (! function_exists('imagewebp') || $source === '' || ! is_file($source)) {
+            return false;
+        }
+
+        $info = @getimagesize($source);
+
+        if ($info === false) {
+            return false;
+        }
+
+        $image = match ($info[2]) {
+            IMAGETYPE_JPEG => @imagecreatefromjpeg($source),
+            IMAGETYPE_PNG  => @imagecreatefrompng($source),
+            IMAGETYPE_WEBP => @imagecreatefromwebp($source),
+            IMAGETYPE_GIF  => @imagecreatefromgif($source),
+            default        => false,
+        };
+
+        if ($image === false) {
+            return false;
+        }
+
+        if (! imageistruecolor($image)) {
+            imagepalettetotruecolor($image);
+        }
+
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+
+        $width = imagesx($image);
+        $height = imagesy($image);
+        $scale = min(1, $maxSide / max($width, $height, 1));
+
+        if ($scale < 1) {
+            $newWidth = max(1, (int) round($width * $scale));
+            $newHeight = max(1, (int) round($height * $scale));
+            $resized = imagecreatetruecolor($newWidth, $newHeight);
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
+            imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+            imagedestroy($image);
+            $image = $resized;
+        }
+
+        $ok = @imagewebp($image, $destination, self::WEBP_QUALITY);
+        imagedestroy($image);
+
+        return $ok && is_file($destination) && filesize($destination) > 0;
     }
 }
