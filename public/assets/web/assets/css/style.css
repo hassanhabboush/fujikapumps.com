@@ -4465,7 +4465,7 @@ width:60%;
   position: relative;
 }
 .about-us-area.about-bg {
-  background: url(../img/bg/about-shape.png) no-repeat padding-box;
+  background: none;
   height: 100%;
   display: block;
   opacity: 1;
@@ -5514,7 +5514,8 @@ Fact Area
   z-index: -1;
 }
 .history-area.history-bg {
-  background-image: url(../img/bg/history-bg.jpg);
+  background-color: #0a1628;
+  background-image: none;
   background-position: center;
   background-size: cover;
 }
@@ -6626,7 +6627,7 @@ padding: 1%;
           rgba(0,0,0,0.6),
           rgba(0,0,0,0.6)
   ),
-  url('../images/contact-bg.jpg') center/cover no-repeat;
+  #1a1a1a center/cover no-repeat;
   color: #fff;
   display: flex;
   align-items: center;
@@ -6781,10 +6782,11 @@ textarea.form-control {
 
 
 .cooli-image {
-  /*height: 200px;*/
   width: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   display: block;
+  vertical-align: bottom;
   transition: transform 0.4s ease;
 }
 .cooli-card {
@@ -6811,6 +6813,7 @@ textarea.form-control {
 }
 .cooli-title {
   font-weight: bold !important;
+  margin: 8px 0 6px;
 }
 .msg-txt{
   padding-top: 9px;
@@ -6876,10 +6879,9 @@ textarea.form-control {
   color: #fff;
 }
 .cooli-img-wrap {
-  height: 240px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: auto;
+  line-height: 0;
+  overflow: hidden;
 }
 
 .contact-form .form-control {
