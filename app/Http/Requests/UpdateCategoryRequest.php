@@ -15,7 +15,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
             'english_name' => ['required', 'string', 'max:255'],
-            'background'   => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'background'   => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ];
     }
 
@@ -33,7 +33,7 @@ class UpdateCategoryRequest extends FormRequest
             'english_name.required' => 'The category name is required.',
             'background.image'      => 'The background must be a valid image file.',
             'background.mimes'      => 'The background must be a jpg, jpeg, png or webp file.',
-            'background.max'        => 'The background image may not be larger than 2 MB.',
+            'background.max'        => 'The background image may not be larger than 5 MB.',
         ];
     }
 }
