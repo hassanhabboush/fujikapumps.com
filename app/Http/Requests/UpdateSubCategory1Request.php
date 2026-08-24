@@ -17,7 +17,7 @@ class UpdateSubCategory1Request extends FormRequest
             'name'       => ['required', 'string', 'max:255'],
             'cat_id'     => ['required', 'array', 'min:1'],
             'cat_id.*'   => ['integer', 'exists:sub_category,id'],
-            'background' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'background' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ];
     }
 
@@ -38,7 +38,7 @@ class UpdateSubCategory1Request extends FormRequest
             'cat_id.*.exists'  => 'One of the selected parent sub categories does not exist.',
             'background.image' => 'The background must be a valid image file.',
             'background.mimes' => 'The background must be a jpg, jpeg, png or webp file.',
-            'background.max'   => 'The background image may not be larger than 2 MB.',
+            'background.max'   => 'The background image may not be larger than 5 MB.',
         ];
     }
 }
