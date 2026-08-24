@@ -42,7 +42,7 @@ class SliderController extends Controller
     public function store(StoreSliderRequest $request): RedirectResponse
     {
         Slider::create($request->safe()->except('image') + [
-            'image' => $this->storeMedia($request->file('image'), self::IMAGE_DIR),
+            'image' => $this->storeMedia($request->file('image'), self::IMAGE_DIR, 1920),
         ]);
 
         return redirect()->back()->with('status', 'Slide created.');
@@ -54,7 +54,7 @@ class SliderController extends Controller
         $oldImage = $slider->getRawOriginal('image');
 
         if ($file = $request->file('image')) {
-            $attributes['image'] = $this->storeMedia($file, self::IMAGE_DIR);
+            $attributes['image'] = $this->storeMedia($file, self::IMAGE_DIR, 1920);
         }
 
         $slider->update($attributes);
