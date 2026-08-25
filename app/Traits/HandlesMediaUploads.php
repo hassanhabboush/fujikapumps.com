@@ -30,6 +30,9 @@ trait HandlesMediaUploads
      */
     protected function storeMedia(UploadedFile $file, string $dir, int $maxSide = self::DEFAULT_MAX_SIDE): string
     {
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', '120');
+
         File::ensureDirectoryExists(public_path($dir));
 
         $name = Str::uuid() . '.webp';
@@ -74,6 +77,11 @@ trait HandlesMediaUploads
         if (! function_exists('imagewebp') || $source === '' || ! is_file($source)) {
             return false;
         }
+
+        // GD keeps the full bitmap in RAM (width × height × 4). A 5 MB JPEG
+        // can still be 8000px wide and kill the PHP-FPM worker (Cloudflare 502).
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', '120');
 
         $info = @getimagesize($source);
 
