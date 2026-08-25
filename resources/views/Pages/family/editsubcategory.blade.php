@@ -63,7 +63,7 @@
             transform: scale(1);
             width: 80%;">
              <div class="k-window-titlebar k-header" style="margin-top: -53.2667px;">&nbsp;<span class="k-window-title">Edit</span>
-               <div class="k-window-actions"><a role="button" href="#" onclick='Ehideme()' class="k-window-action k-link">
+               <div class="k-window-actions"><a role="button" href="#" onclick='Ehideme()' id="family-edit-close" class="k-window-action k-link">
                    <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                         <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
                                        <form id="Eform" method="POST" action="" enctype="multipart/form-data">
@@ -82,9 +82,12 @@
                                     
                                     <div class="col-md-11">
                                             <div class="k-edit-label">
-                                                    <label for="lname">Background</label>
+                                                    <label for="family-edit-background">Background</label>
                                                     <br>
-                                                   <input type="file" name="background" id="background">                                            
+                                                   <input type="file" name="background" id="family-edit-background" accept="image/jpeg,image/png,image/webp">
+                                                   <input type="hidden" name="background_path" id="family-edit-path" value="{{ old('background_path') }}">
+                                                   <div class="instant-upload-preview" id="family-edit-preview"></div>
+                                                   <div class="instant-upload-status" id="family-edit-status"></div>
                                                    </div>
                                      </div>
                                       <div class="col-md-11">
@@ -111,8 +114,8 @@
                                 </div>
                               
                    <div>
-                                <input type="submit"  id="btnleft"  class="k-button k-button-icontext k-primary k-grid-update"   name="submitadd" value="Update" >
-                           <a onclick='Ehideme()' id="btnleft"  class="k-button k-button-icontext k-grid-cancel" href="#">
+                                <input type="submit" id="family-edit-submit" class="k-button k-button-icontext k-primary k-grid-update btnleft" name="submitadd" value="Update">
+                           <a onclick='Ehideme()' id="family-edit-cancel" class="k-button k-button-icontext k-grid-cancel btnleft" href="#">
                              Cancel</a>
                             </div>
                         </form>
