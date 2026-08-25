@@ -154,9 +154,42 @@
         {
             display:none;
         }
-        #btnleft
+        #btnleft,
+        .btnleft
         {
             float: right;
+        }
+        .instant-upload-preview {
+            display: none;
+            margin-top: 10px;
+            max-width: 280px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #1b1b1b;
+        }
+        .instant-upload-preview img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .instant-upload-status {
+            margin-top: 8px;
+            font-size: 13px;
+        }
+        .instant-upload-status.is-busy {
+            color: #f0c14b;
+            cursor: pointer;
+        }
+        .instant-upload-status.is-done {
+            color: #7dce82;
+        }
+        .instant-upload-status.is-error {
+            color: #e57373;
+        }
+        #family-add-submit:disabled,
+        #family-edit-submit:disabled {
+            opacity: 0.65;
+            cursor: wait;
         }
         .k-grid-delete
         {
