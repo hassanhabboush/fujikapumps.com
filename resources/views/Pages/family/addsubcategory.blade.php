@@ -42,7 +42,7 @@
     transform: scale(1);
     width: 80%;">
      <div class="k-window-titlebar k-header" style="margin-top: -53.2667px;">&nbsp;<span class="k-window-title">Add</span>
-       <div class="k-window-actions"><a role="button" href="#" onclick='hideme()' class="k-window-action k-link">
+       <div class="k-window-actions"><a role="button" href="#" onclick='hideme()' id="family-add-close" class="k-window-action k-link">
            <span role="presentation" class="k-icon k-i-close"></span></a></div></div>
                 <div  class="k-popup-edit-form k-window-content k-content" style="width:100% !important" data-role="window" tabindex="0">   
                   <form method="POST" action="{{ route('admin.families.store') }}" enctype="multipart/form-data">
@@ -60,9 +60,12 @@
                                   
                                     <div class="col-md-11">
                                             <div class="k-edit-label">
-                                                    <label for="lname">Background</label>
+                                                    <label for="family-add-background">Background</label>
                                                     <br>
-                                                   <input type="file" name="background" id="background"  required="required">                                            
+                                                   <input type="file" name="background" id="family-add-background" accept="image/jpeg,image/png,image/webp" required="required">
+                                                   <input type="hidden" name="background_path" id="family-add-path" value="{{ old('background_path') }}">
+                                                   <div class="instant-upload-preview" id="family-add-preview"></div>
+                                                   <div class="instant-upload-status" id="family-add-status"></div>
                                                    </div>
                                      </div>
                                       <div class="col-md-11">
@@ -89,8 +92,8 @@
                                 </div>
                               
            <div>
-                        <input type="submit"  id="btnleft"  class="k-button k-button-icontext k-primary k-grid-update"   name="submitadd" value="Add" >
-                   <a onclick='hideme()' id="btnleft"   class="k-button k-button-icontext k-grid-cancel" href="#">
+                        <input type="submit" id="family-add-submit" class="k-button k-button-icontext k-primary k-grid-update btnleft" name="submitadd" value="Add">
+                   <a onclick='hideme()' id="family-add-cancel" class="k-button k-button-icontext k-grid-cancel btnleft" href="#">
                        Cancel</a>
                     </div>
                 </form>
