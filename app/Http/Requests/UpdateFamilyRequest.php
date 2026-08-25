@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ExistingPublicUpload;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateFamilyRequest extends FormRequest
@@ -14,20 +15,22 @@ class UpdateFamilyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => ['sometimes', 'required', 'string', 'max:255'],
-            'cat_id'     => ['required', 'array', 'min:1'],
-            'cat_id.*'   => ['integer', 'exists:sub_category_1,id'],
-            'background' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'link'       => ['nullable', 'string', 'max:255'],
+            'name'            => ['sometimes', 'required', 'string', 'max:255'],
+            'cat_id'          => ['required', 'array', 'min:1'],
+            'cat_id.*'        => ['integer', 'exists:sub_category_1,id'],
+            'background'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'background_path' => ['nullable', 'string', new ExistingPublicUpload('categorybackground')],
+            'link'            => ['nullable', 'string', 'max:255'],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'name'       => 'family name',
-            'cat_id'     => 'sub categories',
-            'background' => 'background image',
+            'name'            => 'family name',
+            'cat_id'          => 'sub categories',
+            'background'      => 'background image',
+            'background_path' => 'background image',
         ];
     }
 
