@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\PaginatesGrid;
 use App\Http\Requests\GridPageRequest;
 use App\Http\Requests\StoreFamilyRequest;
 use App\Http\Requests\UpdateFamilyRequest;
+use App\Http\Requests\UploadFamilyBackgroundRequest;
 use App\Models\Family;
 use App\Models\FamilySubcategory;
 use App\Traits\HandlesMediaUploads;
@@ -67,11 +68,18 @@ class FamilyController extends Controller
         return response()->json(['data' => $data]);
     }
 
+    public function uploadBackground(UploadFamilyBackgroundRequest $request): JsonResponse
+    {
+        return response()->json([
+            'path' => $this->storeMedia($request->file('background'), self::BACKGROUND_DIR),
+        ]);
+    }
+
     public function store(StoreFamilyRequest $request): RedirectResponse
     {
         $family = Family::create([
             'english_name' => $request->validated('name'),
-            'background'   => $this->storeMedia($request->file('background'), self::BACKGROUND_DIR),
+            'background'   => $this->resolvedBackgroundPath($request),
             'link'         => $request->validated('link'),
         ]);
 
@@ -94,8 +102,8 @@ class FamilyController extends Controller
 
         $oldBackground = $family->getRawOriginal('background');
 
-        if ($file = $request->file('background')) {
-            $data['background'] = $this->storeMedia($file, self::BACKGROUND_DIR);
+        if ($background = $this->resolvedBackgroundPath($request)) {
+            $data['background'] = $background;
         }
 
         $family->update($data);
@@ -165,5 +173,20 @@ class FamilyController extends Controller
             'background'   => $family->background,
             'link'         => $family->link,
         ];
+    }
+
+    /**
+     * Prefer a file posted with the form (no-JS fallback). Instant upload
+     * already stored a WebP and only sends its path.
+     */
+    private function resolvedBackgroundPath(StoreFamilyRequest|UpdateFamilyRequest $request): ?string
+    {
+        if ($file = $request->file('background')) {
+            return $this->storeMedia($file, self::BACKGROUND_DIR);
+        }
+
+        $path = $request->validated('background_path');
+
+        return is_string($path) && $path !== '' ? $path : null;
     }
 }
