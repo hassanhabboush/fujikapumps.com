@@ -19,6 +19,7 @@
                                             <!-- body Srart  -->
                                             @include('Pages.family.addsubcategory')
                                              @include('Pages.family.editsubcategory')
+                                             @include('Pages.family.instant-image-upload')
                                              <div id="grid"></div> 
         <script>
              $(function()
