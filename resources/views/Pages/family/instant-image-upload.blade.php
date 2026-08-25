@@ -1,4 +1,4 @@
-<script src="{{ asset('assets/js/instant-image-upload.js') }}"></script>
+<script src="{{ asset('assets/js/instant-image-upload.js') }}?v=3"></script>
 <script>
 $(function () {
     if (!window.HirfexInstantImageUpload) {
