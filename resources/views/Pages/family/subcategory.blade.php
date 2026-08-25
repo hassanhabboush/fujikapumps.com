@@ -17,6 +17,7 @@
                                     <div class="page-body">
                                         <div class="row">
                                         @include('Pages.family.editsubcategory')
+                                        @include('Pages.family.instant-image-upload')
 
                                             <!-- body Srart  -->
                                              <div id="grid"></div> 
