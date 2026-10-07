@@ -6630,7 +6630,7 @@ padding: 1%;
           rgba(0,0,0,0.6),
           rgba(0,0,0,0.6)
   ),
-  url('../images/contact-bg.jpg') center/cover no-repeat;
+	 #1a1a2e;
   color: #fff;
   display: flex;
   align-items: center;
