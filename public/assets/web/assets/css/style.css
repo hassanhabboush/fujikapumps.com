@@ -4950,7 +4950,8 @@ Fact Area
   Counterup area
 -----------------------*/
 .counterup-area {
-  background: linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url(../img/bg/counterup-bg.jpg) no-repeat center center;
+    background: linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url(../img/bg/counterup-bg.jpg) no-repeat center center;
+  background-image: linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), image-set(url(../img/bg/counterup-bg.webp) type("image/webp"), url(../img/bg/counterup-bg.jpg) type("image/jpeg"));
   background-size: cover;
   background-attachment: fixed;
   text-align: center;
@@ -5101,7 +5102,7 @@ Fact Area
   z-index: 9;
 }
 .project-area .project-bg {
-  background-image: url(../img/project/project-bg.jpg);
+    background-image: image-set(url(../img/project/project-bg.webp) type("image/webp"), url(../img/project/project-bg.jpg) type("image/jpeg"));
   width: 100%;
   height: 520px;
   background-repeat: no-repeat;
@@ -5515,7 +5516,8 @@ Fact Area
   z-index: -1;
 }
 .history-area.history-bg {
-  background-image: url(../img/bg/history-bg.jpg);
+    background-image: url(../img/bg/history-bg.jpg);
+  background-image: image-set(url(../img/bg/history-bg.webp) type("image/webp"), url(../img/bg/history-bg.jpg) type("image/jpeg"));
   background-position: center;
   background-size: cover;
 }
@@ -5929,6 +5931,7 @@ Fact Area
 }
 .testimonial-area.testimonial-bg {
   background-image: url(../img/bg/testimonial-bg.jpg);
+  background-image: image-set(url(../img/bg/testimonial-bg.webp) type("image/webp"), url(../img/bg/testimonial-bg.jpg) type("image/jpeg"));
   background-position: center;
   background-size: cover;
 }
