@@ -4949,7 +4949,9 @@ Fact Area
   Counterup area
 -----------------------*/
 .counterup-area {
-  background: linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url(../img/bg/counterup-bg.jpg) no-repeat center center;
+ background: linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), url(../img/bg/counterup-bg.jpg) no-repeat center center;
+background-image: linear-gradient(rgba(57, 108, 240, 0.8), #f8f9fa), image-set(url(../img/bg/counterup-bg.webp) type("image/webp"), url(../img/bg/counterup-bg.jpg) type("image/jpeg"));
+
   background-size: cover;
   background-attachment: fixed;
   text-align: center;
