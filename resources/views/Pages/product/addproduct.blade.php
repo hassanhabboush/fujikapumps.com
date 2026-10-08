@@ -91,7 +91,8 @@
                                 <div class="k-edit-label">
                                         <label for="gallry">Import Parameter Table</label>
                                         <br>
-                                        <input required type="file"  name="parameter" placeholder="Parameter table" accept=".csv,text/csv,text/plain">
+                                       <input type="file"  name="parameter" placeholder="Parameter table" accept=".csv,text/csv,text/plain">
+
 </div>
                                 </div>
                                      </div>
